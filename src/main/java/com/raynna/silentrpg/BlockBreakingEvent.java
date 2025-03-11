@@ -17,7 +17,7 @@ public class BlockBreakingEvent {
         if (block == Blocks.IRON_ORE) {
             event.setCanceled(true);
             if (event.getPlayer() instanceof ServerPlayer player) {
-                player.sendSystemMessage(Component.literal("test"));
+                player.sendSystemMessage(Component.literal("You need a pickaxe to mine this ore."));
             }
         }
     }
