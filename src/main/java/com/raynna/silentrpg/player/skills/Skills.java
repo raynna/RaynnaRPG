@@ -74,6 +74,11 @@ public class Skills {
     }
 
     private void onLevelUp(Skill skill, int level) {
+        if (level > 1) {
+            player.sendSystemMessage(Component.literal("Congratulations! You leveled up " + level + " " + skill.getType().getName() + " levels. You are now level " + skill.getLevel() + "!"));
+        } else {
+            player.sendSystemMessage(Component.literal("Congratulations! You leveled up a " + skill.getType().getName() + " level. You are now level " + skill.getLevel() + "!"));
+        }
         player.sendSystemMessage(Component.literal("Congratulations! You leveled up " + level + " " + skill.getType().getName() + " levels. You are now level " + skill.getLevel() + "!"));
         if (isMaxLevel(skill.getType())) {
             player.sendSystemMessage(Component.literal("You've achieved the highest level possible in " + skill.getType().getName() + "!"));
