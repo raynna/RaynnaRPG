@@ -24,6 +24,18 @@ public class Skill {
         return level;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
+
+    public SkillType getType() {
+        return type;
+    }
+
     public int getXp() {
         return xp;
     }

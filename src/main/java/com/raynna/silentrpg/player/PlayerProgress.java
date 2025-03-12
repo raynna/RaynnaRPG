@@ -2,17 +2,16 @@ package com.raynna.silentrpg.player;
 
 import com.raynna.silentrpg.player.skills.Skills;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
 
-public class PlayerStats {
+public class PlayerProgress {
 
     private final UUID playerUUID;
     private Skills skills;
 
-    public PlayerStats(UUID playerUUID) {
+    public PlayerProgress(UUID playerUUID) {
         this.playerUUID = playerUUID;
         this.skills = null;
     }
@@ -27,9 +26,9 @@ public class PlayerStats {
     }
 
 
-    public static PlayerStats fromNBT(CompoundTag tag) {
+    public static PlayerProgress fromNBT(CompoundTag tag) {
         UUID playerUUID = UUID.fromString(tag.getString("playerUUID"));
-        return new PlayerStats(playerUUID);
+        return new PlayerProgress(playerUUID);
     }
 
     public CompoundTag toNBT() {

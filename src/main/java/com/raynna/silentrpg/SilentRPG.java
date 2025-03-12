@@ -1,7 +1,10 @@
 package com.raynna.silentrpg;
 
-import com.raynna.silentrpg.player.PlayerLoginEvent;
-import net.neoforged.neoforge.attachment.AttachmentType;
+import com.mojang.brigadier.CommandDispatcher;
+import com.raynna.silentrpg.player.commands.SkillCommand;
+import com.raynna.silentrpg.player.events.PlayerLoginEvent;
+import com.raynna.silentrpg.player.events.BlockBreakingEvent;
+import net.minecraft.commands.CommandSourceStack;
 import net.neoforged.neoforge.registries.*;
 import org.slf4j.Logger;
 
@@ -32,8 +35,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-
-import java.util.function.Supplier;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(SilentRPG.MODID)
@@ -79,9 +80,6 @@ public class SilentRPG
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-
         if (Config.logDirtBlock)
             LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
 

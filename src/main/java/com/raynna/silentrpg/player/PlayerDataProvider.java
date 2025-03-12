@@ -5,18 +5,18 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 
-public class PlayerDataManager {
+public class PlayerDataProvider {
 
-    public static PlayerData getPlayerData(ServerLevel world) {
+    public static PlayerDataStorage getData(ServerLevel world) {
         DimensionDataStorage storage = world.getDataStorage();
         return storage.computeIfAbsent(
-                new SavedData.Factory<>(PlayerData::create, PlayerData::load),
+                new SavedData.Factory<>(PlayerDataStorage::create, PlayerDataStorage::load),
                 "player_data"
         );
     }
 
-    public static PlayerStats getPlayerStats(ServerPlayer player) {
-        return getPlayerData(player.server.overworld()).getStats(player.getUUID());
+    public static PlayerProgress getPlayerProgress(ServerPlayer player) {
+        return getData(player.server.overworld()).getStats(player.getUUID());
     }
 
 }

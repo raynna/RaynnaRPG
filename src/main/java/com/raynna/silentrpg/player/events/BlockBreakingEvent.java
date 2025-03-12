@@ -1,10 +1,9 @@
-package com.raynna.silentrpg;
+package com.raynna.silentrpg.player.events;
 
-import com.raynna.silentrpg.player.PlayerDataManager;
-import com.raynna.silentrpg.player.PlayerStats;
+import com.raynna.silentrpg.player.PlayerDataProvider;
+import com.raynna.silentrpg.player.PlayerProgress;
 import com.raynna.silentrpg.player.skills.SkillType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -27,7 +26,7 @@ public class BlockBreakingEvent {
         Player player = event.getPlayer();
 
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.sendSystemMessage(Component.literal("§6[Debug] Block Broken: " + blockState));
+            /*serverPlayer.sendSystemMessage(Component.literal("§6[Debug] Block Broken: " + blockState));
             serverPlayer.sendSystemMessage(Component.literal(" - Block Name: " + block.getDescriptionId()));
             serverPlayer.sendSystemMessage(Component.literal(" - Hardness: " + blockState.getDestroySpeed(event.getLevel(), event.getPos())));
             serverPlayer.sendSystemMessage(Component.literal(" - Resistance: " + block.getExplosionResistance()));
@@ -47,18 +46,22 @@ public class BlockBreakingEvent {
             }
             if (blockState.is(BlockTags.MINEABLE_WITH_SHOVEL)) {
                 serverPlayer.sendSystemMessage(Component.literal(" - This block requires a shovel."));
-            }
+            }*/
 
             if (block == Blocks.IRON_ORE) {
                 event.setCanceled(true);
                 serverPlayer.sendSystemMessage(Component.literal("You need a pickaxe to mine this ore."));
             }
+            if (block == Blocks.SAND) {
+                PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
+                progress.getSkills().resetSkills();
+            }
 
             if (block == Blocks.STONE) {
-                PlayerStats stats = PlayerDataManager.getPlayerStats(serverPlayer);
-                stats.getSkills().addXp(SkillType.MINING, 150);
-                serverPlayer.sendSystemMessage(Component.literal("You received 150 mining experience."));
-                serverPlayer.sendSystemMessage(Component.literal("You now have " + stats.getSkills().getSkill(SkillType.MINING).getXp()));
+                PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
+                progress.getSkills().addXp(SkillType.MINING, 3000);
+                serverPlayer.sendSystemMessage(Component.literal("You received 3000 mining experience."));
+                serverPlayer.sendSystemMessage(Component.literal("You now have " + progress.getSkills().getSkill(SkillType.MINING).getXp()));
             }
         }
     }

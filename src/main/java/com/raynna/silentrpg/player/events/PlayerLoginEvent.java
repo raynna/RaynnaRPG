@@ -1,5 +1,7 @@
-package com.raynna.silentrpg.player;
+package com.raynna.silentrpg.player.events;
 
+import com.raynna.silentrpg.player.PlayerDataProvider;
+import com.raynna.silentrpg.player.PlayerProgress;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -14,8 +16,8 @@ public class PlayerLoginEvent {
         Player player = event.getEntity();
 
         if (player instanceof ServerPlayer serverPlayer) {
-            PlayerStats playerStats = PlayerDataManager.getPlayerStats(serverPlayer);
-            playerStats.init(serverPlayer);
+            PlayerProgress playerProgress = PlayerDataProvider.getPlayerProgress(serverPlayer);
+            playerProgress.init(serverPlayer);
         }
     }
 
