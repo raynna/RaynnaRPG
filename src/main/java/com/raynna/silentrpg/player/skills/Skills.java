@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class Skills {
 
-    private static int MAX_LEVEL = 50;
-    private static int MAX_XP = 400_000;
+    private final static int MAX_LEVEL = 50;
+    private final static int MAX_XP = 283854;//to avoid people getting more xp than max lvl, might want to increase if added some type of highscore
 
     private final Map<SkillType, Skill> skills = new EnumMap<>(SkillType.class);
     private ServerPlayer player;
