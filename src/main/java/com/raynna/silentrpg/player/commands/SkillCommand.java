@@ -2,10 +2,9 @@ package com.raynna.silentrpg.player.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.raynna.silentrpg.player.PlayerDataProvider;
+import com.raynna.silentrpg.player.playerdata.PlayerDataProvider;
 import com.raynna.silentrpg.player.PlayerProgress;
 import com.raynna.silentrpg.player.skills.SkillType;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;

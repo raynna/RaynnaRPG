@@ -1,4 +1,4 @@
-package com.raynna.silentrpg.player;
+package com.raynna.silentrpg.player.progress;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -36,7 +36,7 @@ public class ProgressEntry<T> {
             case Integer intValue -> tag.putInt("value", intValue);
             case Double doubleValue -> tag.putDouble("value", doubleValue);
             case String stringValue -> tag.putString("value", stringValue);
-            case Boolean booleanValue -> tag.putByte("value", (byte) (booleanValue ? 1 : 0)); // Store boolean as byte
+            case Boolean booleanValue -> tag.putByte("value", (byte) (booleanValue ? 1 : 0));
             case null, default -> {
                 assert value != null;
                 throw new IllegalArgumentException("Unsupported value type: " + value.getClass());

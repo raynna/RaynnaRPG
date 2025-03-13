@@ -1,13 +1,11 @@
 package com.raynna.silentrpg.player.events;
 
-import com.raynna.silentrpg.player.PlayerDataProvider;
+import com.raynna.silentrpg.player.playerdata.PlayerDataProvider;
 import com.raynna.silentrpg.player.PlayerProgress;
-import com.raynna.silentrpg.player.ProgressKey;
+import com.raynna.silentrpg.player.progress.ProgressKey;
 import com.raynna.silentrpg.player.skills.SkillType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -15,8 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.BlockEvent;
-
-import java.util.List;
 
 public class BlockBreakingEvent {
 

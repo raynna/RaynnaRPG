@@ -1,5 +1,6 @@
-package com.raynna.silentrpg.player;
+package com.raynna.silentrpg.player.playerdata;
 
+import com.raynna.silentrpg.player.PlayerProgress;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;

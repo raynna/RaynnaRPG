@@ -1,4 +1,4 @@
-package com.raynna.silentrpg.player;
+package com.raynna.silentrpg.player.progress;
 
 public enum ProgressKey {
 

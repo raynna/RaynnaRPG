@@ -1,9 +1,9 @@
 package com.raynna.silentrpg.player;
 
 import com.mojang.logging.LogUtils;
+import com.raynna.silentrpg.player.progress.Progress;
 import com.raynna.silentrpg.player.skills.Skills;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
 

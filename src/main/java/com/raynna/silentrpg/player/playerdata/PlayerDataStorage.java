@@ -1,5 +1,6 @@
-package com.raynna.silentrpg.player;
+package com.raynna.silentrpg.player.playerdata;
 
+import com.raynna.silentrpg.player.PlayerProgress;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -36,7 +37,7 @@ public class PlayerDataStorage extends SavedData {
 
             } catch (Exception e) {
                 System.err.println("Failed to load data for player UUID: " + uuidStr + ". Skipping entry.");
-                e.printStackTrace(); // Log the detailed error
+                e.printStackTrace();
             }
         }
 

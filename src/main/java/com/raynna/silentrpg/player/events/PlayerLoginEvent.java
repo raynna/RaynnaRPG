@@ -1,6 +1,6 @@
 package com.raynna.silentrpg.player.events;
 
-import com.raynna.silentrpg.player.PlayerDataProvider;
+import com.raynna.silentrpg.player.playerdata.PlayerDataProvider;
 import com.raynna.silentrpg.player.PlayerProgress;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
