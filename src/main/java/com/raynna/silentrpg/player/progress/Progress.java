@@ -27,49 +27,30 @@ public class Progress {
             progressMap.put(key, new ProgressEntry<>(key.getType(), key.getDefaultValue()));
         }
     }
-
     @SuppressWarnings("unchecked")
     public <T> T get(ProgressKey key) {
-        ProgressEntry<?> entry = progressMap.get(key);
-        if (entry == null) {
-            throw new IllegalArgumentException("No progress entry found for key: " + key);
-        }
+        ProgressEntry<?> entry = getEntryOrThrow(key);
         return (T) entry.getValue();
     }
-
+    
     public <T> void set(ProgressKey key, T value) {
-        ProgressEntry<?> entry = progressMap.get(key);
-        if (entry == null) {
-            throw new IllegalArgumentException("No progress entry found for key: " + key);
-        }
-        entry.setValue(value);
+        getEntryOrThrow(key).setValue(value);
     }
-
+    
     public void increase(ProgressKey key, int value) {
-        ProgressEntry<?> entry = progressMap.get(key);
-        if (entry == null || !(entry.getValue() instanceof Number)) {
-            throw new IllegalArgumentException("Invalid progress entry for key: " + key);
-        }
-        Number current = (Number) entry.getValue();
-        entry.setValue(current.intValue() + value);
+        modifyNumberEntry(key, value);
     }
-
+    
     public void decrease(ProgressKey key, int value) {
-        ProgressEntry<?> entry = progressMap.get(key);
-        if (entry == null || !(entry.getValue() instanceof Number)) {
-            throw new IllegalArgumentException("Invalid progress entry for key: " + key);
-        }
-        Number current = (Number) entry.getValue();
-        entry.setValue(current.intValue() - value);
+        modifyNumberEntry(key, -value);
     }
     
     public void toggle(ProgressKey key) {
-        ProgressEntry<?> entry = progressMap.get(key);
-        if (entry == null || !(entry.getValue() instanceof Boolean)) {
-            throw new IllegalArgumentException("Invalid progress entry for key: " + key);
+        ProgressEntry<?> entry = getEntryOrThrow(key);
+        if (!(entry.getValue() instanceof Boolean)) {
+            throw new IllegalArgumentException("Invalid boolean progress entry for key: " + key);
         }
-        Boolean current = (Boolean) entry.getValue();
-        entry.setValue(!current);
+        entry.setValue(!(Boolean) entry.getValue());
     }
 
     public boolean isActive(ProgressKey key) {
@@ -78,6 +59,22 @@ public class Progress {
             return (Boolean) entry.getValue();
         }
         throw new IllegalArgumentException("Invalid progress entry for key: " + key);
+    }
+
+    private ProgressEntry<?> getEntryOrThrow(ProgressKey key) {
+        ProgressEntry<?> entry = progressMap.get(key);
+        if (entry == null) {
+            throw new IllegalArgumentException("No progress entry found for key: " + key);
+        }
+        return entry;
+    }
+
+    private void modifyNumberEntry(ProgressKey key, int delta) {
+        ProgressEntry<?> entry = getEntryOrThrow(key);
+        if (!(entry.getValue() instanceof Number)) {
+            throw new IllegalArgumentException("Invalid numeric progress entry for key: " + key);
+        }
+        entry.setValue(((Number) entry.getValue()).intValue() + delta);
     }
 
     public CompoundTag toNBT() {
