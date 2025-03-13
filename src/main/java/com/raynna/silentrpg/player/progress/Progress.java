@@ -45,6 +45,33 @@ public class Progress {
         entry.setValue(value);
     }
 
+public void increase(ProgressKey key, int value) {
+    ProgressEntry<?> entry = progressMap.get(key);
+    if (entry == null || !(entry.getValue() instanceof Number)) {
+        throw new IllegalArgumentException("Invalid progress entry for key: " + key);
+    }
+    Number current = (Number) entry.getValue();
+    entry.setValue(current.intValue() + value);
+}
+
+public void decrease(ProgressKey key, int value) {
+    ProgressEntry<?> entry = progressMap.get(key);
+    if (entry == null || !(entry.getValue() instanceof Number)) {
+        throw new IllegalArgumentException("Invalid progress entry for key: " + key);
+    }
+    Number current = (Number) entry.getValue();
+    entry.setValue(current.intValue() - value);
+}
+
+public void toggle(ProgressKey key) {
+    ProgressEntry<?> entry = progressMap.get(key);
+    if (entry == null || !(entry.getValue() instanceof Boolean)) {
+        throw new IllegalArgumentException("Invalid progress entry for key: " + key);
+    }
+    Boolean current = (Boolean) entry.getValue();
+    entry.setValue(!current);
+}
+
     public CompoundTag toNBT() {
         CompoundTag progressTag = new CompoundTag();
         for (Map.Entry<ProgressKey, ProgressEntry<?>> entry : progressMap.entrySet()) {
