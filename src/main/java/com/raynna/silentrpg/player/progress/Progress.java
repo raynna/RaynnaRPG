@@ -72,6 +72,14 @@ public class Progress {
         entry.setValue(!current);
     }
 
+    public boolean isActive(ProgressKey key) {
+        ProgressEntry<?> entry = progressMap.get(key);
+        if (entry instanceof ProgressEntry<?> && entry.getValue() instanceof Boolean) {
+            return (Boolean) entry.getValue();
+        }
+        throw new IllegalArgumentException("Invalid progress entry for key: " + key);
+    }
+
     public CompoundTag toNBT() {
         CompoundTag progressTag = new CompoundTag();
         for (Map.Entry<ProgressKey, ProgressEntry<?>> entry : progressMap.entrySet()) {
