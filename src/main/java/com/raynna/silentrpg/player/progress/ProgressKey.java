@@ -5,7 +5,7 @@ public enum ProgressKey {
     MINED_STONE(Integer.class, 0),
     TEST_DOUBLEKEY(Double.class, 0.0),
     TEST_UNLOCKKEY(Boolean.class, false),
-
+    TEST_STRINGKEY(String.class, "this key has a stringValue"),
 
     ;
 
