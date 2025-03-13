@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.raynna.silentrpg.player.commands.SkillCommand;
 import com.raynna.silentrpg.player.events.PlayerLoginEvent;
 import com.raynna.silentrpg.player.events.BlockBreakingEvent;
+import com.raynna.silentrpg.player.events.PlayerLogoutEvent;
 import net.minecraft.commands.CommandSourceStack;
 import net.neoforged.neoforge.registries.*;
 import org.slf4j.Logger;
@@ -73,6 +74,7 @@ public class SilentRPG
 
         modEventBus.addListener(this::addCreative);
         PlayerLoginEvent.register();
+        PlayerLogoutEvent.register();
         BlockBreakingEvent.register();
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

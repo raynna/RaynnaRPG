@@ -2,6 +2,7 @@ package com.raynna.silentrpg.player.events;
 
 import com.raynna.silentrpg.player.PlayerDataProvider;
 import com.raynna.silentrpg.player.PlayerProgress;
+import com.raynna.silentrpg.player.ProgressKey;
 import com.raynna.silentrpg.player.skills.SkillType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -55,13 +56,17 @@ public class BlockBreakingEvent {
             if (block == Blocks.SAND) {
                 PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
                 progress.getSkills().resetSkills();
+                progress.getProgress().resetProgress();
+                serverPlayer.sendSystemMessage(Component.literal("All players progress has been reset."));
             }
 
             if (block == Blocks.STONE) {
                 PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
                 progress.getSkills().addXp(SkillType.MINING, 3000);
-                serverPlayer.sendSystemMessage(Component.literal("You received 3000 mining experience."));
-                serverPlayer.sendSystemMessage(Component.literal("You now have " + progress.getSkills().getSkill(SkillType.MINING).getXp()));
+                int stoneMined = progress.getProgress().get(ProgressKey.MINED_STONE);
+                progress.getProgress().set(ProgressKey.MINED_STONE, stoneMined + 1);
+                serverPlayer.sendSystemMessage(Component.literal("You received 3000 mining experience, you now have in total of " + progress.getSkills().getSkill(SkillType.MINING).getXp() + " experience."));
+                serverPlayer.sendSystemMessage(Component.literal("You have mined in total of " + progress.getProgress().get(ProgressKey.MINED_STONE) + " stone blocks."));
             }
         }
     }

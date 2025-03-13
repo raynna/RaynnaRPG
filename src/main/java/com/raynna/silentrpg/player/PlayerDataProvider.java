@@ -16,7 +16,7 @@ public class PlayerDataProvider {
     }
 
     public static PlayerProgress getPlayerProgress(ServerPlayer player) {
-        return getData(player.server.overworld()).getStats(player.getUUID());
+        return getData(player.server.overworld()).getStats(player.getUUID(), player.serverLevel());
     }
 
 }

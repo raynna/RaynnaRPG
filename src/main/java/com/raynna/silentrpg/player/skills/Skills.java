@@ -1,5 +1,6 @@
 package com.raynna.silentrpg.player.skills;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -12,14 +13,16 @@ public class Skills {
     private static int MAX_XP = 400_000;
 
     private final Map<SkillType, Skill> skills = new EnumMap<>(SkillType.class);
-    private final ServerPlayer player;
+    private ServerPlayer player;
 
-
-    public Skills(ServerPlayer player) {
-        this.player = player;
+    public Skills() {
         for (SkillType type : SkillType.values()) {
-            skills.put(type, new Skill(type, this));
+            skills.put(type, new Skill(type));
         }
+    }
+
+    public void setPlayer(ServerPlayer player) {
+        this.player = player;
     }
 
     public ServerPlayer getPlayer() {
@@ -79,7 +82,6 @@ public class Skills {
         } else {
             player.sendSystemMessage(Component.literal("Congratulations! You leveled up a " + skill.getType().getName() + " level. You are now level " + skill.getLevel() + "!"));
         }
-        player.sendSystemMessage(Component.literal("Congratulations! You leveled up " + level + " " + skill.getType().getName() + " levels. You are now level " + skill.getLevel() + "!"));
         if (isMaxLevel(skill.getType())) {
             player.sendSystemMessage(Component.literal("You've achieved the highest level possible in " + skill.getType().getName() + "!"));
         }
@@ -93,4 +95,39 @@ public class Skills {
         player.sendSystemMessage(Component.literal("You have reset all your skills."));
     }
 
+    private CompoundTag serializeSkill(Skill skill) {
+        CompoundTag skillTag = new CompoundTag();
+        skillTag.putInt("level", skill.getLevel());
+        skillTag.putInt("xp", skill.getXp());
+        return skillTag;
+    }
+
+    public CompoundTag toNBT() {
+        CompoundTag skillsTag = new CompoundTag();
+
+        for (Map.Entry<SkillType, Skill> entry : skills.entrySet()) {
+            skillsTag.put(entry.getKey().name(), serializeSkill(entry.getValue()));
+        }
+
+        return skillsTag;
+    }
+
+
+    public static Skills fromNBT(CompoundTag tag) {
+        Skills skills = new Skills();
+
+        for (String skillName : tag.getAllKeys()) {
+            SkillType type = SkillType.valueOf(skillName);
+            skills.skills.put(type, deserializeSkill(type, tag.getCompound(skillName)));
+        }
+
+        return skills;
+    }
+
+    private static Skill deserializeSkill(SkillType type, CompoundTag skillTag) {
+        Skill skill = new Skill(type);
+        skill.setLevel(skillTag.getInt("level"));
+        skill.setXp(skillTag.getInt("xp"));
+        return skill;
+    }
 }

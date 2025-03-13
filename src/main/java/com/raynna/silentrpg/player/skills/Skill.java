@@ -1,23 +1,15 @@
 package com.raynna.silentrpg.player.skills;
 
-import net.minecraft.server.level.ServerPlayer;
-
 public class Skill {
 
     private final SkillType type;
-    private final Skills owner;
 
     private int level = 1;
     private int xp = 0;
 
 
-    public Skill(SkillType type, Skills owner) {
+    public Skill(SkillType type) {
         this.type = type;
-        this.owner = owner;
-    }
-
-    private ServerPlayer getPlayer() {
-        return owner.getPlayer();
     }
 
     public int getLevel() {
