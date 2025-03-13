@@ -7,6 +7,9 @@ import java.util.Map;
 
 public class Progress {
 
+    //TODO Add add(int) method to avoid long lines to increase a progressValue
+    //     Add remove(int) method to avoid long lines to reduce a progressValue
+
     private final Map<ProgressKey, ProgressEntry<?>> progressMap = new EnumMap<>(ProgressKey.class);
 
     public Progress() {
