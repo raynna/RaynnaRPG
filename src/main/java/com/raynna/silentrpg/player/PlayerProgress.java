@@ -57,7 +57,7 @@ public class PlayerProgress {
         }
         if (progress != null) {
             tag.put("progress", progress.toNBT());
-            System.out.println("Saving Skills: " + progress.toNBT().toString());
+            System.out.println("Saving Progress: " + progress.toNBT().toString());
         }
 
         return tag;
