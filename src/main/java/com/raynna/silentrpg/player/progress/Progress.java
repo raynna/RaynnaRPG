@@ -5,10 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class Progress {
-
-    //TODO Add add(int) method to avoid long lines to increase a progressValue
-    //     Add remove(int) method to avoid long lines to reduce a progressValue
+public class Progress { 
 
     private final Map<ProgressKey, ProgressEntry<?>> progressMap = new EnumMap<>(ProgressKey.class);
 
@@ -54,11 +51,11 @@ public class Progress {
     }
 
     public boolean isActive(ProgressKey key) {
-        ProgressEntry<?> entry = progressMap.get(key);
-        if (entry instanceof ProgressEntry<?> && entry.getValue() instanceof Boolean) {
-            return (Boolean) entry.getValue();
+        Object value = getEntryOrThrow(key).getValue();
+        if (!(value instanceof Boolean)) {
+            throw new IllegalArgumentException("Invalid boolean progress entry for key: " + key);
         }
-        throw new IllegalArgumentException("Invalid progress entry for key: " + key);
+        return (Boolean) value;
     }
 
     private ProgressEntry<?> getEntryOrThrow(ProgressKey key) {
