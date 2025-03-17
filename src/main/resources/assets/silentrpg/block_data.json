@@ -1,0 +1,17 @@
+{
+  "tools": {
+    "minecraft:wooden_pickaxe": {
+      "level_requirement": 1
+    },
+    "minecraft:stone_pickaxe": {
+      "level_requirement": 5
+    }
+  },
+
+  "blocks": {
+    "minecraft:iron_ores": {
+      "level_requirement": 10,
+      "experience": 10
+    }
+  }
+}
