@@ -3,6 +3,7 @@ package net.raynna.silentrpg.server.player.skills;
     public enum SkillType {
         MINING("Mining"),
         SMITHING("Smithing"),
+        CRAFTING("Crafting"),
         COMBAT("Combat");
 
 

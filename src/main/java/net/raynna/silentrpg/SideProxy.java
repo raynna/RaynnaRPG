@@ -18,6 +18,11 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.raynna.silentrpg.client.events.ClientBlockEvents;
+import net.raynna.silentrpg.data.DataRegistry;
+import net.raynna.silentrpg.network.Packets;
+import net.raynna.silentrpg.server.events.ServerBlockEvents;
+import net.raynna.silentrpg.server.events.ServerPlayerEvents;
 
 import javax.annotation.Nullable;
 
@@ -29,40 +34,20 @@ class SideProxy implements IProxy {
 
     SideProxy(IEventBus modEventBus) {
         modEventBus.addListener(SideProxy::commonSetup);
-        modEventBus.addListener(SideProxy::registerCapabilities);
-        modEventBus.addListener(SideProxy::imcEnqueue);
-        modEventBus.addListener(SideProxy::imcProcess);
 
-//        modEventBus.addGenericListener(ItemStat.class, ItemStats::registerStats);
 
-        NeoForge.EVENT_BUS.addListener(SideProxy::onAddReloadListeners);
         NeoForge.EVENT_BUS.addListener(SideProxy::serverStarted);
         NeoForge.EVENT_BUS.addListener(SideProxy::serverStopping);
+        ServerPlayerEvents.register();
+        ServerBlockEvents.register();
     }
 
     private static void commonSetup(FMLCommonSetupEvent event) {
-
-    }
-
-    private static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        /*if (ModList.get().isLoaded(Const.CURIOS)) {
-            event.register(CurioGearItemCapability.class);
-        }*/
-    }
-
-    private static void imcEnqueue(InterModEnqueueEvent event) {
-    }
-
-    private static void imcProcess(InterModProcessEvent event) {
-    }
-
-    private static void onAddReloadListeners(AddReloadListenerEvent event) {
-
+        DataRegistry.loadData();
     }
 
     private static void serverStarted(ServerStartedEvent event) {
         server = event.getServer();
-        //SilentRPG.LOGGER.info( "Traits loaded: {}", SgRegistries.TRAIT.stream().count());
     }
 
     private static void serverStopping(ServerStoppingEvent event) {
@@ -100,35 +85,8 @@ class SideProxy implements IProxy {
     static class Client extends SideProxy {
         Client(IEventBus modEventBus, ModContainer container) {
             super(modEventBus);
-
-            modEventBus.addListener(Client::clientSetup);
-            modEventBus.addListener(Client::postSetup);
-            //modEventBus.addListener(ColorHandlers::onItemColors);
-
-            //NeoForge.EVENT_BUS.register(ExtraBlockBreakHandler.INSTANCE);
-            //NeoForge.EVENT_BUS.register(new GearHudOverlay());
-            //NeoForge.EVENT_BUS.register(TooltipHandler.INSTANCE);
-            NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedIn);
-
-            //if (SilentGear.isDevBuild()) {
-            //     //NeoForge.EVENT_BUS.register(new DebugOverlay());
-            //}
-
+            ClientBlockEvents.register();
             container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-        }
-
-        private static void clientSetup(FMLClientSetupEvent event) {
-
-
-        }
-
-        private static void postSetup(FMLLoadCompleteEvent event) {
-            /*EntityRenderDispatcher rendererManager = Minecraft.getInstance().getEntityRenderDispatcher();
-            rendererManager.getSkinMap().values().forEach(renderer ->
-                    renderer.addLayer(new GearElytraLayer<>(renderer)));*/
-        }
-
-        private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         }
 
         @Nullable
@@ -162,7 +120,6 @@ class SideProxy implements IProxy {
     static class Server extends SideProxy {
         Server(IEventBus modEventBus, ModContainer container) {
             super(modEventBus);
-
             modEventBus.addListener(this::serverSetup);
         }
 

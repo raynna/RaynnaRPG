@@ -3,9 +3,7 @@ package net.raynna.silentrpg.server.player.progress;
 public enum ProgressKey {
 
     MINED_STONE(Integer.class, 0),
-    TEST_DOUBLEKEY(Double.class, 0.0),
-    UNLOCKED_CRIMSON_IRON(Boolean.class, false),
-    TEST_STRINGKEY(String.class, "this key has a stringValue"),
+    FIRST_TIME_LOGGED_IN(Boolean.class, true)
 
     ;
 

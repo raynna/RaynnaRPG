@@ -3,7 +3,9 @@ package net.raynna.silentrpg.server.player.skills;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.raynna.silentrpg.network.packets.message.MessagePacketSender;
 import net.raynna.silentrpg.network.packets.skills.SkillsPacketSender;
+import net.raynna.silentrpg.server.utils.Utils;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -47,6 +49,7 @@ public class Skills {
                 int levels = newLevel - oldLevel;
                 onLevelUp(skill, levels);
             }
+            MessagePacketSender.send(player, "You gained " + Utils.formatNumber(xp) + " " + type.getName() + " experience.\nYour current experience is " + Utils.formatNumber(skill.getXp()) + "/" + Utils.formatNumber(getXpForLevel(skill.getLevel()+1)));
             SkillsPacketSender.send(player, this);
         }
     }
@@ -67,6 +70,34 @@ public class Skills {
             }
         }
         return 50;
+    }
+
+    public int getXpForLevel(int level) {
+        int points = 0;
+        double value = 450.0;
+        double value2 = 2.5;
+        double divisor = 8.0;
+
+        for (int lvl = 1; lvl <= level; lvl++) {
+            points += (int) Math.floor(lvl + value * Math.pow(value2, lvl / divisor));
+        }
+
+        return (int) Math.floor(points / 4);
+    }
+
+    public int getXpToLevelUp(SkillType type) {
+        Skill skill = getSkill(type);
+        if (skill == null) return 0;
+
+        int currentXp = skill.getXp();
+        int currentLevel = skill.getLevel();
+        int nextLevelXp = getXpForLevel(currentLevel + 1);
+
+        if (currentLevel == MAX_LEVEL) {
+            return 0;
+        }
+
+        return nextLevelXp - currentXp;
     }
 
     public Skill getSkill(SkillType type) {
@@ -94,6 +125,7 @@ public class Skills {
             skill.setLevel(1);
             skill.setXp(0);
         }
+        SkillsPacketSender.send(player, this);
         player.sendSystemMessage(Component.literal("You have reset all your skills."));
     }
 

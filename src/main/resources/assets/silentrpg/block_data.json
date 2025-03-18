@@ -11,7 +11,30 @@
   "blocks": {
     "minecraft:iron_ores": {
       "level_requirement": 10,
+      "experience": 50
+    },
+    "c:stones": {
+      "level_requirement": 1,
+      "experience": 2
+    },
+    "minecraft:stones": {
+      "level_requirement": 1,
+      "experience": 2
+    }
+  },
+
+  "materials": {
+    "item.minecraft.iron_ingot": {
+      "level_requirement": 5,
+      "experience": 25
+    },
+    "block.minecraft.cobblestone": {
+      "level_requirement": 1,
       "experience": 10
+    },
+    "item.minecraft.stick": {
+      "level_requirement": 1,
+      "experience": 1
     }
   }
 }
