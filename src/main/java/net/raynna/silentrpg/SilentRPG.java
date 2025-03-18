@@ -2,6 +2,7 @@ package net.raynna.silentrpg;
 
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.NeoForgeConfig;
 import net.raynna.silentrpg.client.events.ClientBlockEvents;
 import net.raynna.silentrpg.data.DataRegistry;
 import net.raynna.silentrpg.network.Packets;
@@ -54,7 +55,6 @@ public class SilentRPG
     public static final RandomSource RANDOM_SOURCE = RandomSource.create();
     public static final Logger LOGGER = LogUtils.getLogger();
 
-
     public static SilentRPG INSTANCE;
     public static IProxy PROXY;
 
@@ -84,7 +84,7 @@ public class SilentRPG
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
     {
-        LOGGER.info("HELLO from server starting");
+        LOGGER.info("[Silent RPG] Mod loaded on dedicated server]");
     }
 
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -93,7 +93,7 @@ public class SilentRPG
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            LOGGER.info("HELLO FROM CLIENT SETUP");
+            LOGGER.info("[Silent RPG] Mod loaded on client]");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
     }

@@ -1,0 +1,10 @@
+{
+  "tools": {
+    "item.minecraft.wooden_pickaxe": {
+      "level_requirement": 1
+    },
+    "item.minecraft.stone_pickaxe": {
+      "level_requirement": 5
+    }
+  }
+}

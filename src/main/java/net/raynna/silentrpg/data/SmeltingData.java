@@ -1,8 +1,9 @@
 package net.raynna.silentrpg.data;
 
-public class MaterialData {
+public class SmeltingData {
     private int level_requirement;
     private int experience;
+    private String rawMaterial;
 
     public int getLevelRequirement() {
         return level_requirement;
@@ -10,5 +11,9 @@ public class MaterialData {
 
     public int getExperience() {
         return experience;
+    }
+
+    public String getRawMaterial() {
+        return rawMaterial;
     }
 }

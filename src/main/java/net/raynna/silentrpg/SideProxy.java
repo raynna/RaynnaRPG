@@ -19,6 +19,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.raynna.silentrpg.client.events.ClientBlockEvents;
+import net.raynna.silentrpg.client.events.ClientItemEvents;
 import net.raynna.silentrpg.data.DataRegistry;
 import net.raynna.silentrpg.network.Packets;
 import net.raynna.silentrpg.server.events.ServerBlockEvents;
@@ -86,6 +87,7 @@ class SideProxy implements IProxy {
         Client(IEventBus modEventBus, ModContainer container) {
             super(modEventBus);
             ClientBlockEvents.register();
+            ClientItemEvents.register();
             container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         }
 

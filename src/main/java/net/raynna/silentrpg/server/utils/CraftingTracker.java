@@ -23,7 +23,7 @@ public class CraftingTracker {
         tracker.addExperience(experience);
         tracker.updateLastEventTime();
 
-        System.out.println("Crafting data updated: " + tracker);
+        //System.out.println("Crafting data updated: " + tracker);
 
         scheduler.schedule(() -> sendCraftingSummary(player), 300, TimeUnit.MILLISECONDS);
     }
@@ -35,7 +35,7 @@ public class CraftingTracker {
                     + tracker.getTotalExperience() + " experience for creating "
                     + tracker.getCraftedAmount() + " x " + tracker.getItemName() + "."));
 
-            System.out.println("Crafting summary sent: " + tracker);
+            //System.out.println("Crafting summary sent: " + tracker);
 
             craftingData.remove(player);
         }

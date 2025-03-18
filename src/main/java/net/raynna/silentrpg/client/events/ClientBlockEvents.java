@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.raynna.silentrpg.data.ToolData;
 import net.raynna.silentrpg.server.player.skills.SkillType;
 
 @EventBusSubscriber(modid = SilentRPG.MOD_ID, value = Dist.CLIENT)
@@ -30,46 +31,28 @@ public class ClientBlockEvents {
         if (mc.hitResult != null && mc.hitResult.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK) {
             BlockPos blockPos = ((net.minecraft.world.phys.BlockHitResult) mc.hitResult).getBlockPos();
             BlockState blockState = mc.level.getBlockState(blockPos);
-            Block block = blockState.getBlock();
-            BlockData blockData = DataRegistry.getBlock(blockState.getBlock().getDescriptionId());
-            StringBuilder sb = new StringBuilder();
-            sb.append("BlockId: ").append(block.getDescriptionId());
-            sb.append("\nBlockName: ").append(block.getName().toFlatList().getFirst().toString());
-            sb.append("\nTags: ");
-            for (TagKey<Block> tagKey : blockState.getTags().toList()) {
-                String tagName = tagKey.location().toString();
-                sb.append(tagName).append(", ");
-            }
-            System.out.println(sb.toString());
-            sb.setLength(0);
-            if (blockData == null) {
-                sb.append("Block Data is null, trying to grab by tags");
-                for (TagKey<Block> tagKey : blockState.getTags().toList()) {
-                    String tagName = tagKey.location().toString();
-                    blockData = DataRegistry.getBlock(tagName);
-
-                    if (blockData != null) {
-                        sb.append("\nFound block with tag: ").append(tagName);
-                        break;
-                    }
-                }
-            }
-            System.out.println(sb.toString());
-            System.out.println("isAttack?" + event.isAttack());
-            if (!event.isAttack() || blockData == null) {
-                System.out.println("Isnt attack or block data is null");
-                return;
-            }
             ClientSkills skills = new ClientSkills(mc.player);
             int miningLevel = skills.getSkillLevel(SkillType.MINING);
-            int levelReq = blockData.getLevelRequirement();
-            System.out.println("Mining level: " + miningLevel + ", Required level: " + levelReq);
-            if (miningLevel >= levelReq) {
-                System.out.println("Mining is higher or same as required level");
+            ToolData toolData = DataRegistry.getTool(mc.player.getMainHandItem().getDescriptionId());
+            if (toolData != null) {
+                if (miningLevel <= toolData.getLevelRequirement()) {
+                    event.setCanceled(true);
+                    mc.player.swinging = false;
+                    mc.player.resetAttackStrengthTicker();
+                    mc.player.displayClientMessage(Component.literal("You need mining level of " + toolData.getLevelRequirement() + " to use " + mc.player.getMainHandItem().getHoverName().getString()), true);
+                    return;
+                }
+            }
+            BlockData blockData = DataRegistry.getDataFromBlock(blockState);
+            if (!event.isAttack() || blockData == null) {
                 return;
             }
-            System.out.println("Mining level is lower than required level");
-            System.out.println(sb.toString());
+            int levelReq = blockData.getLevelRequirement();
+            //System.out.println("Mining level: " + miningLevel + ", Required level: " + levelReq);
+            if (miningLevel >= levelReq) {
+                //System.out.println("Mining is higher or same as required level");
+                return;
+            }
             event.setCanceled(true);
             mc.player.swinging = false;
             mc.player.resetAttackStrengthTicker();

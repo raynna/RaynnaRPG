@@ -1,6 +1,8 @@
 package net.raynna.silentrpg.server.player;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.network.chat.Component;
+import net.neoforged.fml.common.Mod;
 import net.raynna.silentrpg.network.packets.skills.SkillsPacketSender;
 import net.raynna.silentrpg.server.player.progress.Progress;
 import net.raynna.silentrpg.server.player.progress.ProgressKey;
@@ -8,10 +10,14 @@ import net.raynna.silentrpg.server.player.skills.SkillType;
 import net.raynna.silentrpg.server.player.skills.Skills;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.raynna.silentrpg.server.utils.Colour;
+import net.raynna.silentrpg.server.utils.MessageSender;
 import net.raynna.silentrpg.server.utils.Utils;
 import org.slf4j.Logger;
 
 import java.util.UUID;
+
+import static net.raynna.silentrpg.SilentRPG.MOD_NAME;
 
 public class PlayerProgress {
 
@@ -42,13 +48,13 @@ public class PlayerProgress {
         SkillsPacketSender.send(player, this.skills);
         if (progress.isActive(ProgressKey.FIRST_TIME_LOGGED_IN)) {
             progress.toggle(ProgressKey.FIRST_TIME_LOGGED_IN);
-            System.out.println("[SilentRPG] Welcome to the server " + player.getName().getString() + "!");
+            MessageSender.send(player, "["+ MOD_NAME + "] Welcome to the server " + player.getName().toFlatList().getFirst().toString() + "!", Colour.GOLD);
         } else {
-            System.out.println("[SilentRPG] Welcome back " + player.getName().getString() + "!");
+            MessageSender.send(player, "["+ MOD_NAME + "] Welcome back " + player.getName().toFlatList().getFirst().toString() + "!", Colour.GOLD);
         }
-        System.out.println("[SilentRPG] Your current skills: ");
+        MessageSender.send(player, "["+ MOD_NAME + "] Your current skills: ", Colour.RED);
         for (SkillType type : SkillType.values()) {
-            System.out.println(type.getName() + " : " + skills.getSkill(type).getLevel() + " - " + Utils.formatNumber(skills.getSkill(type).getXp()));
+            MessageSender.send(player, type.getName() + " - Level: " + skills.getSkill(type).getLevel() + ", Xp: " + Utils.formatNumber(skills.getSkill(type).getXp()), Colour.YELLOW);
         }
     }
 

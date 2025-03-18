@@ -1,40 +1,29 @@
 {
-  "tools": {
-    "minecraft:wooden_pickaxe": {
-      "level_requirement": 1
-    },
-    "minecraft:stone_pickaxe": {
-      "level_requirement": 5
-    }
-  },
-
   "blocks": {
-    "minecraft:iron_ores": {
+    "block.item.iron_ore": {
       "level_requirement": 10,
-      "experience": 50
+      "experience": 50,
+      "tags": [
+        "minecraft:iron_ores",
+        "c:ores/iron"
+      ]
     },
-    "c:stones": {
-      "level_requirement": 1,
-      "experience": 2
+    "block.item.crimson_iron_ore": {
+      "level_requirement": 25,
+      "experience": 125,
+      "tags": [
+        "c:ores/crimson_iron"
+      ]
     },
-    "minecraft:stones": {
+    "block.minecraft.stone": {
       "level_requirement": 1,
-      "experience": 2
-    }
-  },
-
-  "materials": {
-    "item.minecraft.iron_ingot": {
-      "level_requirement": 5,
-      "experience": 25
-    },
-    "block.minecraft.cobblestone": {
-      "level_requirement": 1,
-      "experience": 10
-    },
-    "item.minecraft.stick": {
-      "level_requirement": 1,
-      "experience": 1
+      "experience": 2,
+      "tags": [
+        "c:stones",
+        "c:cobblestones",
+        "minecraft:stones",
+        "minecraft:cobblestones"
+      ]
     }
   }
 }

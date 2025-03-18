@@ -1,0 +1,18 @@
+{
+  "smelting_materials": {
+    "block.minecraft.stone": {
+      "level_requirement": 1,
+      "experience": 5,
+      "rawMaterial": "minecraft:cobblestone"
+    },
+    "item.minecraft.iron_ingot": {
+      "level_requirement": 5,
+      "experience": 25,
+      "rawMaterial": "minecraft:raw_iron"
+    },
+    "item.minecraft.stick": {
+      "level_requirement": 1,
+      "experience": 1
+    }
+  }
+}
