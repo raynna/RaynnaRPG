@@ -17,4 +17,14 @@ package net.raynna.silentrpg.server.player.skills;
         public String getName() {
             return name;
         }
+
+        public static SkillType getSkillByName(String name) {
+            for (SkillType skill : SkillType.values()) {
+                if (skill.name().equalsIgnoreCase(name) || skill.getName().equalsIgnoreCase(name)) {
+                    return skill;
+                }
+            }
+            return null;
+        }
+
     }

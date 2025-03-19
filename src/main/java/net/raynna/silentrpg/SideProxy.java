@@ -22,6 +22,7 @@ import net.raynna.silentrpg.client.events.ClientBlockEvents;
 import net.raynna.silentrpg.client.events.ClientItemEvents;
 import net.raynna.silentrpg.data.DataRegistry;
 import net.raynna.silentrpg.network.Packets;
+import net.raynna.silentrpg.server.commands.Commands;
 import net.raynna.silentrpg.server.events.ServerBlockEvents;
 import net.raynna.silentrpg.server.events.ServerPlayerEvents;
 
@@ -39,6 +40,7 @@ class SideProxy implements IProxy {
 
         NeoForge.EVENT_BUS.addListener(SideProxy::serverStarted);
         NeoForge.EVENT_BUS.addListener(SideProxy::serverStopping);
+        NeoForge.EVENT_BUS.addListener(Commands::registerAll);
         ServerPlayerEvents.register();
         ServerBlockEvents.register();
     }
