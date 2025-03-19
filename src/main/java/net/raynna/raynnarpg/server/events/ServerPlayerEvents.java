@@ -83,16 +83,16 @@ public class ServerPlayerEvents {
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
             if (progress == null) return;
             if (serverPlayer.containerMenu instanceof FurnaceMenu furnaceMenu) {
-                int playerSmithingLevel = progress.getSkills().getSkill(SkillType.SMITHING).getLevel();
+                int playerSmeltingLevel = progress.getSkills().getSkill(SkillType.SMELTING).getLevel();
                 ItemStack inputItem = furnaceMenu.getSlot(INPUT_SLOT).getItem();
                 ItemStack fuelItem = furnaceMenu.getSlot(FUEL_SLOT).getItem();
                 SmeltingData smeltingData = DataRegistry.getSmeltingItem(event.getSmelting().getDescriptionId());
                 if (smeltingData != null) {
                     int requiredLevel = smeltingData.getLevelRequirement();
-                    if (playerSmithingLevel < requiredLevel) {
+                    if (playerSmeltingLevel < requiredLevel) {
                         int outputCount = event.getSmelting().getCount();
                         event.getSmelting().setCount(0);
-                        serverPlayer.sendSystemMessage(Component.literal("You need Smithing level of " + requiredLevel + " to smelt this item."));
+                        serverPlayer.sendSystemMessage(Component.literal("You need Smelting level of " + requiredLevel + " to smelt this item."));
                         Item raw = BuiltInRegistries.ITEM.get(ResourceLocation.parse(smeltingData.getRawMaterial()));
                         ItemStack rawMaterial = new ItemStack(raw);
                         if (inputItem.isEmpty()) {
@@ -124,7 +124,7 @@ public class ServerPlayerEvents {
                     String itemName = event.getSmelting().getHoverName().getString();
                     int totalExperience = baseExperience * smeltedAmount;
                     CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, totalExperience);
-                    progress.getSkills().addXp(SkillType.SMITHING, totalExperience);
+                    progress.getSkills().addXp(SkillType.SMELTING, totalExperience);
                 }
 
             }

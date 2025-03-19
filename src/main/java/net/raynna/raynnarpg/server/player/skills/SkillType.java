@@ -2,7 +2,7 @@ package net.raynna.raynnarpg.server.player.skills;
 
     public enum SkillType {
         MINING("Mining"),
-        SMITHING("Smithing"),
+        SMELTING("Smelting"),
         CRAFTING("Crafting"),
         COMBAT("Combat");
 

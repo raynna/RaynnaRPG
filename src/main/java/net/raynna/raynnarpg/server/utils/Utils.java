@@ -15,4 +15,19 @@ public class Utils {
         NumberFormat formatter = NumberFormat.getInstance(Locale.ENGLISH);
         return formatter.format(number);
     }
+
+    public static String fixItemName(String itemName) {
+        if (itemName.startsWith("item.")) {
+            int firstDotIndex = itemName.indexOf('.') + 1;
+
+            int secondDotIndex = itemName.indexOf('.', firstDotIndex);
+
+            if (secondDotIndex != -1) {
+                String modId = itemName.substring(firstDotIndex, secondDotIndex);
+
+                itemName = modId + ":" + itemName.substring(secondDotIndex + 1);
+            }
+        }
+        return itemName;
+    }
 }
