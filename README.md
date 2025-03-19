@@ -2,4 +2,4 @@ RaynnaRPG is an exciting new RPG-style mod for Minecraft, currently under develo
 
 RaynnaRPG is a fresh project with plans to expand to more Minecraft versions in the future, giving players an evolving experience as they advance through the game.
 
-You can find the source code and track development progress on GitHub, with the project page available at RaynnaRPG Project.
+You can find the source code and track development progress on GitHub
