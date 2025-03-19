@@ -19,14 +19,14 @@ authors="${mod_authors}" #optional
 
 description='''${mod_description}'''
 
-[[dependencies.silentrpg]] #optional
+[[dependencies.raynnarpg]] #optional
     modId="neoforge" #mandatory
     type="required" #mandatory
     versionRange="${neo_version_range}" #mandatory
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.silentrpg]]
+[[dependencies.raynnarpg]]
     modId="minecraft"
     type="required"
     versionRange="${minecraft_version_range}"
