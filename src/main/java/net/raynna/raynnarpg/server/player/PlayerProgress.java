@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import net.raynna.raynnarpg.network.packets.skills.SkillsPacketSender;
 import net.raynna.raynnarpg.server.player.progress.Progress;
 import net.raynna.raynnarpg.server.player.progress.ProgressKey;
+import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.server.player.skills.Skills;
 import net.minecraft.nbt.CompoundTag;
@@ -93,6 +94,12 @@ public class PlayerProgress {
         if (tag.contains("skills")) {
             playerProgress.skills = Skills.fromNBT(tag.getCompound("skills"));
             System.out.println("[Server] Loaded Skills: " + playerProgress.skills.toNBT().toString());
+            for (SkillType type : SkillType.values()) {
+                if (playerProgress.skills.getSkill(type) == null) {
+                    playerProgress.skills.getSkills().put(type, new Skill(type));
+                    System.out.println("[Server] Added missing SkillType: " + type.name() + " with default values.");
+                }
+            }
         }
 
         if (tag.contains("progress")) {

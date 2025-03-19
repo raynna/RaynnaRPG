@@ -24,6 +24,10 @@ public class Skills {
         }
     }
 
+    public Map<SkillType, Skill> getSkills() {
+        return skills;
+    }
+
     public void setPlayer(ServerPlayer player) {
         this.player = player;
     }
@@ -144,9 +148,19 @@ public class Skills {
         Skills skills = new Skills();
 
         for (String skillName : tag.getAllKeys()) {
-            SkillType type = SkillType.valueOf(skillName);
-            skills.skills.put(type, deserializeSkill(type, tag.getCompound(skillName)));
+            try {
+                SkillType type = SkillType.valueOf(skillName);
+                skills.skills.put(type, deserializeSkill(type, tag.getCompound(skillName)));
+            } catch (IllegalArgumentException e) {
+                System.out.println("Warning: SkillType " + skillName + " does not exist and will be removed.");
+            }
         }
+        for (SkillType type : SkillType.values()) {
+            if (!skills.skills.containsKey(type)) {
+                skills.skills.put(type, new Skill(type));
+            }
+        }
+
 
         return skills;
     }

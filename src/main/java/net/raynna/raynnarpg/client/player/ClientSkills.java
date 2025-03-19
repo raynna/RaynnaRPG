@@ -26,14 +26,21 @@ public class ClientSkills {
     public void updateSkills(Skills newSkills) {
         for (SkillType type : SkillType.values()) {
             Skill newSkill = newSkills.getSkill(type);
-            skills.getSkill(type).setLevel(newSkill.getLevel());
-            skills.getSkill(type).setXp(newSkill.getXp());
-            System.out.println("[Client] updated: Skill: " + type.getName() + " Level: " + skills.getSkill(type).getLevel());
+            Skill existingSkill = skills.getSkill(type);
+            if (existingSkill != null && newSkill != null) {
+                skills.getSkill(type).setLevel(newSkill.getLevel());
+                skills.getSkill(type).setXp(newSkill.getXp());
+                System.out.println("[Client] updated: Skill: " + type.getName() + " Level: " + skills.getSkill(type).getLevel());
+            }
         }
     }
 
     public int getSkillLevel(SkillType skillType) {
-        return skills.getSkill(skillType).getLevel();
+        Skill skill = skills.getSkill(skillType);
+        if (skill == null) {
+            return 1;
+        }
+        return skill.getLevel();
     }
 
     public static Skill getSkill(SkillType skillType) {
