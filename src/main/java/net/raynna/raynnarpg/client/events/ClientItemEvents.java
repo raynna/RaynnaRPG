@@ -29,9 +29,7 @@ import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.raynna.raynnarpg.data.*;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
-import org.joml.Matrix4f;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +83,7 @@ public class ClientItemEvents {
                 craftingText.append("§aLevel: ")
                         .append(craftingData.getLevelRequirement()).append(", XP: ").append(craftingData.getExperience());
             }
-            data.put("Crafting",craftingText.toString());
+            data.put("Crafting", craftingText.toString());
         }
 
         SmeltingData smeltingData = DataRegistry.getDataFromItem(stack, SmeltingData.class);
@@ -133,7 +131,6 @@ public class ClientItemEvents {
             data.put(toolType, toolText.toString());
         }
 
-        // Add tooltips dynamically
         if (!data.isEmpty()) {
             toolTips.add(insertIndex.getAndIncrement(), Component.literal("§6RaynnaRPG: "));
             data.forEach((key, value) ->
@@ -147,6 +144,17 @@ public class ClientItemEvents {
             for (TagKey<Item> tag : stack.getTags().toList()) {
                 event.getToolTip().add(Component.literal("§7- " + tag.location().toString()));
             }
+            return;
+        }
+        boolean shift = Minecraft.getInstance().options.keyShift.isDown();
+        if (!shift) {
+            event.getToolTip().add(Component.literal("Hold SHIFT to reveal item tags."));
+            return;
+        }
+        event.getToolTip().add(Component.literal("§6Description: §7" + itemId));
+        event.getToolTip().add(Component.literal("§6Tags: "));
+        for (TagKey<Item> tag : stack.getTags().toList()) {
+            event.getToolTip().add(Component.literal("§7- " + tag.location().toString()));
         }
     }
 
