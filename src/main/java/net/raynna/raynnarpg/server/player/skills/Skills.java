@@ -24,6 +24,7 @@ public class Skills {
         for (SkillType type : SkillType.values()) {
             skills.put(type, new Skill(type));
         }
+        SkillsPacketSender.send(player, this);
     }
 
     public Map<SkillType, Skill> getSkills() {

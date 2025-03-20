@@ -1,5 +1,6 @@
 package net.raynna.raynnarpg.client.events;
 
+import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.raynna.raynnarpg.RaynnaRPG;
@@ -28,14 +29,14 @@ public class ClientBlockEvents {
         if (mc.hitResult != null && mc.hitResult.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK) {
             if (!event.isAttack())
                 return;
-            BlockPos blockPos = ((net.minecraft.world.phys.BlockHitResult) mc.hitResult).getBlockPos();
+            BlockPos blockPos = ((BlockHitResult) mc.hitResult).getBlockPos();
             BlockState blockState = mc.level.getBlockState(blockPos);
             ClientSkills skills = new ClientSkills(mc.player);
             int miningLevel = skills.getSkillLevel(SkillType.MINING);
 
             ToolData toolData = DataRegistry.getTool(mc.player.getMainHandItem().getDescriptionId());
             if (toolData != null) {
-                if (miningLevel <= toolData.getLevelRequirement()) {
+                if (miningLevel < toolData.getLevelRequirement()) {
                     event.setCanceled(true);
                     mc.player.swinging = false;
                     mc.player.resetAttackStrengthTicker();
