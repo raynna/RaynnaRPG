@@ -15,17 +15,21 @@ public class CraftingTracker {
 
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    public static void accumulateCraftingData(ServerPlayer player, String itemName, int amount, double experience) {
+    public static void accumulateCraftingData(ServerPlayer player, String itemName, int amount, double experience, Runnable onFinish) {
         CraftingTracker tracker = craftingData.computeIfAbsent(player, key -> new CraftingTracker());
 
         tracker.setItemName(itemName);
         tracker.addCraftedAmount(amount);
         tracker.addExperience(experience);
         tracker.updateLastEventTime();
-
-        //System.out.println("Crafting data updated: " + tracker);
-
-        scheduler.schedule(() -> sendCraftingSummary(player), 300, TimeUnit.MILLISECONDS);
+        int ping = player.connection.latency();
+        int delay = Math.max(600, ping);
+        scheduler.schedule(() -> {
+            sendCraftingSummary(player);
+            if (onFinish != null) {
+                onFinish.run();
+            }
+        }, delay, TimeUnit.MILLISECONDS);
     }
 
     private static void sendCraftingSummary(ServerPlayer player) {
@@ -34,9 +38,6 @@ public class CraftingTracker {
             player.sendSystemMessage(Component.literal("You gained "
                     + tracker.getTotalExperience() + " experience for creating "
                     + tracker.getCraftedAmount() + " x " + tracker.getItemName() + "."));
-
-            //System.out.println("Crafting summary sent: " + tracker);
-
             craftingData.remove(player);
         }
     }
@@ -47,7 +48,6 @@ public class CraftingTracker {
     private double totalExperience = 0;
     private long lastEventTime = System.currentTimeMillis();
 
-    // Add a private constructor to ensure new instances are managed via `computeIfAbsent`
     private CraftingTracker() {}
 
     public void setItemName(String itemName) {

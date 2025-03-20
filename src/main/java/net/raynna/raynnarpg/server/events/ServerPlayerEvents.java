@@ -123,8 +123,9 @@ public class ServerPlayerEvents {
                     int smeltedAmount = event.getSmelting().getCount();
                     String itemName = event.getSmelting().getHoverName().getString();
                     double totalExperience = baseExperience * smeltedAmount;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, totalExperience);
-                    progress.getSkills().addXp(SkillType.SMELTING, totalExperience);
+                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, totalExperience, () -> {
+                        progress.getSkills().addXp(SkillType.SMELTING, totalExperience);
+                    });
                 }
 
             }
@@ -141,7 +142,8 @@ public class ServerPlayerEvents {
             if (event.getInventory() instanceof CraftingContainer craftingContainer) {
                 int playerCraftingLevel = progress.getSkills().getSkill(SkillType.CRAFTING).getLevel();
                 boolean craftingBlocked = false;
-                double baseExperience = 0.0;
+                double totalBaseExperience = 0.0;
+                int totalCraftedAmount = 0;
                 for (int i = 0; i < craftingContainer.getContainerSize(); i++) {
                     ItemStack materialStack = craftingContainer.getItem(i);
                     if (materialStack.isEmpty()) {
@@ -166,15 +168,16 @@ public class ServerPlayerEvents {
                         event.getCrafting().setCount(0);
                         return;
                     }
-                    baseExperience += craftingData.getExperience();
+                    totalBaseExperience += craftingData.getExperience();
+                    totalCraftedAmount += event.getCrafting().getCount();
                 }
 
                 if (!craftingBlocked) {
-                    int craftedAmount = event.getCrafting().getCount();
                     String itemName = event.getCrafting().getHoverName().getString();
-                    double totalExperience = baseExperience * craftedAmount;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, craftedAmount, totalExperience);
-                    progress.getSkills().addXp(SkillType.CRAFTING, totalExperience);
+                    double totalExperience = totalBaseExperience * totalCraftedAmount;
+                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, totalCraftedAmount, totalExperience, () -> {
+                        progress.getSkills().addXp(SkillType.CRAFTING, totalExperience);
+                    });
                 }
             }
         }

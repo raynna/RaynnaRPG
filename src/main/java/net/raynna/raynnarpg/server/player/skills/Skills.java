@@ -39,6 +39,7 @@ public class Skills {
     }
 
     private static final Map<ServerPlayer, Long> lastMessageTime = new ConcurrentHashMap<>();
+    private static final Map<ServerPlayer, Double> accumulatedXp = new ConcurrentHashMap<>();
     private static final long MESSAGE_COOLDOWN_MS = 1000; // 1 second
 
     public void addXp(SkillType type, double xp) {
@@ -58,16 +59,21 @@ public class Skills {
                 int levels = newLevel - oldLevel;
                 onLevelUp(skill, levels);
             }
-            ServerPlayer player = this.player;
+
             long currentTime = System.currentTimeMillis();
             long lastTime = lastMessageTime.getOrDefault(player, 0L);
 
             if (currentTime - lastTime >= MESSAGE_COOLDOWN_MS) {
-                lastMessageTime.put(player, currentTime);
+                lastMessageTime.put(player, currentTime); // Update last sent time
+                accumulatedXp.put(player, accumulatedXp.getOrDefault(player, 0.0) + xp);
                 MessagePacketSender.send(player, "You gained " + Utils.formatNumber(xp) + " " + type.getName() + " experience.");
                 MessageSender.send(player, "Your current " + type.getName() + " experience is now: " + Utils.formatNumber(skill.getXp()) + ".");
+                accumulatedXp.put(player, 0.0);
+                SkillsPacketSender.send(player, this);
+            } else {
+                // Accumulate XP but don't send the message yet
+                accumulatedXp.put(player, accumulatedXp.getOrDefault(player, 0.0) + xp);
             }
-            SkillsPacketSender.send(player, this);
         }
     }
 
