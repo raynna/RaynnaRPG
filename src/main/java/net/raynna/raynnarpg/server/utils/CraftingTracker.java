@@ -15,7 +15,7 @@ public class CraftingTracker {
 
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    public static void accumulateCraftingData(ServerPlayer player, String itemName, int amount, int experience) {
+    public static void accumulateCraftingData(ServerPlayer player, String itemName, int amount, double experience) {
         CraftingTracker tracker = craftingData.computeIfAbsent(player, key -> new CraftingTracker());
 
         tracker.setItemName(itemName);
@@ -44,7 +44,7 @@ public class CraftingTracker {
 
     private String itemName = "";
     private int craftedAmount = 0;
-    private int totalExperience = 0;
+    private double totalExperience = 0;
     private long lastEventTime = System.currentTimeMillis();
 
     // Add a private constructor to ensure new instances are managed via `computeIfAbsent`
@@ -58,7 +58,7 @@ public class CraftingTracker {
         this.craftedAmount += amount;
     }
 
-    public void addExperience(int experience) {
+    public void addExperience(double experience) {
         this.totalExperience += experience;
     }
 
@@ -78,7 +78,7 @@ public class CraftingTracker {
         return craftedAmount;
     }
 
-    public int getTotalExperience() {
+    public double getTotalExperience() {
         return totalExperience;
     }
 

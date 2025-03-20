@@ -5,7 +5,7 @@ public class Skill {
     private final SkillType type;
 
     private int level = 1;
-    private int xp = 0;
+    private double xp = 0;
 
 
     public Skill(SkillType type) {
@@ -20,7 +20,7 @@ public class Skill {
         this.level = level;
     }
 
-    public void setXp(int xp) {
+    public void setXp(double xp) {
         this.xp = xp;
     }
 
@@ -28,11 +28,11 @@ public class Skill {
         return type;
     }
 
-    public int getXp() {
+    public double getXp() {
         return xp;
     }
 
-    public void addXp(int xp) {
+    public void addXp(double xp) {
          this.xp += xp;
     }
 

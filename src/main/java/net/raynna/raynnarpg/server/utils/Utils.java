@@ -16,6 +16,11 @@ public class Utils {
         return formatter.format(number);
     }
 
+    public static String formatNumber(double number) {
+        NumberFormat formatter = NumberFormat.getInstance(Locale.ENGLISH);
+        return formatter.format(number);
+    }
+
     public static String fixItemName(String itemName) {
         if (itemName.startsWith("item.")) {
             int firstDotIndex = itemName.indexOf('.') + 1;

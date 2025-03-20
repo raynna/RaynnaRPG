@@ -5,10 +5,10 @@ import java.util.Set;
 public class BlockData {
     private final String id;
     private final int levelRequirement;
-    private final int experience;
+    private final double experience;
     private final Set<String> tags; // Store tags as strings
 
-    public BlockData(String id, int levelRequirement, int experience, Set<String> tags) {
+    public BlockData(String id, int levelRequirement, double experience, Set<String> tags) {
         this.id = id;
         this.levelRequirement = levelRequirement;
         this.experience = experience;
@@ -23,7 +23,7 @@ public class BlockData {
         return levelRequirement;
     }
 
-    public int getExperience() {
+    public double getExperience() {
         return experience;
     }
 

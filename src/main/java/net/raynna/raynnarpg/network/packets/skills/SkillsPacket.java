@@ -27,9 +27,9 @@ public record SkillsPacket(Skills skills) implements CustomPacketPayload {
             buf.writeInt(SkillType.values().length);
             for (SkillType type : SkillType.values()) {
                 Skill skill = skills.getSkill(type);
-                buf.writeUtf(type.name());
+                buf.writeUtf(type.getName());
                 buf.writeInt(skill.getLevel());
-                buf.writeInt(skill.getXp());
+                buf.writeDouble(skill.getXp());
             }
         }
 
@@ -41,7 +41,7 @@ public record SkillsPacket(Skills skills) implements CustomPacketPayload {
             for (int i = 0; i < size; i++) {
                 String skillName = buf.readUtf(Short.MAX_VALUE);
                 int skillLevel = buf.readInt();
-                int skillXp = buf.readInt();
+                double skillXp = buf.readDouble();
                 SkillType skillType = SkillType.valueOf(skillName.toUpperCase());
                 skills.getSkill(skillType).setLevel(skillLevel);
                 skills.getSkill(skillType).setXp(skillXp);

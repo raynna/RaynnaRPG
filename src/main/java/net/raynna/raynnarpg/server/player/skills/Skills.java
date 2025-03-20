@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
 import net.raynna.raynnarpg.network.packets.skills.SkillsPacketSender;
+import net.raynna.raynnarpg.server.utils.MessageSender;
 import net.raynna.raynnarpg.server.utils.Utils;
 
 import java.util.EnumMap;
@@ -13,7 +14,7 @@ import java.util.Map;
 public class Skills {
 
     private final static int MAX_LEVEL = 50;
-    private final static int MAX_XP = 283854;//to avoid people getting more xp than max lvl, might want to increase if added some type of highscore
+    private final static double MAX_XP = 283854;//to avoid people getting more xp than max lvl, might want to increase if added some type of highscore
 
     private final Map<SkillType, Skill> skills = new EnumMap<>(SkillType.class);
     private ServerPlayer player;
@@ -36,7 +37,7 @@ public class Skills {
         return player;
     }
 
-    public void addXp(SkillType type, int xp) {
+    public void addXp(SkillType type, double xp) {
         Skill skill = getSkill(type);
         if (skill != null) {
             if (skill.getXp() >= MAX_XP)
@@ -53,12 +54,13 @@ public class Skills {
                 int levels = newLevel - oldLevel;
                 onLevelUp(skill, levels);
             }
-            MessagePacketSender.send(player, "You gained " + Utils.formatNumber(xp) + " " + type.getName() + " experience.\nYour current experience is " + Utils.formatNumber(skill.getXp()) + "/" + Utils.formatNumber(getXpForLevel(skill.getLevel()+1)));
+            MessagePacketSender.send(player, "You gained " + Utils.formatNumber(xp) + " " + type.getName() + " experience.");
+            MessageSender.send(player, "Your current " + type.getName() + " experience is now: " + Utils.formatNumber(skill.getXp()) + ".");
             SkillsPacketSender.send(player, this);
         }
     }
 
-    public int getLevelForXp(int xp) {
+    public int getLevelForXp(double xp) {
         int points = 0;
         int output;
 
@@ -69,7 +71,7 @@ public class Skills {
         for (int lvl = 1; lvl <= 50; lvl++) {
             points += (int) Math.floor(lvl + value * Math.pow(value2, lvl / divisor));
             output = (int) Math.floor(points / 4);
-            if ((output - 1) >= (double) xp) {
+            if ((output - 1) >= xp) {
                 return lvl;
             }
         }
@@ -89,19 +91,19 @@ public class Skills {
         return (int) Math.floor(points / 4);
     }
 
-    public int getXpToLevelUp(SkillType type) {
+    public double getXpToLevelUp(SkillType type) {
         Skill skill = getSkill(type);
         if (skill == null) return 0;
 
-        int currentXp = skill.getXp();
+        double currentXp = skill.getXp();
         int currentLevel = skill.getLevel();
-        int nextLevelXp = getXpForLevel(currentLevel + 1);
+        double nextLevelXp = getXpForLevel(currentLevel + 1);
 
         if (currentLevel == MAX_LEVEL) {
             return 0;
         }
 
-        return nextLevelXp - currentXp;
+        return (int) (nextLevelXp - currentXp);
     }
 
     public Skill getSkill(SkillType type) {
@@ -152,6 +154,7 @@ public class Skills {
                 SkillType type = SkillType.valueOf(skillName);
                 skills.skills.put(type, deserializeSkill(type, tag.getCompound(skillName)));
             } catch (IllegalArgumentException e) {
+                //remove skill here?
                 System.out.println("Warning: SkillType " + skillName + " does not exist and will be removed.");
             }
         }
@@ -168,14 +171,14 @@ public class Skills {
     private CompoundTag serializeSkill(Skill skill) {
         CompoundTag skillTag = new CompoundTag();
         skillTag.putInt("level", skill.getLevel());
-        skillTag.putInt("xp", skill.getXp());
+        skillTag.putDouble("xp", skill.getXp());
         return skillTag;
     }
 
     private static Skill deserializeSkill(SkillType type, CompoundTag skillTag) {
         Skill skill = new Skill(type);
         skill.setLevel(skillTag.getInt("level"));
-        skill.setXp(skillTag.getInt("xp"));
+        skill.setXp(skillTag.getDouble("xp"));
         return skill;
     }
 }

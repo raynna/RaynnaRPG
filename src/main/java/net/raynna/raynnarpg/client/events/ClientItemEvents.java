@@ -14,6 +14,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -29,6 +30,8 @@ import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.raynna.raynnarpg.data.*;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
+import org.apache.logging.log4j.core.jmx.Server;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +46,7 @@ public class ClientItemEvents {
         Minecraft mc = Minecraft.getInstance();
         assert mc.player != null;
         boolean isPlayerCreative = mc.player.isCreative();
+        boolean isSinglePlayer = mc.isSingleplayer();
         ItemStack stack = event.getItemStack();
         String itemId = stack.getItem().getDescriptionId();
         Map<String, String> data = new HashMap<>();
@@ -53,18 +57,18 @@ public class ClientItemEvents {
         if (blockData != null) {
             int miningLevel = skills.getSkillLevel(SkillType.MINING);
             int levelReq = blockData.getLevelRequirement();
-            int xp = blockData.getExperience();
+            double xp = blockData.getExperience();
             StringBuilder miningText = new StringBuilder();
 
             if (miningLevel < levelReq) {
                 miningText.append("§cLevel: ")
                         .append(levelReq)
                         .append(" (Current level: ")
-                        .append(miningLevel).append("), XP: ").append(xp);
+                        .append(miningLevel).append("), Xp: ").append(xp);
             } else {
                 miningText.append("§aLevel: ")
                         .append(levelReq)
-                        .append(", XP: ")
+                        .append(", Xp: ")
                         .append(xp);
             }
             data.put("Mining", miningText.toString());
@@ -78,10 +82,10 @@ public class ClientItemEvents {
                 craftingText.append("§cLevel: ")
                         .append(craftingData.getLevelRequirement())
                         .append(" (Current level: ")
-                        .append(craftingLevel).append("), XP: ").append(craftingData.getExperience());
+                        .append(craftingLevel).append("), Xp: ").append(craftingData.getExperience());
             } else {
                 craftingText.append("§aLevel: ")
-                        .append(craftingData.getLevelRequirement()).append(", XP: ").append(craftingData.getExperience());
+                        .append(craftingData.getLevelRequirement()).append(", Xp: ").append(craftingData.getExperience());
             }
             data.put("Crafting", craftingText.toString());
         }
@@ -94,10 +98,10 @@ public class ClientItemEvents {
                 smeltingText.append("§cLevel: ")
                         .append(smeltingData.getLevelRequirement())
                         .append(" (Current level: ")
-                        .append(smeltingLevel).append("), XP: ").append(smeltingData.getExperience());
+                        .append(smeltingLevel).append("), Xp: ").append(smeltingData.getExperience());
             } else {
                 smeltingText.append("§aLevel: ")
-                        .append(smeltingData.getLevelRequirement()).append(", XP: ").append(smeltingData.getExperience());
+                        .append(smeltingData.getLevelRequirement()).append(", Xp: ").append(smeltingData.getExperience());
             }
             data.put("Smelting", smeltingText.toString());
         }
@@ -146,15 +150,30 @@ public class ClientItemEvents {
             }
             return;
         }
-        boolean shift = Minecraft.getInstance().options.keyShift.isDown();
-        if (!shift) {
-            event.getToolTip().add(Component.literal("Hold SHIFT to reveal item tags."));
-            return;
-        }
-        event.getToolTip().add(Component.literal("§6Description: §7" + itemId));
-        event.getToolTip().add(Component.literal("§6Tags: "));
-        for (TagKey<Item> tag : stack.getTags().toList()) {
-            event.getToolTip().add(Component.literal("§7- " + tag.location().toString()));
+        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+            if (serverPlayer.hasPermissions(2)) {
+                boolean shift = GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS;
+                if (!shift) {
+                    event.getToolTip().add(Component.literal("Hold SHIFT to reveal item tags."));
+                    return;
+                }
+                event.getToolTip().add(Component.literal("§6Description: §7" + itemId));
+                event.getToolTip().add(Component.literal("§6Tags: "));
+                for (TagKey<Item> tag : stack.getTags().toList()) {
+                    event.getToolTip().add(Component.literal("§7- " + tag.location().toString()));
+                }
+            }
+        } else {
+            boolean shift = GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS;
+            if (!shift) {
+                event.getToolTip().add(Component.literal("Hold SHIFT to reveal item tags."));
+                return;
+            }
+            event.getToolTip().add(Component.literal("§6Description: §7" + itemId));
+            event.getToolTip().add(Component.literal("§6Tags: "));
+            for (TagKey<Item> tag : stack.getTags().toList()) {
+                event.getToolTip().add(Component.literal("§7- " + tag.location().toString()));
+            }
         }
     }
 

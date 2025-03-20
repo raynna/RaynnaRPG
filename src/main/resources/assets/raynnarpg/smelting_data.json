@@ -1,14 +1,54 @@
 {
   "smelting_materials": {
-    "block.minecraft.stone": {
+    "block.minecraft.oak_log": {
       "level_requirement": 1,
-      "experience": 5,
+      "experience": 4,
+      "raw_material": "minecraft:logs"
+    },
+    "item.minecraft.glass": {
+      "level_requirement": 2,
+      "experience": 8,
+      "raw_material": "minecraft:sand"
+    },
+    "block.minecraft.bricks": {
+      "level_requirement": 3,
+      "experience": 12,
+      "raw_material": "minecraft:clay_ball"
+    },
+    "block.minecraft.stone": {
+      "level_requirement": 5,
+      "experience": 20,
       "raw_material": "minecraft:cobblestone"
     },
+    "block.minecraft.smooth_stone": {
+      "level_requirement": 8,
+      "experience": 32,
+      "raw_material": "minecraft:stone"
+    },
+    "item.minecraft.copper_ingot": {
+      "level_requirement": 10,
+      "experience": 40,
+      "raw_material": "minecraft:raw_copper"
+    },
     "item.minecraft.iron_ingot": {
-      "level_requirement": 5,
-      "experience": 25,
+      "level_requirement": 20,
+      "experience": 80,
       "raw_material": "minecraft:raw_iron"
+    },
+    "item.minecraft.gold_ingot": {
+      "level_requirement": 25,
+      "experience": 100,
+      "raw_material": "minecraft:raw_gold"
+    },
+    "item.minecraft.diamond": {
+      "level_requirement": 30,
+      "experience": 120,
+      "raw_material": "minecraft:diamond_ore"
+    },
+    "item.minecraft.netherite_scrap": {
+      "level_requirement": 40,
+      "experience": 160,
+      "raw_material": "minecraft:ancient_debris"
     }
   }
 }

@@ -11,6 +11,9 @@ public class MessageSender {
     }
 
     public static void send(ServerPlayer player, String message, Colour color) {
+        if (color == null) {
+            color = Colour.WHITE;
+        }
         player.sendSystemMessage(
                 Component.literal(message).setStyle(Style.EMPTY.withColor(color.getTextColor()))
         );

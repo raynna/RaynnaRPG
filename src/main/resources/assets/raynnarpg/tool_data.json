@@ -3,8 +3,74 @@
     "item.minecraft.wooden_pickaxe": {
       "level_requirement": 1
     },
+    "item.minecraft.wooden_axe": {
+      "level_requirement": 1
+    },
+    "item.minecraft.wooden_shovel": {
+      "level_requirement": 1
+    },
+    "item.minecraft.wooden_hoe": {
+      "level_requirement": 1
+    },
     "item.minecraft.stone_pickaxe": {
       "level_requirement": 5
+    },
+    "item.minecraft.stone_axe": {
+      "level_requirement": 5
+    },
+    "item.minecraft.stone_shovel": {
+      "level_requirement": 5
+    },
+    "item.minecraft.stone_hoe": {
+      "level_requirement": 5
+    },
+    "item.minecraft.iron_pickaxe": {
+      "level_requirement": 20
+    },
+    "item.minecraft.iron_axe": {
+      "level_requirement": 20
+    },
+    "item.minecraft.iron_shovel": {
+      "level_requirement": 20
+    },
+    "item.minecraft.iron_hoe": {
+      "level_requirement": 20
+    },
+    "item.minecraft.gold_pickaxe": {
+      "level_requirement": 25
+    },
+    "item.minecraft.gold_axe": {
+      "level_requirement": 25
+    },
+    "item.minecraft.gold_shovel": {
+      "level_requirement": 25
+    },
+    "item.minecraft.gold_hoe": {
+      "level_requirement": 25
+    },
+    "item.minecraft.diamond_pickaxe": {
+      "level_requirement": 30
+    },
+    "item.minecraft.diamond_axe": {
+      "level_requirement": 30
+    },
+    "item.minecraft.diamond_shovel": {
+      "level_requirement": 30
+    },
+    "item.minecraft.diamond_hoe": {
+      "level_requirement": 30
+    },
+    "item.minecraft.netherite_pickaxe": {
+      "level_requirement": 40
+    },
+    "item.minecraft.netherite_axe": {
+      "level_requirement": 40
+    },
+    "item.minecraft.netherite_shovel": {
+      "level_requirement": 40
+    },
+    "item.minecraft.netherite_hoe": {
+      "level_requirement": 40
     }
   }
 }

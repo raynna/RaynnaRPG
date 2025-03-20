@@ -87,7 +87,7 @@ public class DataRegistry {
                                 JsonObject smeltingDataJson = entry.getValue();
 
                                 int levelRequirement = smeltingDataJson.has("level_requirement") ? smeltingDataJson.get("level_requirement").getAsInt() : 0;
-                                int experience = smeltingDataJson.has("experience") ? smeltingDataJson.get("experience").getAsInt() : 0;
+                                double experience = smeltingDataJson.has("experience") ? smeltingDataJson.get("experience").getAsDouble() : 0;
                                 Set<String> tags = new HashSet<>();
 
                                 if (smeltingDataJson.has("tags")) {
@@ -119,7 +119,7 @@ public class DataRegistry {
                                 JsonObject craftingDataJson = entry.getValue();
 
                                 int levelRequirement = craftingDataJson.has("level_requirement") ? craftingDataJson.get("level_requirement").getAsInt() : 0;
-                                int experience = craftingDataJson.has("experience") ? craftingDataJson.get("experience").getAsInt() : 0;
+                                double experience = craftingDataJson.has("experience") ? craftingDataJson.get("experience").getAsDouble() : 0;
                                 Set<String> tags = new HashSet<>();
 
                                 if (craftingDataJson.has("tags")) {
@@ -150,7 +150,7 @@ public class DataRegistry {
                                 JsonObject blockDataJson = entry.getValue();
 
                                 int levelRequirement = blockDataJson.has("level_requirement") ? blockDataJson.get("level_requirement").getAsInt() : 0;
-                                int experience = blockDataJson.has("experience") ? blockDataJson.get("experience").getAsInt() : 0;
+                                double experience = blockDataJson.has("experience") ? blockDataJson.get("experience").getAsDouble() : 0;
                                 Set<String> tags = new HashSet<>();
 
                                 if (blockDataJson.has("tags")) {

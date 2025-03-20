@@ -26,35 +26,35 @@ public class ClientBlockEvents {
         assert mc.player != null;
 
         if (mc.hitResult != null && mc.hitResult.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK) {
+            if (!event.isAttack())
+                return;
             BlockPos blockPos = ((net.minecraft.world.phys.BlockHitResult) mc.hitResult).getBlockPos();
             BlockState blockState = mc.level.getBlockState(blockPos);
             ClientSkills skills = new ClientSkills(mc.player);
             int miningLevel = skills.getSkillLevel(SkillType.MINING);
+
             ToolData toolData = DataRegistry.getTool(mc.player.getMainHandItem().getDescriptionId());
             if (toolData != null) {
                 if (miningLevel <= toolData.getLevelRequirement()) {
                     event.setCanceled(true);
                     mc.player.swinging = false;
                     mc.player.resetAttackStrengthTicker();
-                    mc.player.displayClientMessage(Component.literal("You need mining level of " + toolData.getLevelRequirement() + " to use " + mc.player.getMainHandItem().getHoverName().getString()), true);
+                    mc.player.displayClientMessage(Component.literal("You need a mining level of " + toolData.getLevelRequirement() + " in order to use " + mc.player.getMainHandItem().getHoverName().getString() + " as a tool."), true);
                     return;
                 }
             }
+
             BlockData blockData = DataRegistry.getDataFromBlock(blockState);
-            if (!event.isAttack() || blockData == null) {
-                return;
+            if (blockData != null) {
+                int levelReq = blockData.getLevelRequirement();
+                if (miningLevel < levelReq) {
+                    event.setCanceled(true);
+                    mc.player.swinging = false;
+                    mc.player.resetAttackStrengthTicker();
+                    String blockName = blockState.getBlock().getName().toFlatList().getFirst().getString();
+                    mc.player.displayClientMessage(Component.literal("You need a mining level of " + blockData.getLevelRequirement() + " in order to mine " + blockName + "."), true);
+                }
             }
-            int levelReq = blockData.getLevelRequirement();
-            //System.out.println("Mining level: " + miningLevel + ", Required level: " + levelReq);
-            if (miningLevel >= levelReq) {
-                //System.out.println("Mining is higher or same as required level");
-                return;
-            }
-            event.setCanceled(true);
-            mc.player.swinging = false;
-            mc.player.resetAttackStrengthTicker();
-            String blockName = blockState.getBlock().getName().toFlatList().getFirst().getString();
-            mc.player.displayClientMessage(Component.literal("You need level " + blockData.getLevelRequirement() + " in mining to mine " + blockName), true);
         }
     }
 

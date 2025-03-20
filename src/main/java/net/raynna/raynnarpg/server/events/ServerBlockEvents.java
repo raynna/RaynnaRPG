@@ -30,7 +30,7 @@ public class ServerBlockEvents {
                 int levelReq = blockData.getLevelRequirement();
                 if (miningLevel < levelReq) {
                     event.setCanceled(true);
-                    MessagePacketSender.send(serverPlayer, "You need level " + levelReq + " in mining to mine " + block.getName().toFlatList().getFirst().getString());
+                    MessagePacketSender.send(serverPlayer, "You need a mining level of " + levelReq + " in order to mine " + block.getName().toFlatList().getFirst().getString() + ".");
                     return;
                 }
                 progress.getSkills().addXp(SkillType.MINING, blockData.getExperience());

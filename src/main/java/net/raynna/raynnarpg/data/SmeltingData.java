@@ -5,11 +5,11 @@ import java.util.Set;
 public class SmeltingData {
     private final String id;
     private final int levelRequirement;
-    private final int experience;
+    private final double experience;
     private final String rawMaterial;
     private final Set<String> tags;
 
-    public SmeltingData(String id, int levelRequirement, int experience, String rawMaterial, Set<String> tags) {
+    public SmeltingData(String id, int levelRequirement, double experience, String rawMaterial, Set<String> tags) {
         this.id = id;
         this.levelRequirement = levelRequirement;
         this.experience = experience;
@@ -21,7 +21,7 @@ public class SmeltingData {
         return levelRequirement;
     }
 
-    public int getExperience() {
+    public double getExperience() {
         return experience;
     }
 

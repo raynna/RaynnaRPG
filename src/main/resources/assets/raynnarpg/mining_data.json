@@ -1,28 +1,105 @@
 {
   "blocks": {
-    "block.item.iron_ore": {
-      "level_requirement": 10,
-      "experience": 50,
-      "tags": [
-        "minecraft:iron_ores",
-        "c:ores/iron"
-      ]
-    },
-    "block.item.crimson_iron_ore": {
-      "level_requirement": 25,
-      "experience": 125,
-      "tags": [
-        "c:ores/crimson_iron"
-      ]
-    },
     "block.minecraft.stone": {
       "level_requirement": 1,
-      "experience": 2,
+      "experience": 4,
       "tags": [
         "c:stones",
         "c:cobblestones",
         "minecraft:stones",
         "minecraft:cobblestones"
+      ]
+    },
+    "block.minecraft.stone_bricks": {
+      "level_requirement": 2,
+      "experience": 8,
+      "tags": [
+        "minecraft:stone_bricks"
+      ]
+    },
+    "block.minecraft.coal_ore": {
+      "level_requirement": 3,
+      "experience": 12,
+      "tags": [
+        "minecraft:coal_ores",
+        "c:ores/coal"
+      ]
+    },
+    "block.minecraft.copper_ore": {
+      "level_requirement": 10,
+      "experience": 40,
+      "tags": [
+        "minecraft:copper_ores",
+        "c:ores/copper"
+      ]
+    },
+    "block.minecraft.redstone_ore": {
+      "level_requirement": 13,
+      "experience": 52,
+      "tags": [
+        "minecraft:redstone_ores",
+        "c:ores/redstone"
+      ]
+    },
+    "block.minecraft.nether_quartz_ore": {
+      "level_requirement": 18,
+      "experience": 72,
+      "tags": [
+        "c:ores/quartz"
+      ]
+    },
+    "block.minecraft.lapis_ore": {
+      "level_requirement": 16,
+      "experience": 64,
+      "tags": [
+        "minecraft:lapis_ores",
+        "c:ores/lapis"
+      ]
+    },
+    "block.minecraft.iron_ore": {
+      "level_requirement": 20,
+      "experience": 40,
+      "tags": [
+        "minecraft:iron_ores",
+        "c:ores/iron"
+      ]
+    },
+    "block.minecraft.gold_ore": {
+      "level_requirement": 25,
+      "experience": 100,
+      "tags": [
+        "minecraft:gold_ores",
+        "c:ores/gold"
+      ]
+    },
+    "block.minecraft.diamond_ore": {
+      "level_requirement": 30,
+      "experience": 120,
+      "tags": [
+        "minecraft:diamond_ores",
+        "c:ores/diamond"
+      ]
+    },
+    "block.minecraft.emerald_ore": {
+      "level_requirement": 35,
+      "experience": 140,
+      "tags": [
+        "minecraft:emerald_ores",
+        "c:ores/emerald"
+      ]
+    },
+    "block.minecraft.ancient_debris": {
+      "level_requirement": 40,
+      "experience": 160,
+      "tags": [
+        "c:ores/netherite_scrap"
+      ]
+    },
+    "block.minecraft.end_stone": {
+      "level_requirement": 25,
+      "experience": 100,
+      "tags": [
+        "minecraft:end_stones"
       ]
     }
   }

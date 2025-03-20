@@ -1,16 +1,79 @@
 {
   "crafting_materials": {
-    "item.minecraft.iron_ingot": {
-      "level_requirement": 5,
-      "experience": 25
-    },
-    "block.minecraft.cobblestone": {
+    "block.minecraft.oak_log": {
       "level_requirement": 1,
-      "experience": 10
+      "experience": 4.0,
+      "tags": [
+        "minecraft:logs"
+      ]
+    },
+    "block.minecraft.oak_plank": {
+      "level_requirement": 1,
+      "experience": 1.0,
+      "tags": [
+        "minecraft:planks"
+      ]
     },
     "item.minecraft.stick": {
       "level_requirement": 1,
-      "experience": 1
+      "experience": 0.25,
+      "tags": [
+        "c:rods/wooden"
+      ]
+    },
+    "block.minecraft.crafting_table": {
+      "level_requirement": 1,
+      "experience": 16.0
+    },
+    "block.minecraft.cobblestone": {
+      "level_requirement": 5,
+      "experience": 20,
+      "tags": [
+        "c:cobblestones",
+        "minecraft:stone_crafting_materials"
+      ]
+    },
+    "block.minecraft.copper_ingot": {
+      "level_requirement": 10,
+      "experience": 40,
+      "tags": [
+        "c:ingots/copper"
+      ]
+    },
+    "item.minecraft.iron_ingot": {
+      "level_requirement": 20,
+      "experience": 80,
+      "tags": [
+        "c:ingots/iron"
+      ]
+    },
+    "item.minecraft.gold_ingot": {
+      "level_requirement": 25,
+      "experience": 100,
+      "tags": [
+        "c:ingots/gold"
+      ]
+    },
+    "item.minecraft.diamond": {
+      "level_requirement": 30,
+      "experience": 120,
+      "tags": [
+        "c:gems/diamond"
+      ]
+    },
+    "item.minecraft.netherite_ingot": {
+      "level_requirement": 40,
+      "experience": 320,
+      "tags": [
+        "c:ingots/netherite"
+      ]
+    },
+    "item.minecraft.netherite_scrap": {
+      "level_requirement": 40,
+      "experience": 80,
+      "tags": [
+        "c:ingots/netherite"
+      ]
     }
   }
 }
