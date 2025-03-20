@@ -47,9 +47,9 @@ public class PlayerProgress {
         SkillsPacketSender.send(player, this.skills);
         if (progress.isActive(ProgressKey.FIRST_TIME_LOGGED_IN)) {
             progress.toggle(ProgressKey.FIRST_TIME_LOGGED_IN);
-            MessageSender.send(player, "["+ MOD_NAME + "] Welcome to the server " + player.getName().toFlatList().getFirst().toString() + "!", Colour.GOLD);
+            MessageSender.send(player, "["+ MOD_NAME + "] Welcome to the server " + player.getName().toFlatList().getFirst().getString() + "!", Colour.GOLD);
         } else {
-            MessageSender.send(player, "["+ MOD_NAME + "] Welcome back " + player.getName().toFlatList().getFirst().toString() + "!", Colour.GOLD);
+            MessageSender.send(player, "["+ MOD_NAME + "] Welcome back " + player.getName().toFlatList().getFirst().getString() + "!", Colour.GOLD);
         }
         MessageSender.send(player, "["+ MOD_NAME + "] Your current skills: ", Colour.RED);
         for (SkillType type : SkillType.values()) {
