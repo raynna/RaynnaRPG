@@ -8,6 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
+import net.raynna.raynnarpg.network.packets.skills.SkillsPacketSender;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
@@ -59,6 +60,7 @@ public class SetLevelCommand {
         int xp = progress.getSkills().getXpForLevel(level);
         progress.getSkills().getSkill(skill).setXp(xp);
         MessageSender.send(player, "You have set your level to " + level + " with experience: " + xp + ".", Colour.GREEN);
+        SkillsPacketSender.send(player, progress.getSkills());
         return 1;
     }
 }
