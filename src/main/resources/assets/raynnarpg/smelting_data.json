@@ -1,9 +1,9 @@
 {
   "smelting_materials": {
-    "block.minecraft.oak_log": {
+    "item.minecraft.charcoal": {
       "level_requirement": 1,
       "experience": 4,
-      "raw_material": "minecraft:logs"
+      "raw_material": "minecraft:oak_logs"
     },
     "item.minecraft.glass": {
       "level_requirement": 2,

@@ -1,10 +1,7 @@
 package net.raynna.raynnarpg.server.events;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.FurnaceMenu;
 import net.minecraft.world.item.Item;

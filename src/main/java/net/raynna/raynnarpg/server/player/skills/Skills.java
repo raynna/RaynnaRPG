@@ -66,7 +66,8 @@ public class Skills {
             if (currentTime - lastTime >= MESSAGE_COOLDOWN_MS) {
                 lastMessageTime.put(player, currentTime); // Update last sent time
                 accumulatedXp.put(player, accumulatedXp.getOrDefault(player, 0.0) + xp);
-                MessagePacketSender.send(player, "You gained " + Utils.formatNumber(xp) + " " + type.getName() + " experience.");
+                if (type != SkillType.COMBAT)
+                    MessagePacketSender.send(player, "You gained " + Utils.formatNumber(xp) + " " + type.getName() + " experience.");
                 MessageSender.send(player, "Your current " + type.getName() + " experience is now: " + Utils.formatNumber(skill.getXp()) + ".");
                 accumulatedXp.put(player, 0.0);
                 SkillsPacketSender.send(player, this);
