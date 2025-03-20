@@ -55,11 +55,12 @@
         "c:ores/bort"
       ]
     },
-    "block.minecraft.nether_quartz_ore": {
-      "level_requirement": 18,
-      "experience": 72,
+    "block.minecraft.iron_ore": {
+      "level_requirement": 15,
+      "experience": 60,
       "tags": [
-        "c:ores/quartz"
+        "minecraft:iron_ores",
+        "c:ores/iron"
       ]
     },
     "block.minecraft.lapis_ore": {
@@ -70,17 +71,16 @@
         "c:ores/lapis"
       ]
     },
-    "block.minecraft.iron_ore": {
-      "level_requirement": 20,
-      "experience": 40,
+    "block.minecraft.nether_quartz_ore": {
+      "level_requirement": 18,
+      "experience": 72,
       "tags": [
-        "minecraft:iron_ores",
-        "c:ores/iron"
+        "c:ores/quartz"
       ]
     },
     "block.minecraft.gold_ore": {
-      "level_requirement": 25,
-      "experience": 100,
+      "level_requirement": 20,
+      "experience": 80,
       "tags": [
         "minecraft:gold_ores",
         "c:ores/gold"
@@ -103,10 +103,17 @@
       ]
     },
     "block.minecraft.crimson_iron_ore": {
-      "level_requirement": 38,
-      "experience": 152,
+      "level_requirement": 43,
+      "experience": 172,
       "tags": [
         "c:ores/crimson_iron"
+      ]
+    },
+    "block.silentgear.azure_silver_ore": {
+      "level_requirement": 48,
+      "experience": 192,
+      "tags": [
+        "c:ores/azure_silver"
       ]
     },
     "block.minecraft.ancient_debris": {

@@ -35,9 +35,14 @@ public class CraftingTracker {
     private static void sendCraftingSummary(ServerPlayer player) {
         CraftingTracker tracker = craftingData.get(player);
         if (tracker != null && tracker.shouldSendMessage()) {
-            player.sendSystemMessage(Component.literal("You gained "
-                    + tracker.getTotalExperience() + " experience for creating "
-                    + tracker.getCraftedAmount() + " x " + tracker.getItemName() + "."));
+            if (tracker.getCraftedAmount() > 1) {
+                player.sendSystemMessage(Component.literal("You gained "
+                        + tracker.getTotalExperience() + " experience for creating "
+                        + tracker.getCraftedAmount() + " x " + tracker.getItemName() + " batches."));
+            } else {
+                player.sendSystemMessage(Component.literal("You gained "
+                        + tracker.getTotalExperience() + " experience for creating one " + tracker.getItemName() + " batch."));
+            }
             craftingData.remove(player);
         }
     }

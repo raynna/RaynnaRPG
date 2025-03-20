@@ -34,6 +34,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.server.utils.CraftingTracker;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class ServerPlayerEvents {
@@ -64,12 +66,9 @@ public class ServerPlayerEvents {
         if (event.getEntity() instanceof ServerPlayer interactingPlayer) {
             // Check if the target entity is another player
             if (event.getTarget() instanceof Player targetPlayer) {
-                // Check if the target player has hunger (less than full saturation)
 
-                // Check if the interacting player has food to give
                 ItemStack itemInHand = interactingPlayer.getMainHandItem();
                 FoodProperties food = itemInHand.getItem().getFoodProperties(itemInHand, targetPlayer);
-                System.out.println(food);
                 boolean isHandEmpty = itemInHand.isEmpty();
                 if (!isHandEmpty && food != null) {
                     if (targetPlayer.getFoodData().getFoodLevel() < FoodConstants.MAX_FOOD) {
@@ -227,13 +226,18 @@ public class ServerPlayerEvents {
                 int playerCraftingLevel = progress.getSkills().getSkill(SkillType.CRAFTING).getLevel();
                 boolean craftingBlocked = false;
                 double totalBaseExperience = 0.0;
-                int totalCraftedAmount = 0;
+                boolean craftingBenchFull = true;
+                Set<String> uniqueMaterials = new HashSet<>();
+
                 for (int i = 0; i < craftingContainer.getContainerSize(); i++) {
                     ItemStack materialStack = craftingContainer.getItem(i);
                     if (materialStack.isEmpty()) {
+                        craftingBenchFull = false;
                         continue;
                     }
-                    String materialId = materialStack.getItem().getDescriptionId();
+                    String materialId = materialStack.getDescriptionId();
+                    String materialName = materialStack.getHoverName().getString();
+                    uniqueMaterials.add(materialName);
                     CraftingData craftingData = DataRegistry.getDataFromItem(materialStack, CraftingData.class);
                     if (craftingData == null) {
                         continue;
@@ -253,14 +257,16 @@ public class ServerPlayerEvents {
                         return;
                     }
                     totalBaseExperience += craftingData.getExperience();
-                    totalCraftedAmount += event.getCrafting().getCount();
+                }
+                if (craftingBenchFull && uniqueMaterials.size() == 1) {
+                    craftingBlocked = true;
                 }
 
                 if (!craftingBlocked) {
                     String itemName = event.getCrafting().getHoverName().getString();
-                    double totalExperience = totalBaseExperience * totalCraftedAmount;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, totalCraftedAmount, totalExperience, () -> {
-                        progress.getSkills().addXp(SkillType.CRAFTING, totalExperience);
+                    double totalExperience = totalBaseExperience;
+                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, 1, totalExperience, () -> {
+                    progress.getSkills().addXp(SkillType.CRAFTING, totalExperience);
                     });
                 }
             }

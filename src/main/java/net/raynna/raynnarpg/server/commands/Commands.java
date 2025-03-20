@@ -12,5 +12,6 @@ public class Commands {
     public static void registerAll(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
         SetLevelCommand.register(dispatcher);
+        LevelsCommad.register(dispatcher);
     }
 }

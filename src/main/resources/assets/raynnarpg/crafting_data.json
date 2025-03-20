@@ -41,15 +41,29 @@
       ]
     },
     "item.minecraft.iron_ingot": {
-      "level_requirement": 20,
-      "experience": 80,
+      "level_requirement": 15,
+      "experience": 60,
       "tags": [
         "c:ingots/iron"
       ]
     },
+    "item.silentgear.bort": {
+      "level_requirement": 15,
+      "experience": 60,
+      "tags": [
+        "c:gems/bort"
+      ]
+    },
+    "item.silentgear.bronze_ingot": {
+      "level_requirement": 17,
+      "experience": 68,
+      "tags": [
+        "c:ingots/bronze"
+      ]
+    },
     "item.minecraft.gold_ingot": {
-      "level_requirement": 25,
-      "experience": 100,
+      "level_requirement": 20,
+      "experience": 80,
       "tags": [
         "c:ingots/gold"
       ]
@@ -73,13 +87,6 @@
       "experience": 80,
       "tags": [
         "c:ingots/netherite"
-      ]
-    },
-    "item.silentgear.bronze_ingot": {
-      "level_requirement": 15,
-      "experience": 60,
-      "tags": [
-        "c:ingots/bronze"
       ]
     },
     "item.silentgear.crimson_iron": {
