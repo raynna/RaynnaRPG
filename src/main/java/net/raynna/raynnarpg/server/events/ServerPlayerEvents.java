@@ -86,7 +86,7 @@ public class ServerPlayerEvents {
                 ItemStack inputItem = furnaceMenu.getSlot(INPUT_SLOT).getItem();
                 ItemStack fuelItem = furnaceMenu.getSlot(FUEL_SLOT).getItem();
                 String smeltingItemName = event.getSmelting().getHoverName().toString();
-                SmeltingData smeltingData = DataRegistry.getSmeltingItem(event.getSmelting().getDescriptionId());
+                SmeltingData smeltingData = DataRegistry.getDataFromItem(event.getSmelting(), SmeltingData.class);
                 if (smeltingData != null) {
                     int requiredLevel = smeltingData.getLevelRequirement();
                     if (smeltingLevel < requiredLevel) {
@@ -141,14 +141,14 @@ public class ServerPlayerEvents {
             if (event.getInventory() instanceof CraftingContainer craftingContainer) {
                 int playerCraftingLevel = progress.getSkills().getSkill(SkillType.CRAFTING).getLevel();
                 boolean craftingBlocked = false;
-                double baseExperience = 0;
+                double baseExperience = 0.0;
                 for (int i = 0; i < craftingContainer.getContainerSize(); i++) {
                     ItemStack materialStack = craftingContainer.getItem(i);
                     if (materialStack.isEmpty()) {
                         continue;
                     }
                     String materialId = materialStack.getItem().getDescriptionId();
-                    CraftingData craftingData = DataRegistry.getMaterial(materialId);
+                    CraftingData craftingData = DataRegistry.getDataFromItem(materialStack, CraftingData.class);
                     if (craftingData == null) {
                         continue;
                     }
@@ -177,7 +177,6 @@ public class ServerPlayerEvents {
                     progress.getSkills().addXp(SkillType.CRAFTING, totalExperience);
                 }
             }
-
         }
     }
 

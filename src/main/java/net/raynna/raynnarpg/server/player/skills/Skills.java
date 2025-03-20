@@ -10,6 +10,7 @@ import net.raynna.raynnarpg.server.utils.Utils;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Skills {
 
@@ -37,6 +38,9 @@ public class Skills {
         return player;
     }
 
+    private static final Map<ServerPlayer, Long> lastMessageTime = new ConcurrentHashMap<>();
+    private static final long MESSAGE_COOLDOWN_MS = 1000; // 1 second
+
     public void addXp(SkillType type, double xp) {
         Skill skill = getSkill(type);
         if (skill != null) {
@@ -54,8 +58,15 @@ public class Skills {
                 int levels = newLevel - oldLevel;
                 onLevelUp(skill, levels);
             }
-            MessagePacketSender.send(player, "You gained " + Utils.formatNumber(xp) + " " + type.getName() + " experience.");
-            MessageSender.send(player, "Your current " + type.getName() + " experience is now: " + Utils.formatNumber(skill.getXp()) + ".");
+            ServerPlayer player = this.player;
+            long currentTime = System.currentTimeMillis();
+            long lastTime = lastMessageTime.getOrDefault(player, 0L);
+
+            if (currentTime - lastTime >= MESSAGE_COOLDOWN_MS) {
+                lastMessageTime.put(player, currentTime);
+                MessagePacketSender.send(player, "You gained " + Utils.formatNumber(xp) + " " + type.getName() + " experience.");
+                MessageSender.send(player, "Your current " + type.getName() + " experience is now: " + Utils.formatNumber(skill.getXp()) + ".");
+            }
             SkillsPacketSender.send(player, this);
         }
     }
