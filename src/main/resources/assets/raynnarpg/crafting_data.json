@@ -74,6 +74,55 @@
       "tags": [
         "c:ingots/netherite"
       ]
+    },
+    "item.silentgear.bronze_ingot": {
+      "level_requirement": 15,
+      "experience": 60,
+      "tags": [
+        "c:ingots/bronze"
+      ]
+    },
+    "item.silentgear.crimson_iron": {
+      "level_requirement": 43,
+      "experience": 172,
+      "tags": [
+        "c:ingots/crimson_iron"
+      ]
+    },
+    "item.silentgear.blaze_gold": {
+      "level_requirement": 35,
+      "experience": 140,
+      "tags": [
+        "c:ingots/blaze_gold"
+      ]
+    },
+    "item.silentgear.crimson_steel_ingot": {
+      "level_requirement": 46,
+      "experience": 184,
+      "tags": [
+        "c:ingots/crimson_steel"
+      ]
+    },
+    "item.silentgear.azure_silver_ingot": {
+      "level_requirement": 48,
+      "experience": 192,
+      "tags": [
+        "c:ingots/azure_silver"
+      ]
+    },
+    "item.silentgear.azure_electrum_ingot": {
+      "level_requirement": 49,
+      "experience": 196,
+      "tags": [
+        "c:ingots/azure_electrum"
+      ]
+    },
+    "item.silentgear.tyrian_steel_ingot": {
+      "level_requirement": 50,
+      "experience": 200,
+      "tags": [
+        "c:ingots/tyrian_steel"
+      ]
     }
   }
 }

@@ -25,6 +25,13 @@
         "c:ores/coal"
       ]
     },
+    "block.minecraft.terracotta": {
+      "level_requirement": 4,
+      "experience": 16,
+      "tags": [
+        "minecraft:terracotta"
+      ]
+    },
     "block.minecraft.copper_ore": {
       "level_requirement": 10,
       "experience": 40,
@@ -39,6 +46,13 @@
       "tags": [
         "minecraft:redstone_ores",
         "c:ores/redstone"
+      ]
+    },
+    "block.minecraft.bort_ore": {
+      "level_requirement": 15,
+      "experience": 60,
+      "tags": [
+        "c:ores/bort"
       ]
     },
     "block.minecraft.nether_quartz_ore": {
@@ -88,6 +102,13 @@
         "c:ores/emerald"
       ]
     },
+    "block.minecraft.crimson_iron_ore": {
+      "level_requirement": 38,
+      "experience": 152,
+      "tags": [
+        "c:ores/crimson_iron"
+      ]
+    },
     "block.minecraft.ancient_debris": {
       "level_requirement": 40,
       "experience": 160,
@@ -96,11 +117,26 @@
       ]
     },
     "block.minecraft.end_stone": {
-      "level_requirement": 25,
-      "experience": 100,
+      "level_requirement": 40,
+      "experience": 10,
       "tags": [
         "minecraft:end_stones"
       ]
-    }
+    },
+    "block.minecraft.silent_gems": {
+      "level_requirement": 15,
+      "experience": 60,
+      "tags": [
+        "silentgems:ores"
+      ]
+    },
+
+
+
+
+
+
+
+    "blockw"
   }
 }

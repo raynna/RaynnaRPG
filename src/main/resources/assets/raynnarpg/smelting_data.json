@@ -49,6 +49,16 @@
       "level_requirement": 40,
       "experience": 160,
       "raw_material": "minecraft:ancient_debris"
+    },
+    "item.silentgear.crimson_iron_ingot": {
+      "level_requirement": 43,
+      "experience": 172,
+      "raw_material": "silentgear:raw_crimson_iron"
+    },
+    "item.silentgear.azure_silver_ingot": {
+      "level_requirement": 48,
+      "experience": 192,
+      "raw_material": "silentgear:raw_azure_silver"
     }
   }
 }
