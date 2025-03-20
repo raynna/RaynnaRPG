@@ -155,7 +155,7 @@ public class ServerPlayerEvents {
                     int requiredLevel = craftingData.getLevelRequirement();
                     if (playerCraftingLevel < requiredLevel) {
                         craftingBlocked = true;
-                        serverPlayer.sendSystemMessage(Component.literal("You need a crafting level of " + requiredLevel + " in order to use " + materialStack.getHoverName() + " in crafting."));
+                        serverPlayer.sendSystemMessage(Component.literal("You need a crafting level of " + requiredLevel + " in order to use " + materialStack.getHoverName().toString() + " in crafting."));
                         for (int j = 0; j < craftingContainer.getContainerSize(); j++) {
                             ItemStack stack = craftingContainer.getItem(j);
                             if (!stack.isEmpty()) {
