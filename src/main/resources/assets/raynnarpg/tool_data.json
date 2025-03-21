@@ -10,6 +10,9 @@
     "terracotta": {
       "level_requirement": 4
     },
+    "flint": {
+      "level_requirement": 7
+    },
     "copper": {
       "level_requirement": 10
     },
@@ -25,8 +28,14 @@
     "blaze_gold": {
       "level_requirement": 20
     },
+    "emerald": {
+      "level_requirement": 25
+    },
     "diamond": {
       "level_requirement": 30
+    },
+    "dimerald": {
+      "level_requirement": 32
     },
     "netherite": {
       "level_requirement": 40
@@ -82,17 +91,17 @@
     "item.minecraft.iron_hoe": {
       "level_requirement": 15
     },
-    "item.minecraft.gold_pickaxe": {
-      "level_requirement": 15
+    "item.minecraft.golden_pickaxe": {
+      "level_requirement": 1
     },
-    "item.minecraft.gold_axe": {
-      "level_requirement": 15
+    "item.minecraft.golden_axe": {
+      "level_requirement": 1
     },
-    "item.minecraft.gold_shovel": {
-      "level_requirement": 15
+    "item.minecraft.golden_shovel": {
+      "level_requirement": 1
     },
-    "item.minecraft.gold_hoe": {
-      "level_requirement": 15
+    "item.minecraft.golden_hoe": {
+      "level_requirement": 1
     },
     "item.minecraft.diamond_pickaxe": {
       "level_requirement": 30

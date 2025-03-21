@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -29,7 +30,11 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.raynna.raynnarpg.data.*;
+import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
+import net.silentchaos512.gear.api.item.GearItem;
+import net.silentchaos512.gear.core.component.GearPropertiesData;
+import net.silentchaos512.gear.util.GearData;
 import org.apache.logging.log4j.core.jmx.Server;
 import org.lwjgl.glfw.GLFW;
 
@@ -105,23 +110,40 @@ public class ClientItemEvents {
             }
             data.put("Smelting", smeltingText.toString());
         }
+        if (ModList.get().isLoaded("silentgear")) {
+            if (stack.getItem() instanceof GearItem silent) {
+                String toolName = silent.asItem().getName(stack).getString();
 
-        ToolData toolData = DataRegistry.getDataFromItem(stack, ToolData.class);
-        if (toolData != null) {
-            String toolType = DataRegistry.determineToolType(stack);
-            StringBuilder toolText = new StringBuilder();
-            SkillType skillType;
-            switch (toolType) {
-                case "pickaxe":
-                case "shovel":
-                    skillType = SkillType.MINING;
-                    break;
-                default:
-                    skillType = null;
-                    break;
+                Map<String, String> properties = new HashMap<>();
+                GearPropertiesData propertiesData = GearData.getProperties(stack);
+                propertiesData.properties().forEach((key, value) -> {
+                    properties.put(key.getDisplayName().getString(), value.toString());
+                });
+                String harvestTierByName = properties.get("Harvest Tier");
+                ToolData toolData = DataRegistry.getTool(harvestTierByName);
+
+                if (toolData != null) {
+                    StringBuilder toolText = new StringBuilder();
+
+                    int playerLevel = skills.getSkillLevel(SkillType.MINING);
+                    if (playerLevel < toolData.getLevelRequirement()) {
+                        toolText.append("§cLevel: ")
+                                .append(toolData.getLevelRequirement())
+                                .append(" (Current level: ")
+                                .append(playerLevel).append(")");
+                    } else {
+                        toolText.append("§aLevel: ")
+                                .append(toolData.getLevelRequirement());
+                    }
+
+                    data.put("Mining", toolText.toString());
+                }
             }
-
-            int playerLevel = skills.getSkillLevel(skillType);
+        }
+        ToolData toolData = DataRegistry.getTool(stack.getDescriptionId());
+        if (toolData != null) {
+            StringBuilder toolText = new StringBuilder();
+            int playerLevel = skills.getSkillLevel(SkillType.MINING);
             if (playerLevel < toolData.getLevelRequirement()) {
                 toolText.append("§cLevel: ")
                         .append(toolData.getLevelRequirement())
@@ -132,7 +154,7 @@ public class ClientItemEvents {
                         .append(toolData.getLevelRequirement());
             }
 
-            data.put(toolType, toolText.toString());
+            data.put("Mining", toolText.toString());
         }
 
         if (!data.isEmpty()) {
