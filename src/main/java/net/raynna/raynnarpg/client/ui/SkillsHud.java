@@ -8,12 +8,15 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.raynna.raynnarpg.RaynnaRPG;
+import net.raynna.raynnarpg.client.events.ClientBlockEvents;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.server.player.skills.Skills;
 
-@EventBusSubscriber(value = Dist.CLIENT)
+@EventBusSubscriber(modid = RaynnaRPG.MOD_ID, value = Dist.CLIENT)
 public class SkillsHud {
 
     private static final int XP_BAR_WIDTH = 100;
@@ -69,5 +72,9 @@ public class SkillsHud {
         int textXPosition = xOffset + 16 + (XP_BAR_WIDTH / 2);
         guiGraphics.drawString(mc.font, Component.literal(xpText), textXPosition, yOffset + 11, 0xFFFFFF);
         guiGraphics.pose().popPose();
+    }
+
+    public static void register() {
+        NeoForge.EVENT_BUS.register(SkillsHud.class);
     }
 }
