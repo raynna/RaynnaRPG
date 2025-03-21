@@ -51,18 +51,10 @@ public class SkillsHud {
 
         guiGraphics.drawString(mc.font, Component.literal(skillName + " Lv. " + level), xOffset, yOffset, 0xFFFFFF);
 
-        //calculate the progress bar to match with xp and next level
-        // int barWidth = (int) (XP_BAR_WIDTH * progress)
-
-
-
         double progress = Math.min((currentTotalXpInSkill - xpForCurrentLevel) / (totalXpInSkillNeededForNextLevel - xpForCurrentLevel), 1.0);
 
-
-        // Calculate the width of the progress bar based on the progress
         int barWidth = (int) (XP_BAR_WIDTH * progress);
 
-        // Draw the XP bar background and progress
         guiGraphics.fill(xOffset, yOffset + 12, xOffset + XP_BAR_WIDTH, yOffset + 12 + XP_BAR_HEIGHT, 0xFF444444); // background
         guiGraphics.fill(xOffset, yOffset + 12, xOffset + barWidth, yOffset + 12 + XP_BAR_HEIGHT, 0xFF00AA00); // progress
 
