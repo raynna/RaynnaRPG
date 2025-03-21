@@ -15,6 +15,7 @@ import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.server.player.skills.Skills;
+import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = RaynnaRPG.MOD_ID, value = Dist.CLIENT)
 public class SkillsHud {
@@ -34,6 +35,10 @@ public class SkillsHud {
 
         int xOffset = 10;
         int yOffset = screenHeight / 4;
+        boolean shift = GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS;
+        if (shift) {
+            return;
+        }
         for (SkillType type : SkillType.values()) {
             Skill skill = ClientSkills.getSkill(type);
             if (skill == null) continue;

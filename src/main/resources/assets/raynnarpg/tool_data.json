@@ -1,5 +1,51 @@
 {
   "tools": {
+
+    "wood": {
+      "level_requirement": 1
+    },
+    "stone": {
+      "level_requirement": 5
+    },
+    "terracotta": {
+      "level_requirement": 4
+    },
+    "copper": {
+      "level_requirement": 10
+    },
+    "iron": {
+      "level_requirement": 15
+    },
+    "bronze": {
+      "level_requirement": 15
+    },
+    "gold": {
+      "level_requirement": 15
+    },
+    "blaze_gold": {
+      "level_requirement": 20
+    },
+    "diamond": {
+      "level_requirement": 30
+    },
+    "netherite": {
+      "level_requirement": 40
+    },
+    "crimson_iron": {
+      "level_requirement": 43
+    },
+    "crimson_steel": {
+      "level_requirement": 46
+    },
+    "azure_silver": {
+      "level_requirement": 48
+    },
+    "azure_electrum": {
+      "level_requirement": 49
+    },
+    "tyrian_steel": {
+      "level_requirement": 50
+    },
     "item.minecraft.wooden_pickaxe": {
       "level_requirement": 1
     },
@@ -25,28 +71,28 @@
       "level_requirement": 5
     },
     "item.minecraft.iron_pickaxe": {
-      "level_requirement": 20
+      "level_requirement": 15
     },
     "item.minecraft.iron_axe": {
-      "level_requirement": 20
+      "level_requirement": 15
     },
     "item.minecraft.iron_shovel": {
-      "level_requirement": 20
+      "level_requirement": 15
     },
     "item.minecraft.iron_hoe": {
-      "level_requirement": 20
+      "level_requirement": 15
     },
     "item.minecraft.gold_pickaxe": {
-      "level_requirement": 25
+      "level_requirement": 15
     },
     "item.minecraft.gold_axe": {
-      "level_requirement": 25
+      "level_requirement": 15
     },
     "item.minecraft.gold_shovel": {
-      "level_requirement": 25
+      "level_requirement": 15
     },
     "item.minecraft.gold_hoe": {
-      "level_requirement": 25
+      "level_requirement": 15
     },
     "item.minecraft.diamond_pickaxe": {
       "level_requirement": 30
@@ -72,5 +118,6 @@
     "item.minecraft.netherite_hoe": {
       "level_requirement": 40
     }
+
   }
 }

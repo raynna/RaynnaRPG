@@ -1,6 +1,11 @@
 package net.raynna.raynnarpg.server.player;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.raynna.raynnarpg.network.packets.skills.SkillsPacketSender;
 import net.raynna.raynnarpg.server.player.progress.Progress;
 import net.raynna.raynnarpg.server.player.progress.ProgressKey;
@@ -11,6 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.raynna.raynnarpg.server.utils.Colour;
 import net.raynna.raynnarpg.server.utils.MessageSender;
+import net.raynna.raynnarpg.server.utils.StarterItems;
 import net.raynna.raynnarpg.server.utils.Utils;
 import org.slf4j.Logger;
 
@@ -45,10 +51,12 @@ public class PlayerProgress {
             this.progress = new Progress();
         }
         SkillsPacketSender.send(player, this.skills);
+        StarterItems.giveItems(player);
         if (progress.isActive(ProgressKey.FIRST_TIME_LOGGED_IN)) {
             progress.toggle(ProgressKey.FIRST_TIME_LOGGED_IN);
             MessageSender.send(player, "["+ MOD_NAME + "] Welcome to the server " + player.getName().toFlatList().getFirst().getString() + "!", Colour.GOLD);
         } else {
+            progress.toggle(ProgressKey.FIRST_TIME_LOGGED_IN);
             MessageSender.send(player, "["+ MOD_NAME + "] Welcome back " + player.getName().toFlatList().getFirst().getString() + "!", Colour.GOLD);
         }
         MessageSender.send(player, "["+ MOD_NAME + "] Your current skills: ", Colour.RED);

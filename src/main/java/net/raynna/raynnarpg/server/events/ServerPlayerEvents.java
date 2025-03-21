@@ -36,10 +36,11 @@ import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.server.utils.CraftingTracker;
 import net.raynna.raynnarpg.server.utils.MessageSender;
 import net.raynna.raynnarpg.server.utils.Utils;
+import net.silentchaos512.gear.api.item.GearItem;
+import net.silentchaos512.gear.core.component.GearPropertiesData;
+import net.silentchaos512.gear.util.GearData;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class ServerPlayerEvents {
 
@@ -76,7 +77,6 @@ public class ServerPlayerEvents {
                 if (!isHandEmpty && food != null) {
                     if (targetPlayer.getFoodData().getFoodLevel() < FoodConstants.MAX_FOOD) {
                         ItemStack result = targetPlayer.eat(interactingPlayer.level(), itemInHand);
-                        //System.out.println(result.getHoverName().getString());
                         if (result.isEmpty() || result.getCount() < itemInHand.getCount()) {
                             itemInHand.shrink(1);
                             interactingPlayer.sendSystemMessage(Component.literal("You have fed " + targetPlayer.getName().getString() + "."));
@@ -97,9 +97,30 @@ public class ServerPlayerEvents {
         BlockState state = level.getBlockState(blockPos);
         if (event.getEntity() instanceof ServerPlayer player) {
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
-            ToolData toolData = DataRegistry.getTool(player.getMainHandItem().getDescriptionId());
             if (progress == null)
                 return;
+            int miningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
+            ItemStack mainHand = player.getMainHandItem();
+
+            if (mainHand.getItem() instanceof GearItem silent) {
+                String toolName = silent.asItem().getName(mainHand).getString();
+
+                Map<String, String> properties = new HashMap<>();
+                GearPropertiesData propertiesData = GearData.getProperties(mainHand);
+                propertiesData.properties().forEach((key, value) -> {
+                    properties.put(key.getDisplayName().getString(), value.toString());
+                });
+                String harvestTierByName = properties.get("Harvest Tier");
+                ToolData toolData = DataRegistry.getTool(harvestTierByName);
+                if (toolData != null) {
+                    if (miningLevel < toolData.getLevelRequirement()) {
+                        event.setCanceled(true);
+                        MessagePacketSender.send(player, "You need a mining level of " + toolData.getLevelRequirement() + " in order to use " + toolName + " as a tool.");
+                        return;
+                    }
+                }
+            }
+            ToolData toolData = DataRegistry.getTool(mainHand.getDescriptionId());
             if (toolData != null) {
                 int playerMiningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
                 int levelRequirement = toolData.getLevelRequirement();

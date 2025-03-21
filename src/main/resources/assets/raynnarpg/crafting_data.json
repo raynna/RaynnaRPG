@@ -14,6 +14,13 @@
         "minecraft:planks"
       ]
     },
+    "block.minecraft.coal": {
+      "level_requirement": 3,
+      "experience": 6.0,
+      "tags": [
+        "minecraft:coals"
+      ]
+    },
     "item.minecraft.stick": {
       "level_requirement": 1,
       "experience": 0.25,
@@ -97,7 +104,7 @@
       ]
     },
     "item.silentgear.blaze_gold": {
-      "level_requirement": 35,
+      "level_requirement": 20,
       "experience": 140,
       "tags": [
         "c:ingots/blaze_gold"
