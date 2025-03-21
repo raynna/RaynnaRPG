@@ -57,7 +57,9 @@ public class SetLevelCommand {
         }
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
         progress.getSkills().getSkill(skill).setLevel(level);
-        int xp = progress.getSkills().getXpForLevel(level);
+        int xp = progress.getSkills().getXpForLevel(level - 1) + 1;
+        if (level == 1)
+            xp = 0;
         progress.getSkills().getSkill(skill).setXp(xp);
         MessageSender.send(player, "You have set your level to " + level + " with experience: " + xp + ".", Colour.GREEN);
         SkillsPacketSender.send(player, progress.getSkills());

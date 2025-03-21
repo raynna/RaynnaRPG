@@ -35,8 +35,8 @@ public class ServerNpcEvents {
                 PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
 
                 if (progress != null) {
-                    MessagePacketSender.send(player, "You gained " + combatXP + " Combat XP for killing " + mob.getName().getString() + ".");
                     progress.getSkills().addXp(SkillType.COMBAT, combatXP);
+                    MessagePacketSender.send(player, "You gained " + combatXP + " Combat XP for killing " + mob.getName().getString() + ".");
 
                 }
             }

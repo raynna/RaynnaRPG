@@ -2,6 +2,10 @@ package net.raynna.raynnarpg.server.utils;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.raynna.raynnarpg.server.player.PlayerProgress;
+import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
+import net.raynna.raynnarpg.server.player.progress.Progress;
+import net.raynna.raynnarpg.server.player.skills.SkillType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +19,7 @@ public class CraftingTracker {
 
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    public static void accumulateCraftingData(ServerPlayer player, String itemName, int amount, double experience, Runnable onFinish) {
+    public static void accumulateCraftingData(ServerPlayer player, String itemName, int amount, double experience, SkillType type, Runnable onFinish) {
         CraftingTracker tracker = craftingData.computeIfAbsent(player, key -> new CraftingTracker());
 
         tracker.setItemName(itemName);
@@ -25,24 +29,29 @@ public class CraftingTracker {
         int ping = player.connection.latency();
         int delay = Math.max(600, ping);
         scheduler.schedule(() -> {
-            sendCraftingSummary(player);
+            sendCraftingSummary(player, type);
             if (onFinish != null) {
                 onFinish.run();
             }
         }, delay, TimeUnit.MILLISECONDS);
     }
 
-    private static void sendCraftingSummary(ServerPlayer player) {
+    private static void sendCraftingSummary(ServerPlayer player, SkillType type) {
         CraftingTracker tracker = craftingData.get(player);
         if (tracker != null && tracker.shouldSendMessage()) {
             if (tracker.getCraftedAmount() > 1) {
                 player.sendSystemMessage(Component.literal("You gained "
                         + tracker.getTotalExperience() + " experience for creating "
-                        + tracker.getCraftedAmount() + " x " + tracker.getItemName() + " batches."));
+                        + tracker.getCraftedAmount() + " x " + tracker.getItemName() + "'s."));
             } else {
                 player.sendSystemMessage(Component.literal("You gained "
-                        + tracker.getTotalExperience() + " experience for creating one " + tracker.getItemName() + " batch."));
+                        + tracker.getTotalExperience() + " experience for creating one " + tracker.getItemName() + "."));
             }
+            PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+            double totalExp = tracker.getTotalExperience();
+            double currentXp = progress.getSkills().getSkill(type).getXp();
+            double combinedXp = (currentXp + totalExp);
+            MessageSender.send(player, "You currently have " + combinedXp + " experiece in " + type.getName() + ".");
             craftingData.remove(player);
         }
     }

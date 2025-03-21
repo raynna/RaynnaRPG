@@ -24,7 +24,6 @@ public class Skills {
         for (SkillType type : SkillType.values()) {
             skills.put(type, new Skill(type));
         }
-        SkillsPacketSender.send(player, this);
     }
 
     public Map<SkillType, Skill> getSkills() {
@@ -48,7 +47,7 @@ public class Skills {
         if (skill != null) {
             if (skill.getXp() >= MAX_XP)
                 return;
-            int oldLevel = getLevelForXp(skill.getXp());
+            int oldLevel = skill.getLevel();
             if (skill.getXp() + xp > MAX_XP) {
                 skill.setXp(MAX_XP);
                 return;
@@ -60,22 +59,9 @@ public class Skills {
                 int levels = newLevel - oldLevel;
                 onLevelUp(skill, levels);
             }
+            SkillsPacketSender.send(player, this);
+            System.out.println("[Server] Skill: " + skill.getType().getName() + " XP: " + skill.getXp() + " Next Level XP: " + Skills.getXpForLevel(skill.getLevel() + 1));
 
-            long currentTime = System.currentTimeMillis();
-            long lastTime = lastMessageTime.getOrDefault(player, 0L);
-
-            if (currentTime - lastTime >= MESSAGE_COOLDOWN_MS) {
-                lastMessageTime.put(player, currentTime); // Update last sent time
-                accumulatedXp.put(player, accumulatedXp.getOrDefault(player, 0.0) + xp);
-                if (type != SkillType.COMBAT)
-                    MessagePacketSender.send(player, "You gained " + Utils.formatNumber(xp) + " " + type.getName() + " experience.");
-                MessageSender.send(player, "Your current " + type.getName() + " experience is now: " + Utils.formatNumber(skill.getXp()) + ".");
-                accumulatedXp.put(player, 0.0);
-                SkillsPacketSender.send(player, this);
-            } else {
-                // Accumulate XP but don't send the message yet
-                accumulatedXp.put(player, accumulatedXp.getOrDefault(player, 0.0) + xp);
-            }
         }
     }
 
@@ -90,39 +76,28 @@ public class Skills {
         for (int lvl = 1; lvl <= 50; lvl++) {
             points += (int) Math.floor(lvl + value * Math.pow(value2, lvl / divisor));
             output = (int) Math.floor(points / 4);
-            if ((output - 1) >= xp) {
-                return lvl;
+
+            // Ensure XP threshold matches exactly with getXpForLevel
+            if (xp < output) {
+                return lvl - 1;  // Return the previous level if XP hasn't reached the threshold yet
             }
         }
         return 50;
     }
 
-    public int getXpForLevel(int level) {
+
+    public static int getXpForLevel(int level) {
         int points = 0;
         double value = 450.0;
         double value2 = 2.5;
         double divisor = 8.0;
-
+        if (level == 1)
+            return 0;
         for (int lvl = 1; lvl <= level; lvl++) {
             points += (int) Math.floor(lvl + value * Math.pow(value2, lvl / divisor));
         }
 
         return (int) Math.floor(points / 4);
-    }
-
-    public double getXpToLevelUp(SkillType type) {
-        Skill skill = getSkill(type);
-        if (skill == null) return 0;
-
-        double currentXp = skill.getXp();
-        int currentLevel = skill.getLevel();
-        double nextLevelXp = getXpForLevel(currentLevel + 1);
-
-        if (currentLevel == MAX_LEVEL) {
-            return 0;
-        }
-
-        return (int) (nextLevelXp - currentXp);
     }
 
     public Skill getSkill(SkillType type) {

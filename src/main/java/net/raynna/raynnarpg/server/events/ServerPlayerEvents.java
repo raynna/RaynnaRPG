@@ -31,8 +31,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.server.utils.CraftingTracker;
+import net.raynna.raynnarpg.server.utils.MessageSender;
+import net.raynna.raynnarpg.server.utils.Utils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -116,6 +119,7 @@ public class ServerPlayerEvents {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
             if (progress == null) return;
+            Skill smithing = progress.getSkills().getSkill(SkillType.SMELTING);
             if (serverPlayer.containerMenu instanceof BlastFurnaceMenu furnaceMenu) {
                 int smeltingLevel = progress.getSkills().getSkill(SkillType.SMELTING).getLevel();
                 ItemStack inputItem = furnaceMenu.getSlot(INPUT_SLOT).getItem();
@@ -158,7 +162,7 @@ public class ServerPlayerEvents {
                     int smeltedAmount = event.getSmelting().getCount();
                     String itemName = event.getSmelting().getHoverName().getString();
                     double totalExperience = baseExperience * smeltedAmount;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, totalExperience, () -> {
+                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, totalExperience, smithing.getType(), () -> {
                         progress.getSkills().addXp(SkillType.SMELTING, totalExperience);
                     });
                 }
@@ -206,7 +210,7 @@ public class ServerPlayerEvents {
                     int smeltedAmount = event.getSmelting().getCount();
                     String itemName = event.getSmelting().getHoverName().getString();
                     double totalExperience = baseExperience * smeltedAmount;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, totalExperience, () -> {
+                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, totalExperience, smithing.getType(), () -> {
                         progress.getSkills().addXp(SkillType.SMELTING, totalExperience);
                     });
                 }
@@ -221,20 +225,21 @@ public class ServerPlayerEvents {
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
 
             if (progress == null) return;
-
+            Skill crafting = progress.getSkills().getSkill(SkillType.CRAFTING);
             if (event.getInventory() instanceof CraftingContainer craftingContainer) {
-                int playerCraftingLevel = progress.getSkills().getSkill(SkillType.CRAFTING).getLevel();
+                int playerCraftingLevel = crafting.getLevel();
                 boolean craftingBlocked = false;
                 double totalBaseExperience = 0.0;
                 boolean craftingBenchFull = true;
                 Set<String> uniqueMaterials = new HashSet<>();
-
+                int totalSlotsUsed = 0;
                 for (int i = 0; i < craftingContainer.getContainerSize(); i++) {
                     ItemStack materialStack = craftingContainer.getItem(i);
                     if (materialStack.isEmpty()) {
                         craftingBenchFull = false;
                         continue;
                     }
+                    totalSlotsUsed++;
                     String materialId = materialStack.getDescriptionId();
                     String materialName = materialStack.getHoverName().getString();
                     uniqueMaterials.add(materialName);
@@ -245,7 +250,7 @@ public class ServerPlayerEvents {
                     int requiredLevel = craftingData.getLevelRequirement();
                     if (playerCraftingLevel < requiredLevel) {
                         craftingBlocked = true;
-                        serverPlayer.sendSystemMessage(Component.literal("You need a crafting level of " + requiredLevel + " in order to use " + materialStack.getHoverName().getString() + " in crafting."));
+                        serverPlayer.sendSystemMessage(Component.literal("You need a " + crafting.getType().getName() + " level of " + requiredLevel + " in order to use " + materialStack.getHoverName().getString() + " in crafting."));
                         for (int j = 0; j < craftingContainer.getContainerSize(); j++) {
                             ItemStack stack = craftingContainer.getItem(j);
                             if (!stack.isEmpty()) {
@@ -258,15 +263,15 @@ public class ServerPlayerEvents {
                     }
                     totalBaseExperience += craftingData.getExperience();
                 }
-                if (craftingBenchFull && uniqueMaterials.size() == 1) {
+                if (craftingBenchFull && uniqueMaterials.size() == 1 && totalSlotsUsed > 4) {
                     craftingBlocked = true;
                 }
-
                 if (!craftingBlocked) {
                     String itemName = event.getCrafting().getHoverName().getString();
                     double totalExperience = totalBaseExperience;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, 1, totalExperience, () -> {
-                    progress.getSkills().addXp(SkillType.CRAFTING, totalExperience);
+                    int itemsCreated = event.getCrafting().getCount();
+                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, itemsCreated, totalExperience, crafting.getType(), () -> {
+                        progress.getSkills().addXp(SkillType.CRAFTING, totalExperience);
                     });
                 }
             }
