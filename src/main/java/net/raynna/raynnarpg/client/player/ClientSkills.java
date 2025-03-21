@@ -31,7 +31,7 @@ public class ClientSkills {
                 skills.getSkill(type).setLevel(newSkill.getLevel());
                 skills.getSkill(type).setXp(newSkill.getXp());
                 //System.out.println("[Client] updated: Skill: " + type.getName() + " Level: " + skills.getSkill(type).getLevel());
-                System.out.println("[Client] Skill: " + skills.getSkill(type).getType().getName() + " XP: " + skills.getSkill(type).getXp() + " Next Level XP: " + Skills.getXpForLevel(skills.getSkill(type).getLevel() + 1));
+                //System.out.println("[Client] Skill: " + skills.getSkill(type).getType().getName() + " XP: " + skills.getSkill(type).getXp() + " Next Level XP: " + Skills.getXpForLevel(skills.getSkill(type).getLevel() + 1));
 
             }
         }

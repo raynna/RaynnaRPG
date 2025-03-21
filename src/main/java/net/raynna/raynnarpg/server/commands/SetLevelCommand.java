@@ -12,6 +12,7 @@ import net.raynna.raynnarpg.network.packets.skills.SkillsPacketSender;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
+import net.raynna.raynnarpg.server.player.skills.Skills;
 import net.raynna.raynnarpg.server.utils.Colour;
 import net.raynna.raynnarpg.server.utils.MessageSender;
 
@@ -57,7 +58,7 @@ public class SetLevelCommand {
         }
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
         progress.getSkills().getSkill(skill).setLevel(level);
-        int xp = progress.getSkills().getXpForLevel(level - 1) + 1;
+        int xp = Skills.getXpForLevel(level);
         if (level == 1)
             xp = 0;
         progress.getSkills().getSkill(skill).setXp(xp);

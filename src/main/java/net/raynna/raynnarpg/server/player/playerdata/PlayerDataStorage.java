@@ -85,7 +85,7 @@ public class PlayerDataStorage extends SavedData {
     }
 
     public void markDirty() {
-        System.out.println("MarkDirty was called.");
+        //System.out.println("MarkDirty was called.");
         setDirty();
     }
 }

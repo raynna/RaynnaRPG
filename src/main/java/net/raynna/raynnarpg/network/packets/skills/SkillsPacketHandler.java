@@ -18,7 +18,7 @@ public class SkillsPacketHandler implements IPayloadHandler<SkillsPacket> {
         if (context.flow() == PacketFlow.CLIENTBOUND) {
             Skills skills = packet.skills();
             for (SkillType type : SkillType.values()) {
-                System.out.println("[PlayerSkillsPacket] read: Skill: " + type.getName() + " Level: " + skills.getSkill(type).getLevel());
+                //System.out.println("[PlayerSkillsPacket] read: Skill: " + type.getName() + " Level: " + skills.getSkill(type).getLevel());
             }
             handleClient(packet);
         }

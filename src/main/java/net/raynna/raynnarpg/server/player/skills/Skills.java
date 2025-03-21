@@ -60,7 +60,7 @@ public class Skills {
                 onLevelUp(skill, levels);
             }
             SkillsPacketSender.send(player, this);
-            System.out.println("[Server] Skill: " + skill.getType().getName() + " XP: " + skill.getXp() + " Next Level XP: " + Skills.getXpForLevel(skill.getLevel() + 1));
+            //System.out.println("[Server] Skill: " + skill.getType().getName() + " XP: " + skill.getXp() + " Next Level XP: " + Skills.getXpForLevel(skill.getLevel() + 1));
 
         }
     }

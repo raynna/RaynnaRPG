@@ -20,7 +20,7 @@ public class MessagePacketHandler implements IPayloadHandler<MessagePacket> {
 
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(MessagePacket packet) {
-        System.out.println("[PlayerMessagePacket] read: " + packet.message());
+        //System.out.println("[PlayerMessagePacket] read: " + packet.message());
         Minecraft.getInstance().execute(() -> {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) return;

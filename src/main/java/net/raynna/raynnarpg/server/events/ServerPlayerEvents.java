@@ -76,7 +76,7 @@ public class ServerPlayerEvents {
                 if (!isHandEmpty && food != null) {
                     if (targetPlayer.getFoodData().getFoodLevel() < FoodConstants.MAX_FOOD) {
                         ItemStack result = targetPlayer.eat(interactingPlayer.level(), itemInHand);
-                        System.out.println(result.getHoverName().getString());
+                        //System.out.println(result.getHoverName().getString());
                         if (result.isEmpty() || result.getCount() < itemInHand.getCount()) {
                             itemInHand.shrink(1);
                             interactingPlayer.sendSystemMessage(Component.literal("You have fed " + targetPlayer.getName().getString() + "."));
