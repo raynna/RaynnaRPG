@@ -4,6 +4,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
@@ -51,25 +52,27 @@ public class ClientBlockEvents {
             ClientSkills skills = new ClientSkills(mc.player);
             ItemStack mainHand = mc.player.getMainHandItem();
             int miningLevel = skills.getSkillLevel(SkillType.MINING);
-            if (mainHand.getItem() instanceof GearItem silent) {
-                String toolName = silent.asItem().getName(mainHand).getString();
-                Map<String, String> properties = new HashMap<>();
-                GearPropertiesData propertiesData = GearData.getProperties(mainHand);
+            if (ModList.get().isLoaded("silentgear")) {
+                if (mainHand.getItem() instanceof GearItem silent) {
+                    String toolName = silent.asItem().getName(mainHand).getString();
+                    Map<String, String> properties = new HashMap<>();
+                    GearPropertiesData propertiesData = GearData.getProperties(mainHand);
 
-                propertiesData.properties().forEach((key, value) -> {
-                    properties.put(key.getDisplayName().getString(), value.toString());
-                });
+                    propertiesData.properties().forEach((key, value) -> {
+                        properties.put(key.getDisplayName().getString(), value.toString());
+                    });
 
-                String harvestTierByName = properties.get("Harvest Tier");
+                    String harvestTierByName = properties.get("Harvest Tier");
 
-                ToolData toolData = DataRegistry.getTool(harvestTierByName);
-                if (toolData != null) {
-                    if (miningLevel < toolData.getLevelRequirement()) {
-                        event.setCanceled(true);
-                        mc.player.swinging = false;
-                        mc.player.resetAttackStrengthTicker();
-                        mc.player.displayClientMessage(Component.literal("You need a mining level of " + toolData.getLevelRequirement() + " in order to use " + toolName + " as a tool."), true);
-                        return;
+                    ToolData toolData = DataRegistry.getTool(harvestTierByName);
+                    if (toolData != null) {
+                        if (miningLevel < toolData.getLevelRequirement()) {
+                            event.setCanceled(true);
+                            mc.player.swinging = false;
+                            mc.player.resetAttackStrengthTicker();
+                            mc.player.displayClientMessage(Component.literal("You need a mining level of " + toolData.getLevelRequirement() + " in order to use " + toolName + " as a tool."), true);
+                            return;
+                        }
                     }
                 }
             }

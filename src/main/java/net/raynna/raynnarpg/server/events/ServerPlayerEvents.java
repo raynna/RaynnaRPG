@@ -14,6 +14,7 @@ import net.minecraft.world.inventory.FurnaceMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.raynna.raynnarpg.data.*;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
@@ -101,22 +102,23 @@ public class ServerPlayerEvents {
                 return;
             int miningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
             ItemStack mainHand = player.getMainHandItem();
+            if (ModList.get().isLoaded("silentgear")) {
+                if (mainHand.getItem() instanceof GearItem silent) {
+                    String toolName = silent.asItem().getName(mainHand).getString();
 
-            if (mainHand.getItem() instanceof GearItem silent) {
-                String toolName = silent.asItem().getName(mainHand).getString();
-
-                Map<String, String> properties = new HashMap<>();
-                GearPropertiesData propertiesData = GearData.getProperties(mainHand);
-                propertiesData.properties().forEach((key, value) -> {
-                    properties.put(key.getDisplayName().getString(), value.toString());
-                });
-                String harvestTierByName = properties.get("Harvest Tier");
-                ToolData toolData = DataRegistry.getTool(harvestTierByName);
-                if (toolData != null) {
-                    if (miningLevel < toolData.getLevelRequirement()) {
-                        event.setCanceled(true);
-                        MessagePacketSender.send(player, "You need a mining level of " + toolData.getLevelRequirement() + " in order to use " + toolName + " as a tool.");
-                        return;
+                    Map<String, String> properties = new HashMap<>();
+                    GearPropertiesData propertiesData = GearData.getProperties(mainHand);
+                    propertiesData.properties().forEach((key, value) -> {
+                        properties.put(key.getDisplayName().getString(), value.toString());
+                    });
+                    String harvestTierByName = properties.get("Harvest Tier");
+                    ToolData toolData = DataRegistry.getTool(harvestTierByName);
+                    if (toolData != null) {
+                        if (miningLevel < toolData.getLevelRequirement()) {
+                            event.setCanceled(true);
+                            MessagePacketSender.send(player, "You need a mining level of " + toolData.getLevelRequirement() + " in order to use " + toolName + " as a tool.");
+                            return;
+                        }
                     }
                 }
             }
