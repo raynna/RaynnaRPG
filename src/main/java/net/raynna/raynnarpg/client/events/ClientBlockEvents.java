@@ -43,7 +43,7 @@ public class ClientBlockEvents {
             ItemStack mainHand = mc.player.getMainHandItem();
             int miningLevel = skills.getSkillLevel(SkillType.MINING);
             if (ModList.get().isLoaded("silentgear")) {
-                if (mainHand.getItem() instanceof GearItem silent) {
+                if (!mainHand.isEmpty() && mainHand.getItem() instanceof GearItem silent) {
                     String toolName = silent.asItem().getName(mainHand).getString();
                     Map<String, String> properties = new HashMap<>();
                     GearPropertiesData propertiesData = GearData.getProperties(mainHand);
@@ -66,15 +66,16 @@ public class ClientBlockEvents {
                     }
                 }
             }
-
-            ToolData toolData = DataRegistry.getToolByTag(mainHand.getDescriptionId());
-            if (toolData != null) {
-                if (miningLevel < toolData.getLevelRequirement()) {
-                    event.setCanceled(true);
-                    mc.player.swinging = false;
-                    mc.player.resetAttackStrengthTicker();
-                    mc.player.displayClientMessage(Component.literal("You need a mining level of " + toolData.getLevelRequirement() + " in order to use " + mc.player.getMainHandItem().getHoverName().getString() + " as a tool."), true);
-                    return;
+            if (!mainHand.isEmpty()) {
+                ToolData toolData = DataRegistry.getToolByTag(mainHand.getDescriptionId());
+                if (toolData != null) {
+                    if (miningLevel < toolData.getLevelRequirement()) {
+                        event.setCanceled(true);
+                        mc.player.swinging = false;
+                        mc.player.resetAttackStrengthTicker();
+                        mc.player.displayClientMessage(Component.literal("You need a mining level of " + toolData.getLevelRequirement() + " in order to use " + mc.player.getMainHandItem().getHoverName().getString() + " as a tool."), true);
+                        return;
+                    }
                 }
             }
 

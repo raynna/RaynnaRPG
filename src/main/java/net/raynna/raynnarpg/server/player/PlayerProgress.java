@@ -1,6 +1,7 @@
 package net.raynna.raynnarpg.server.player;
 
 import com.mojang.logging.LogUtils;
+import net.neoforged.fml.ModList;
 import net.raynna.raynnarpg.network.packets.skills.SkillsPacketSender;
 import net.raynna.raynnarpg.server.player.progress.Progress;
 import net.raynna.raynnarpg.server.player.progress.ProgressKey;
@@ -48,7 +49,9 @@ public class PlayerProgress {
         SkillsPacketSender.send(player, this.skills);
         if (progress.isActive(ProgressKey.FIRST_TIME_LOGGED_IN)) {
             progress.toggle(ProgressKey.FIRST_TIME_LOGGED_IN);
-            StarterItems.giveItems(player);
+            if (ModList.get().isLoaded("silentgear")) {
+                StarterItems.giveItems(player);
+            }
             MessageSender.send(player, "["+ MOD_NAME + "] Welcome to the server " + player.getName().toFlatList().getFirst().getString() + "!", Colour.GOLD);
         } else {
             MessageSender.send(player, "["+ MOD_NAME + "] Welcome back " + player.getName().toFlatList().getFirst().getString() + "!", Colour.GOLD);
