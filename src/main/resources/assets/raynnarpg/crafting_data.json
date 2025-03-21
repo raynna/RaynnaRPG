@@ -14,13 +14,6 @@
         "minecraft:planks"
       ]
     },
-    "block.minecraft.coal": {
-      "level_requirement": 3,
-      "experience": 6.0,
-      "tags": [
-        "minecraft:coals"
-      ]
-    },
     "item.minecraft.stick": {
       "level_requirement": 1,
       "experience": 0.25,
@@ -31,6 +24,13 @@
     "block.minecraft.crafting_table": {
       "level_requirement": 1,
       "experience": 16.0
+    },
+    "block.minecraft.coal": {
+      "level_requirement": 3,
+      "experience": 6.0,
+      "tags": [
+        "minecraft:coals"
+      ]
     },
     "block.minecraft.cobblestone": {
       "level_requirement": 5,

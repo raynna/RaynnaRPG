@@ -19,21 +19,11 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.raynna.raynnarpg.data.ToolData;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
-import net.silentchaos512.gear.SilentGear;
 import net.silentchaos512.gear.api.item.GearItem;
-import net.silentchaos512.gear.api.material.Material;
-import net.silentchaos512.gear.api.part.PartType;
-import net.silentchaos512.gear.api.property.GearProperty;
-import net.silentchaos512.gear.api.property.GearPropertyValue;
-import net.silentchaos512.gear.api.property.HarvestTier;
 import net.silentchaos512.gear.core.component.GearPropertiesData;
-import net.silentchaos512.gear.gear.material.MaterialInstance;
-import net.silentchaos512.gear.gear.part.PartInstance;
-import net.silentchaos512.gear.setup.gear.GearProperties;
 import net.silentchaos512.gear.util.GearData;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @EventBusSubscriber(modid = RaynnaRPG.MOD_ID, value = Dist.CLIENT)
 public class ClientBlockEvents {
@@ -107,3 +97,4 @@ public class ClientBlockEvents {
         NeoForge.EVENT_BUS.register(ClientBlockEvents.class);
     }
 }
+
