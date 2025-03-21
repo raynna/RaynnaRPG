@@ -14,12 +14,13 @@ import net.raynna.raynnarpg.server.player.skills.Skills;
 public class SkillsPacketHandler implements IPayloadHandler<SkillsPacket> {
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void handle(SkillsPacket packet, IPayloadContext context) {
         if (context.flow() == PacketFlow.CLIENTBOUND) {
-            Skills skills = packet.skills();
-            for (SkillType type : SkillType.values()) {
+            //Skills skills = packet.skills();
+            //for (SkillType type : SkillType.values()) {
                 //System.out.println("[PlayerSkillsPacket] read: Skill: " + type.getName() + " Level: " + skills.getSkill(type).getLevel());
-            }
+            //}
             handleClient(packet);
         }
     }

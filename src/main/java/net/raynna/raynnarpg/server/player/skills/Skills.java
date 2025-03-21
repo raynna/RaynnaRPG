@@ -66,38 +66,21 @@ public class Skills {
     }
 
     public int getLevelForXp(double xp) {
-        int points = 0;
-        int output;
-
-        double value = 450.0;
-        double value2 = 2.5;
-        double divisor = 8.0;
-
-        for (int lvl = 1; lvl <= 50; lvl++) {
-            points += (int) Math.floor(lvl + value * Math.pow(value2, lvl / divisor));
-            output = (int) Math.floor(points / 4);
-
-            // Ensure XP threshold matches exactly with getXpForLevel
-            if (xp < output) {
-                return lvl - 1;  // Return the previous level if XP hasn't reached the threshold yet
+        for (int level = 1; level <= 50; level++) {
+            if (getXpForLevel(level) > xp) {
+                return level - 1;
             }
         }
         return 50;
     }
 
-
-    public static int getXpForLevel(int level) {
-        int points = 0;
-        double value = 450.0;
-        double value2 = 2.5;
-        double divisor = 8.0;
-        if (level == 1)
-            return 0;
-        for (int lvl = 1; lvl <= level; lvl++) {
-            points += (int) Math.floor(lvl + value * Math.pow(value2, lvl / divisor));
+    public static double getXpForLevel(int level) {
+        double totalXP = 0;
+        for (int n = 1; n < level; n++) {
+            totalXP += Math.floor(n + 230 * Math.pow(2, n / 6.0));
         }
 
-        return (int) Math.floor(points / 4);
+        return (long) Math.floor(totalXP / 2);
     }
 
     public Skill getSkill(SkillType type) {

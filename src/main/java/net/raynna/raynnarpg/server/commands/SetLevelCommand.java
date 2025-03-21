@@ -58,7 +58,7 @@ public class SetLevelCommand {
         }
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
         progress.getSkills().getSkill(skill).setLevel(level);
-        int xp = Skills.getXpForLevel(level);
+        double xp = Skills.getXpForLevel(level);
         if (level == 1)
             xp = 0;
         progress.getSkills().getSkill(skill).setXp(xp);

@@ -38,8 +38,8 @@ public class SkillsHud {
             Skill skill = ClientSkills.getSkill(type);
             if (skill == null) continue;
 
-            double totalXpInSkillNeededForNextLevel = Skills.getXpForLevel(skill.getLevel() + 1);
-            double xpForCurrentLevel = Skills.getXpForLevel(skill.getLevel());
+            double totalXpInSkillNeededForNextLevel = ClientSkills.getXpForLevel(skill.getLevel() + 1);
+            double xpForCurrentLevel = ClientSkills.getXpForLevel(skill.getLevel());
             double currentTotalXpInSkill = skill.getXp();
             drawSkillHUD(event.getGuiGraphics(), type.getName(), skill.getLevel(), currentTotalXpInSkill, xpForCurrentLevel, totalXpInSkillNeededForNextLevel, xOffset, yOffset);
             yOffset += LINE_SPACING;
@@ -57,8 +57,13 @@ public class SkillsHud {
 
         guiGraphics.fill(xOffset, yOffset + 12, xOffset + XP_BAR_WIDTH, yOffset + 12 + XP_BAR_HEIGHT, 0xFF444444); // background
         guiGraphics.fill(xOffset, yOffset + 12, xOffset + barWidth, yOffset + 12 + XP_BAR_HEIGHT, 0xFF00AA00); // progress
-
-        String xpText = String.format("%.0f / %.0f", currentTotalXpInSkill, totalXpInSkillNeededForNextLevel);
+        boolean isMaxLevel = level == 50;
+        String xpText = "";
+        if (isMaxLevel) {
+            xpText = "Max Lvl";
+        } else {
+            xpText = String.format("%.0f / %.0f", currentTotalXpInSkill, totalXpInSkillNeededForNextLevel);
+        }
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(0.6F, 1, 0.6F);
         int textXPosition = xOffset + 16 + (XP_BAR_WIDTH / 2);

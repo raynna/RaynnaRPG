@@ -45,6 +45,30 @@ public class ClientSkills {
         return skill.getLevel();
     }
 
+    public double getSkillExperience(SkillType skillType) {
+        Skill skill = skills.getSkill(skillType);
+        if (skill == null)
+            return 0;
+        return skill.getXp();
+    }
+
+    public int getLevelForXp(double xp) {
+        for (int level = 1; level <= 50; level++) {
+            if (getXpForLevel(level) > xp) {
+                return level - 1;
+            }
+        }
+        return 50;
+    }
+
+    public static double getXpForLevel(int level) {
+        double totalXP = 0;
+        for (int n = 1; n < level; n++) {
+            totalXP += Math.floor(n + 230 * Math.pow(2, n / 6.0));
+        }
+        return (long) Math.floor(totalXP / 2);
+    }
+
     public static Skill getSkill(SkillType skillType) {
         return skills.getSkill(skillType);
     }
