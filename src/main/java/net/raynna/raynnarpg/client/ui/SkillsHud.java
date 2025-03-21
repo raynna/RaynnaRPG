@@ -66,7 +66,9 @@ public class SkillsHud {
         }
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(0.6F, 1, 0.6F);
-        int textXPosition = xOffset + 16 + (XP_BAR_WIDTH / 2);
+        int textWidth = (int) ((double) mc.font.width(xpText) * 0.75);
+        //int textXPosition = xOffset + 16 - (XP_BAR_WIDTH / 2);
+        int textXPosition = xOffset + (XP_BAR_WIDTH - textWidth);
         guiGraphics.drawString(mc.font, Component.literal(xpText), textXPosition, yOffset + 11, 0xFFFFFF);
         guiGraphics.pose().popPose();
     }
