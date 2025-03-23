@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -27,6 +28,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.raynna.raynnarpg.data.*;
@@ -38,6 +40,7 @@ import net.silentchaos512.gear.util.GearData;
 import org.apache.logging.log4j.core.jmx.Server;
 import org.lwjgl.glfw.GLFW;
 
+import javax.xml.crypto.Data;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,16 +56,18 @@ public class ClientItemEvents {
         boolean isPlayerCreative = mc.player.isCreative();
         boolean isSinglePlayer = mc.isSingleplayer();
         ItemStack stack = event.getItemStack();
-        String itemId = stack.getItem().getDescriptionId();
-        Map<String, String> data = new HashMap<>();
+        String descriptionId = stack.getItem().getDescriptionId();
+        Map<String, String> tooltip = new HashMap<>();
         List<Component> toolTips = event.getToolTip();
         AtomicInteger insertIndex = new AtomicInteger(1);
         ClientSkills skills = new ClientSkills(mc.player);
-        BlockData blockData = DataRegistry.getDataFromItem(stack, BlockData.class);
-        if (blockData != null) {
+        Config.ConfigData data = Config.getMiningData(stack);
+        int levelReq;
+        double xp;
+        if (data != null) {
             int miningLevel = skills.getSkillLevel(SkillType.MINING);
-            int levelReq = blockData.getLevelRequirement();
-            double xp = blockData.getExperience();
+            levelReq = data.getLevel();
+            xp = data.getXp();
             StringBuilder miningText = new StringBuilder();
 
             if (miningLevel < levelReq) {
@@ -76,96 +81,98 @@ public class ClientItemEvents {
                         .append(", Xp: ")
                         .append(xp);
             }
-            data.put("Mining", miningText.toString());
+            tooltip.put("Mining", miningText.toString());
         }
-
-        CraftingData craftingData = DataRegistry.getDataFromItem(stack, CraftingData.class);
-        if (craftingData != null) {
+       data = Config.getCraftingData(stack);
+        if (data != null) {
             int craftingLevel = skills.getSkillLevel(SkillType.CRAFTING);
+            levelReq = data.getLevel();
+            xp = data.getXp();
             StringBuilder craftingText = new StringBuilder();
-            if (craftingLevel < craftingData.getLevelRequirement()) {
+            if (craftingLevel < levelReq) {
                 craftingText.append("§cLevel: ")
-                        .append(craftingData.getLevelRequirement())
+                        .append(levelReq)
                         .append(" (Current level: ")
-                        .append(craftingLevel).append("), Xp: ").append(craftingData.getExperience());
+                        .append(craftingLevel).append("), Xp: ").append(xp);
             } else {
                 craftingText.append("§aLevel: ")
-                        .append(craftingData.getLevelRequirement()).append(", Xp: ").append(craftingData.getExperience());
+                        .append(levelReq).append(", Xp: ").append(xp);
             }
-            data.put("Crafting", craftingText.toString());
+            tooltip.put("Crafting", craftingText.toString());
         }
 
-        SmeltingData smeltingData = DataRegistry.getDataFromItem(stack, SmeltingData.class);
-        if (smeltingData != null) {
+        data = Config.getSmeltingData(stack);
+        if (data != null) {
             int smeltingLevel = skills.getSkillLevel(SkillType.SMELTING);
+            levelReq = data.getLevel();
+            xp = data.getXp();
             StringBuilder smeltingText = new StringBuilder();
-            if (smeltingLevel < smeltingData.getLevelRequirement()) {
+            if (smeltingLevel < levelReq) {
                 smeltingText.append("§cLevel: ")
-                        .append(smeltingData.getLevelRequirement())
+                        .append(levelReq)
                         .append(" (Current level: ")
-                        .append(smeltingLevel).append("), Xp: ").append(smeltingData.getExperience());
+                        .append(smeltingLevel).append("), Xp: ").append(xp);
             } else {
                 smeltingText.append("§aLevel: ")
-                        .append(smeltingData.getLevelRequirement()).append(", Xp: ").append(smeltingData.getExperience());
+                        .append(levelReq).append(", Xp: ").append(xp);
             }
-            data.put("Smelting", smeltingText.toString());
+            tooltip.put("Smelting", smeltingText.toString());
         }
         if (ModList.get().isLoaded("silentgear")) {
             if (stack.getItem() instanceof GearItem silent) {
-                String toolName = silent.asItem().getName(stack).getString();
-
                 Map<String, String> properties = new HashMap<>();
                 GearPropertiesData propertiesData = GearData.getProperties(stack);
                 propertiesData.properties().forEach((key, value) -> {
                     properties.put(key.getDisplayName().getString(), value.toString());
                 });
                 String harvestTierByName = properties.get("Harvest Tier");
-                ToolData toolData = DataRegistry.getTool(harvestTierByName);
-
-                if (toolData != null) {
+                data = Config.getSilentGearData(harvestTierByName);
+                if (data != null) {
+                    levelReq = data.getLevel();
                     StringBuilder toolText = new StringBuilder();
 
                     int playerLevel = skills.getSkillLevel(SkillType.MINING);
-                    if (playerLevel < toolData.getLevelRequirement()) {
+                    if (playerLevel < levelReq) {
                         toolText.append("§cLevel: ")
-                                .append(toolData.getLevelRequirement())
+                                .append(levelReq)
                                 .append(" (Current level: ")
                                 .append(playerLevel).append(")");
                     } else {
                         toolText.append("§aLevel: ")
-                                .append(toolData.getLevelRequirement());
+                                .append(levelReq);
                     }
 
-                    data.put("Mining", toolText.toString());
+                    tooltip.put("Mining", toolText.toString());
                 }
             }
         }
-        ToolData toolData = DataRegistry.getTool(stack.getDescriptionId());
-        if (toolData != null) {
+        data = Config.getToolData(stack);
+        if (data != null) {
             StringBuilder toolText = new StringBuilder();
+            levelReq = data.getLevel();
             int playerLevel = skills.getSkillLevel(SkillType.MINING);
-            if (playerLevel < toolData.getLevelRequirement()) {
+            if (playerLevel < levelReq) {
                 toolText.append("§cLevel: ")
-                        .append(toolData.getLevelRequirement())
+                        .append(levelReq)
                         .append(" (Current level: ")
                         .append(playerLevel).append(")");
             } else {
                 toolText.append("§aLevel: ")
-                        .append(toolData.getLevelRequirement());
+                        .append(levelReq);
             }
 
-            data.put("Mining", toolText.toString());
+            tooltip.put("Mining", toolText.toString());
         }
 
-        if (!data.isEmpty()) {
+        if (!tooltip.isEmpty()) {
             toolTips.add(insertIndex.getAndIncrement(), Component.literal("§6RaynnaRPG: "));
-            data.forEach((key, value) ->
+            tooltip.forEach((key, value) ->
                     toolTips.add(insertIndex.getAndIncrement(), Component.literal("§7" + key + " " + value))
             );
         }
 
         if (isPlayerCreative) {
-            event.getToolTip().add(Component.literal("§6Description: §7" + itemId));
+            event.getToolTip().add(Component.literal("§6Description: §7" + descriptionId));
             event.getToolTip().add(Component.literal("§6Tags: "));
             for (TagKey<Item> tag : stack.getTags().toList()) {
                 event.getToolTip().add(Component.literal("§7- " + tag.location().toString()));
@@ -179,7 +186,7 @@ public class ClientItemEvents {
                     event.getToolTip().add(Component.literal("Hold SHIFT to reveal item tags."));
                     return;
                 }
-                event.getToolTip().add(Component.literal("§6Description: §7" + itemId));
+                event.getToolTip().add(Component.literal("§6Description: §7" + descriptionId));
                 event.getToolTip().add(Component.literal("§6Tags: "));
                 for (TagKey<Item> tag : stack.getTags().toList()) {
                     event.getToolTip().add(Component.literal("§7- " + tag.location().toString()));
@@ -191,7 +198,7 @@ public class ClientItemEvents {
                 event.getToolTip().add(Component.literal("Hold SHIFT to reveal item tags."));
                 return;
             }
-            event.getToolTip().add(Component.literal("§6Description: §7" + itemId));
+            event.getToolTip().add(Component.literal("§6Description: §7" + descriptionId));
             event.getToolTip().add(Component.literal("§6Tags: "));
             for (TagKey<Item> tag : stack.getTags().toList()) {
                 event.getToolTip().add(Component.literal("§7- " + tag.location().toString()));

@@ -1,7 +1,6 @@
 package net.raynna.raynnarpg;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
@@ -17,7 +16,6 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.raynna.raynnarpg.client.events.ClientBlockEvents;
 import net.raynna.raynnarpg.client.events.ClientItemEvents;
 import net.raynna.raynnarpg.client.ui.SkillsHud;
-import net.raynna.raynnarpg.data.DataRegistry;
 import net.raynna.raynnarpg.server.commands.Commands;
 import net.raynna.raynnarpg.server.events.ServerBlockEvents;
 import net.raynna.raynnarpg.server.events.ServerPlayerEvents;
@@ -32,8 +30,6 @@ class SideProxy implements IProxy {
 
     SideProxy(IEventBus modEventBus) {
         modEventBus.addListener(SideProxy::commonSetup);
-
-
         NeoForge.EVENT_BUS.addListener(SideProxy::serverStarted);
         NeoForge.EVENT_BUS.addListener(SideProxy::serverStopping);
         NeoForge.EVENT_BUS.addListener(Commands::registerAll);
@@ -42,7 +38,6 @@ class SideProxy implements IProxy {
     }
 
     private static void commonSetup(FMLCommonSetupEvent event) {
-        DataRegistry.loadData();
     }
 
     private static void serverStarted(ServerStartedEvent event) {

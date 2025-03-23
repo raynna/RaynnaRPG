@@ -1,15 +1,15 @@
 package net.raynna.raynnarpg.client.events;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
-import net.raynna.raynnarpg.data.BlockData;
-import net.raynna.raynnarpg.data.DataRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.raynna.raynnarpg.data.ToolData;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.silentchaos512.gear.api.item.GearItem;
 import net.silentchaos512.gear.core.component.GearPropertiesData;
@@ -54,40 +53,39 @@ public class ClientBlockEvents {
 
                     String harvestTierByName = properties.get("Harvest Tier");
 
-                    ToolData toolData = DataRegistry.getTool(harvestTierByName);
-                    if (toolData != null) {
-                        if (miningLevel < toolData.getLevelRequirement()) {
+                    Config.ConfigData data = Config.getSilentGearData(harvestTierByName);
+                    if (data != null) {
+                        if (miningLevel < data.getLevel()) {
                             event.setCanceled(true);
                             mc.player.swinging = false;
                             mc.player.resetAttackStrengthTicker();
-                            mc.player.displayClientMessage(Component.literal("You need a mining level of " + toolData.getLevelRequirement() + " in order to use " + toolName + " as a tool."), true);
+                            mc.player.displayClientMessage(Component.literal("You need a mining level of " + data.getLevel() + " in order to use " + toolName + " as a tool."), true);
                             return;
                         }
                     }
                 }
             }
             if (!mainHand.isEmpty()) {
-                ToolData toolData = DataRegistry.getToolByTag(mainHand.getDescriptionId());
-                if (toolData != null) {
-                    if (miningLevel < toolData.getLevelRequirement()) {
+                Config.ConfigData data = Config.getToolData(mainHand);
+                if (data != null) {
+                    if (miningLevel < data.getLevel()) {
                         event.setCanceled(true);
                         mc.player.swinging = false;
                         mc.player.resetAttackStrengthTicker();
-                        mc.player.displayClientMessage(Component.literal("You need a mining level of " + toolData.getLevelRequirement() + " in order to use " + mc.player.getMainHandItem().getHoverName().getString() + " as a tool."), true);
+                        mc.player.displayClientMessage(Component.literal("You need a mining level of " + data.getLevel() + " in order to use " + mainHand.getHoverName().getString() + " as a tool."), true);
                         return;
                     }
                 }
             }
-
-            BlockData blockData = DataRegistry.getDataFromBlock(blockState);
-            if (blockData != null) {
-                int levelReq = blockData.getLevelRequirement();
+            Config.ConfigData data = Config.getMiningData(blockState);
+            if (data != null) {
+                int levelReq = data.getLevel();
                 if (miningLevel < levelReq) {
                     event.setCanceled(true);
                     mc.player.swinging = false;
                     mc.player.resetAttackStrengthTicker();
                     String blockName = blockState.getBlock().getName().toFlatList().getFirst().getString();
-                    mc.player.displayClientMessage(Component.literal("You need a mining level of " + blockData.getLevelRequirement() + " in order to mine " + blockName + "."), true);
+                    mc.player.displayClientMessage(Component.literal("You need a mining level of " + data.getLevel() + " in order to mine " + blockName + "."), true);
                 }
             }
         }

@@ -42,7 +42,7 @@ public class RaynnaRPG
         PROXY = FMLEnvironment.dist == Dist.CLIENT
                 ? new SideProxy.Client(modEventBus, modContainer)
                 : new SideProxy.Server(modEventBus, modContainer);
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.Common.SPEC);
+        modContainer.registerConfig(ModConfig.Type.SERVER, Config.Server.SPEC);
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.Client.SPEC);
         NeoForge.EVENT_BUS.register(this);
 
