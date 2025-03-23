@@ -1,9 +1,6 @@
 package net.raynna.raynnarpg;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
@@ -13,6 +10,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import org.apache.commons.lang3.tuple.Pair;
 
 import static net.raynna.raynnarpg.RaynnaRPG.MOD_ID;
 
@@ -36,7 +34,7 @@ public class Config {
 
 
     public static final class Server {
-        static final ModConfigSpec SPEC;
+        public static final ModConfigSpec SPEC;
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -45,14 +43,18 @@ public class Config {
         }
     }
 
+    public static class ServerConfig {
+        public ServerConfig(ModConfigSpec.Builder builder) {
+            registerConfigs(builder);
+            builder.build();
+        }
+    }
+
     public static final class Client {
         static final ModConfigSpec SPEC;
 
-        private static final ModConfigSpec.BooleanValue MOD_IS_ENABLED_CLIENT;
-
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
-            MOD_IS_ENABLED_CLIENT = builder.comment("Wheather if mod should be enabled or not; DEFAULT: true").define("mod_is_enabled", true);
             registerConfigs(builder);
             SPEC = builder.build();
         }
