@@ -252,7 +252,6 @@ public class Config {
                     CRAFTING_XP.put("minecraft:oak_plank", builder.translation("Plank Xp: ").comment("Configuration on how much oak plank should yield in xp while crafting").comment("Default: " + xp).define("xp", xp));
                     CRAFTING_TAGS.put("minecraft:oak_plank", builder.translation("Plank Tags: ").comment("Default tags: " + tags).define("tags", tags));
                 builder.pop();
-
                 builder.translation("Stick").push("crafting_stick");
                     level = 1;
                     xp = 0.25;
@@ -263,7 +262,7 @@ public class Config {
                 builder.pop();
             builder.pop();
 
-            builder.translation("Iron Materials").push("crafting_iron");
+            builder.translation("Metal Materials").push("crafting_metal");
                 builder.translation("Iron Ingot").push("crafting_iron_ingot");
                     level = 15;
                     xp = 60;
@@ -280,6 +279,24 @@ public class Config {
                     CRAFTING_LEVEL.put("minecraft:copper_ingot", builder.translation("Copper Ingot Level: ").comment("Configuration on what level requirement a copper ingot should have to be able to use it in crafting").comment("Default: " + level).define("level", level));
                     CRAFTING_XP.put("minecraft:copper_ingot", builder.translation("Copper Ingot Xp: ").comment("Configuration on how much copper ingot should yield in xp while crafting").comment("Default: " + xp).define("xp", xp));
                     CRAFTING_TAGS.put("minecraft:copper_ingot", builder.translation("Copper Ingot Tags: ").comment("Default tags: " + tags).define("tags", tags));
+                builder.pop();
+
+                builder.translation("Gold Ingot").push("crafting_gold_ingot");
+                    level = 20;
+                    xp = 80;
+                    tags = List.of("c:ingots/gold");
+                    CRAFTING_LEVEL.put("minecraft:gold_ingot", builder.translation("Gold Ingot Level: ").comment("Configuration on what level requirement a gold ingot should have to be able to use it in crafting").comment("Default: " + level).define("level", level));
+                    CRAFTING_XP.put("minecraft:gold_ingot", builder.translation("Gold Ingot Xp: ").comment("Configuration on how much gold ingot should yield in xp while crafting").comment("Default: " + xp).define("xp", xp));
+                    CRAFTING_TAGS.put("minecraft:gold_ingot", builder.translation("Gold Ingot Tags: ").comment("Default tags: " + tags).define("tags", tags));
+                builder.pop();
+
+                builder.translation("Blaze Gold").push("crafting_blaze_gold");
+                    level = 20;
+                    xp = 140;
+                    tags = List.of("c:ingots/blaze_gold");
+                    CRAFTING_LEVEL.put("silentgear:blaze_gold", builder.translation("Blaze Gold Level: ").comment("Configuration on what level requirement a blaze gold should have to be able to use it in crafting").comment("Default: " + level).define("level", level));
+                    CRAFTING_XP.put("silentgear:blaze_gold", builder.translation("Blaze Gold Xp: ").comment("Configuration on how much blaze gold should yield in xp while crafting").comment("Default: " + xp).define("xp", xp));
+                    CRAFTING_TAGS.put("silentgear:blaze_gold", builder.translation("Blaze Gold Tags: ").comment("Default tags: " + tags).define("tags", tags));
                 builder.pop();
             builder.pop();
 
@@ -302,15 +319,6 @@ public class Config {
                     CRAFTING_LEVEL.put("silentgear:bort", builder.translation("Bort Level: ").comment("Configuration on what level requirement a bort should have to be able to use it in crafting").comment("Default: " + level).define("level", level));
                     CRAFTING_XP.put("silentgear:bort", builder.translation("Bort Xp: ").comment("Configuration on how much bort should yield in xp while crafting").comment("Default: " + xp).define("xp", xp));
                     CRAFTING_TAGS.put("silentgear:bort", builder.translation("Bort Tags: ").comment("Default tags: " + tags).define("tags", tags));
-                builder.pop();
-
-                builder.translation("Gold Ingot").push("crafting_gold_ingot");
-                    level = 20;
-                    xp = 80;
-                    tags = List.of("c:ingots/gold");
-                    CRAFTING_LEVEL.put("minecraft:gold_ingot", builder.translation("Gold Ingot Level: ").comment("Configuration on what level requirement a gold ingot should have to be able to use it in crafting").comment("Default: " + level).define("level", level));
-                    CRAFTING_XP.put("minecraft:gold_ingot", builder.translation("Gold Ingot Xp: ").comment("Configuration on how much gold ingot should yield in xp while crafting").comment("Default: " + xp).define("xp", xp));
-                    CRAFTING_TAGS.put("minecraft:gold_ingot", builder.translation("Gold Ingot Tags: ").comment("Default tags: " + tags).define("tags", tags));
                 builder.pop();
 
                 builder.translation("Diamond").push("crafting_diamond");
@@ -353,17 +361,6 @@ public class Config {
                     CRAFTING_TAGS.put("silentgear:crimson_iron", builder.translation("Crimson Iron Tags: ").comment("Default tags: " + tags).define("tags", tags));
                 builder.pop();
 
-                builder.translation("Blaze Gold").push("crafting_blaze_gold");
-                    level = 20;
-                    xp = 140;
-                    tags = List.of("c:ingots/blaze_gold");
-                    CRAFTING_LEVEL.put("silentgear:blaze_gold", builder.translation("Blaze Gold Level: ").comment("Configuration on what level requirement a blaze gold should have to be able to use it in crafting").comment("Default: " + level).define("level", level));
-                    CRAFTING_XP.put("silentgear:blaze_gold", builder.translation("Blaze Gold Xp: ").comment("Configuration on how much blaze gold should yield in xp while crafting").comment("Default: " + xp).define("xp", xp));
-                    CRAFTING_TAGS.put("silentgear:blaze_gold", builder.translation("Blaze Gold Tags: ").comment("Default tags: " + tags).define("tags", tags));
-                builder.pop();
-            builder.pop();
-
-            builder.translation("Crimson Steel Materials").push("crafting_crimson_steel");
                 builder.translation("Crimson Steel Ingot").push("crafting_crimson_steel_ingot");
                     level = 46;
                     xp = 184;
@@ -372,6 +369,7 @@ public class Config {
                     CRAFTING_XP.put("silentgear:crimson_steel_ingot", builder.translation("Crimson Steel Ingot Xp: ").comment("Configuration on how much crimson steel ingot should yield in xp while crafting").comment("Default: " + xp).define("xp", xp));
                     CRAFTING_TAGS.put("silentgear:crimson_steel_ingot", builder.translation("Crimson Steel Ingot Tags: ").comment("Default tags: " + tags).define("tags", tags));
                 builder.pop();
+
             builder.pop();
 
             builder.translation("Azure Silver Materials").push("crafting_azure_silver");
@@ -421,6 +419,24 @@ public class Config {
                     SMELTING_RAW_MATERIAL.put("minecraft:cooked_salmon", builder.translation("Raw fish id: ").comment("Configuration on what the meats raw versions id is.").define("raw", raw_variant));
                 builder.pop();
 
+                builder.translation("Cooked Cod").push("cooked_cod");
+                    level = 1;
+                    xp = 6;
+                    raw_variant = "minecraft:cod";
+                    SMELTING_LEVEL.put("minecraft:cooked_cod", builder.translation("Cooked Cod Level: ").define("level", level));
+                    SMELTING_XP.put("minecraft:cooked_cod", builder.translation("Cooked Cod XP: ").define("xp", xp));
+                    SMELTING_RAW_MATERIAL.put("minecraft:cooked_cod", builder.translation("Raw cod id: ").define("raw", raw_variant));
+                builder.pop();
+
+                builder.translation("Baked Potato").push("baked_potato");
+                    level = 1;
+                    xp = 6;
+                    raw_variant = "minecraft:potato";
+                    SMELTING_LEVEL.put("minecraft:baked_potato", builder.translation("Baked Potato Level: ").define("level", level));
+                    SMELTING_XP.put("minecraft:baked_potato", builder.translation("Baked Potato XP: ").define("xp", xp));
+                    SMELTING_RAW_MATERIAL.put("minecraft:baked_potato", builder.translation("Raw material id: ").define("raw", raw_variant));
+                builder.pop();
+
                 builder.translation("Beef").push("cooking_beef");
                     level = 1;
                     xp = 6;
@@ -456,6 +472,7 @@ public class Config {
                     SMELTING_XP.put("minecraft:cooked_rabbit", builder.translation("Rabbit XP: ").define("xp", xp));
                     SMELTING_RAW_MATERIAL.put("minecraft:cooked_rabbit", builder.translation("Raw rabbit id: ").define("raw", raw_variant));
                 builder.pop();
+
             builder.pop();
 
             builder.translation("Materials").push("smelting_materials");
@@ -466,24 +483,6 @@ public class Config {
                     SMELTING_LEVEL.put("minecraft:charcoal", builder.translation("Charcoal Level: ").define("level", level));
                     SMELTING_XP.put("minecraft:charcoal", builder.translation("Charcoal XP: ").define("xp", xp));
                     SMELTING_RAW_MATERIAL.put("minecraft:charcoal", builder.translation("Raw material id: ").define("raw", raw_variant));
-                builder.pop();
-
-                builder.translation("Baked Potato").push("baked_potato");
-                    level = 1;
-                    xp = 6;
-                    raw_variant = "minecraft:potato";
-                    SMELTING_LEVEL.put("minecraft:baked_potato", builder.translation("Baked Potato Level: ").define("level", level));
-                    SMELTING_XP.put("minecraft:baked_potato", builder.translation("Baked Potato XP: ").define("xp", xp));
-                    SMELTING_RAW_MATERIAL.put("minecraft:baked_potato", builder.translation("Raw material id: ").define("raw", raw_variant));
-                builder.pop();
-
-                builder.translation("Cooked Cod").push("cooked_cod");
-                    level = 1;
-                    xp = 6;
-                    raw_variant = "minecraft:cod";
-                    SMELTING_LEVEL.put("minecraft:cooked_cod", builder.translation("Cooked Cod Level: ").define("level", level));
-                    SMELTING_XP.put("minecraft:cooked_cod", builder.translation("Cooked Cod XP: ").define("xp", xp));
-                    SMELTING_RAW_MATERIAL.put("minecraft:cooked_cod", builder.translation("Raw cod id: ").define("raw", raw_variant));
                 builder.pop();
 
                 builder.translation("Glass").push("glass");
@@ -592,12 +591,12 @@ public class Config {
             builder.translation("Wood").comment("Wooden tools").push("wood");
                 level = 1;
                 SILENT_GEAR_TOOLS.put("wood",
-                builder.translation("Silentgear Wooden tools level requirement: ")
+                builder.translation("[Silentgear] Wooden Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Wooden tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
                 TOOLS.put("minecraft:wooden_pickaxe",
-                builder.translation("Minecraft Wooden tools level requirement: ")
+                builder.translation("[Minecraft] Wooden Tool Lvl")
                         .comment("Configurations for level requirements for Minecraft Wooden tools")
                         .comment("Default: " + level)
                         .define("[MINECRAFT] level", level));
@@ -606,12 +605,12 @@ public class Config {
             builder.translation("Stone").comment("Stone tools").push("STONE");
                 level = 5;
                 SILENT_GEAR_TOOLS.put("stone",
-                builder.translation("[SilentGear] Stone Level Requirement: ")
+                builder.translation("[Silentgear] Stone Tool Lvl")
                         .comment("Configurations for level requirements for Silent gears Stone tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
                 TOOLS.put("minecraft:stone_pickaxe",
-                builder.translation("[Minecraft] Stone Level Requirement: ")
+                builder.translation("[Minecraft] Stone Tool Lvl")
                         .comment("Configurations for level requirements for Minecraft Stone tools")
                         .comment("Default: " + level)
                         .define("[MINECRAFT] level", level));
@@ -620,7 +619,7 @@ public class Config {
             builder.translation("Terracotta").comment("Terracotta tools").push("TERRACOTTA");
                 level = 4;
                 SILENT_GEAR_TOOLS.put("terracotta",
-                builder.translation("Silentgear Terracotta tools level requirement: ")
+                builder.translation("[Silentgear] Terracotta Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Terracotta tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
@@ -629,7 +628,7 @@ public class Config {
             builder.translation("Flint").comment("Flint tools").push("FLINT");
                 level = 7;
                 SILENT_GEAR_TOOLS.put("flint",
-                builder.translation("Silentgear Flint tools level requirement: ")
+                builder.translation("[Silentgear] Flint Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Flint tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
@@ -638,12 +637,12 @@ public class Config {
             builder.translation("Copper").comment("Copper tools").push("COPPER");
                 level = 10;
                 SILENT_GEAR_TOOLS.put("copper",
-                builder.translation("Silentgear Copper tools level requirement: ")
+                builder.translation("[Silentgear] Copper Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Copper tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
                 TOOLS.put("minecraft:copper_pickaxe",
-                builder.translation("Minecraft Copper tools level requirement: ")
+                builder.translation("[Minecraft] Copper Tool Lvl")
                         .comment("Configurations for level requirements for Minecraft Copper tools")
                         .comment("Default: " + level)
                         .define("[MINECRAFT] level", level));
@@ -653,13 +652,13 @@ public class Config {
                 level = 15;
 
                 SILENT_GEAR_TOOLS.put("iron",
-                builder.translation("Silentgear Iron tools level requirement: ")
+                builder.translation("[Silentgear] Iron Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Iron tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
 
                 TOOLS.put("minecraft:iron_pickaxe",
-                builder.translation("Minecraft Iron tools level requirement: ")
+                builder.translation("[Minecraft] Stone Tool Lvl")
                         .comment("Configurations for level requirements for Minecraft Iron tools")
                         .comment("Default: " + level)
                         .define("[MINECRAFT] level", level));
@@ -670,12 +669,12 @@ public class Config {
             builder.translation("Bronze").comment("Bronze tools").push("BRONZE");
                 //level = 15
                 SILENT_GEAR_TOOLS.put("bronze",
-                builder.translation("Silentgear Bronze tools level requirement: ")
+                builder.translation("[Silentgear] Bronze Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Bronze tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
                 TOOLS.put("minecraft:bronze_pickaxe",
-                builder.translation("Minecraft Bronze tools level requirement: ")
+                builder.translation("[Minecraft] Stone Tool Lvl")
                         .comment("Configurations for level requirements for Minecraft Bronze tools")
                         .comment("Default: " + level)
                         .define("[MINECRAFT] level", level));
@@ -684,12 +683,12 @@ public class Config {
             builder.translation("Gold").comment("Gold tools").push("GOLD");
                 //level = 15;
                 SILENT_GEAR_TOOLS.put("gold",
-                builder.translation("Silentgear Gold tools level requirement: ")
+                builder.translation("[Silentgear] Gold Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Gold tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
                 TOOLS.put("minecraft:golden_pickaxe",
-                builder.translation("Minecraft Gold tools level requirement: ")
+                builder.translation("[Minecraft] Gold Tool Lvl")
                         .comment("Configurations for level requirements for Minecraft Gold tools")
                         .comment("Default: " + level)
                         .define("[MINECRAFT] level", level));
@@ -698,7 +697,7 @@ public class Config {
             builder.translation("Blaze Gold").comment("Blaze Gold tools").push("BLAZE_GOLD");
                 level = 20;
                 SILENT_GEAR_TOOLS.put("blaze_gold",
-                builder.translation("Silentgear Blaze Gold tools level requirement: ")
+                builder.translation("[Silentgear] Blaze Gold Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Blaze Gold tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
@@ -707,7 +706,7 @@ public class Config {
             builder.translation("Emerald").comment("Emerald tools").push("EMERALD");
                 level = 25;
                 SILENT_GEAR_TOOLS.put("emerald",
-                builder.translation("Silentgear Emerald tools level requirement: ")
+                builder.translation("[Silentgear] Emerald Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Emerald tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
@@ -716,12 +715,12 @@ public class Config {
             builder.translation("Diamond").comment("Diamond tools").push("DIAMOND");
                 level = 30;
                 SILENT_GEAR_TOOLS.put("diamond",
-                builder.translation("Silentgear Diamond tools level requirement: ")
+                builder.translation("[Silentgear] Diamond Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Diamond tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
                 TOOLS.put("minecraft:diamond_pickaxe",
-                builder.translation("Minecraft Diamond tools level requirement: ")
+                builder.translation("[Minecraft] Diamond Tool Lvl")
                         .comment("Configurations for level requirements for Minecraft Diamond tools")
                         .comment("Default: " + level)
                         .define("[MINECRAFT] level", level));
@@ -730,7 +729,7 @@ public class Config {
             builder.translation("Dimerald").comment("Dimerald tools").push("DIMERALD");
                 level = 32;
                 SILENT_GEAR_TOOLS.put("dimerald",
-                builder.translation("Silentgear Dimerald tools level requirement: ")
+                builder.translation("[Silentgear] Dimerald Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Dimerald tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
@@ -739,12 +738,12 @@ public class Config {
             builder.translation("Netherite").comment("Netherite tools").push("NETHERITE");
                 level = 40;
                 SILENT_GEAR_TOOLS.put("netherite",
-                builder.translation("Silentgear Netherite tools level requirement: ")
+                builder.translation("[Silentgear] Netherite Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Netherite tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
                 TOOLS.put("minecraft:netherite_pickaxe",
-                builder.translation("Minecraft Netherite tools level requirement: ")
+                builder.translation("[Minecraft] Netherite Tool Lvl")
                         .comment("Configurations for level requirements for Minecraft Netherite tools")
                         .comment("Default: " + level)
                         .define("[MINECRAFT] level", level));
@@ -753,7 +752,7 @@ public class Config {
             builder.translation("Crimson Iron").comment("Crimson Iron tools").push("CRIMSON_IRON");
                 level = 43;
                 SILENT_GEAR_TOOLS.put("crimson_iron",
-                builder.translation("Silentgear Crimson Iron tools level requirement: ")
+                builder.translation("[Silentgear] Crimson Iron Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Crimson Iron tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
@@ -762,7 +761,7 @@ public class Config {
             builder.translation("Crimson Steel").comment("Crimson Steel tools").push("CRIMSON_STEEL");
                 level = 46;
                 SILENT_GEAR_TOOLS.put("crimson_steel",
-                builder.translation("Silentgear Crimson Steel tools level requirement: ")
+                builder.translation("[Silentgear] Crimson Steel Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Crimson Steel tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
@@ -771,7 +770,7 @@ public class Config {
             builder.translation("Azure Silver").comment("Azure Silver tools").push("AZURE_SILVER");
                 level = 48;
                 SILENT_GEAR_TOOLS.put("azure_silver",
-                builder.translation("Silentgear Azure Silver tools level requirement: ")
+                builder.translation("[Silentgear] Azure Silver Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Azure Silver tools").
                         comment("Default: " + level).
                         define("[SILENTGEAR] level", level));
@@ -780,7 +779,7 @@ public class Config {
             builder.translation("Azure Electrum").comment("Azure Electrum tools").push("AZURE_ELECTRUM");
                 level = 49;
                 SILENT_GEAR_TOOLS.put("azure_electrum",
-                builder.translation("Silentgear Azure Electrum tools level requirement: ")
+                builder.translation("[Silentgear] Azure Electrum Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Azure Electrum tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
@@ -789,7 +788,7 @@ public class Config {
             builder.translation("Tyrian Steel").comment("Tyrian Steel tools").push("TYRIAN_STEEL");
                 level = 50;
                 SILENT_GEAR_TOOLS.put("tyrian_steel",
-                builder.translation("Silentgear Tyrian Steel tools level requirement: ")
+                builder.translation("[Silentgear] Tyrian Steel Tool Lvl")
                         .comment("Configurations for level requirements for Silentgear Tyrian Steel tools")
                         .comment("Default: " + level)
                         .define("[SILENTGEAR] level", level));
