@@ -1,4 +1,4 @@
-package net.raynna.raynnarpg.server.utils;
+package net.raynna.raynnarpg.utils;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -34,5 +34,10 @@ public class Utils {
             }
         }
         return itemName;
+    }
+
+    public static String capitalize(String text) {
+        if (text == null || text.isEmpty()) return text;
+        return text.substring(0, 1).toUpperCase() + text.substring(1);
     }
 }

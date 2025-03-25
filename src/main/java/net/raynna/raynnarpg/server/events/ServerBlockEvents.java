@@ -1,6 +1,7 @@
 package net.raynna.raynnarpg.server.events;
 
-import net.raynna.raynnarpg.Config;
+import net.raynna.raynnarpg.config.ConfigData;
+import net.raynna.raynnarpg.config.mining.MiningConfig;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
@@ -23,7 +24,7 @@ public class ServerBlockEvents {
         if (event.getPlayer() instanceof ServerPlayer player) {
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
             Skill mining = progress.getSkills().getSkill(SkillType.MINING);
-            Config.ConfigData data = Config.getMiningData(blockState);
+            ConfigData data = MiningConfig.getMiningData(blockState);
             if (data != null) {
                 int miningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
                 int levelReq = data.getLevel();

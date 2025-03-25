@@ -1,4 +1,4 @@
-package net.raynna.raynnarpg.server.utils;
+package net.raynna.raynnarpg.utils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;

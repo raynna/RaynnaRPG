@@ -1,5 +1,3 @@
 {
-  "itemGroup.raynnarpg": "Example Mod Tab",
-  "block.raynnarpg.example_block": "Example Block",
-  "item.raynnarpg.example_item": "Example Item"
+  "raynnarpg.configuration.stick": "Stick"
 }

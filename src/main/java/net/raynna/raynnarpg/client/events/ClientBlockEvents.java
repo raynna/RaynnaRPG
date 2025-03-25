@@ -1,13 +1,11 @@
 package net.raynna.raynnarpg.client.events;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.minecraft.client.Minecraft;
@@ -17,6 +15,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.raynna.raynnarpg.config.ConfigData;
+import net.raynna.raynnarpg.config.mining.MiningConfig;
+import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.silentchaos512.gear.api.item.GearItem;
 import net.silentchaos512.gear.core.component.GearPropertiesData;
@@ -52,8 +53,7 @@ public class ClientBlockEvents {
                     });
 
                     String harvestTierByName = properties.get("Harvest Tier");
-
-                    Config.ConfigData data = Config.getSilentGearData(harvestTierByName);
+                    ConfigData data = ToolConfig.getSilentGearData(harvestTierByName);
                     if (data != null) {
                         if (miningLevel < data.getLevel()) {
                             event.setCanceled(true);
@@ -66,7 +66,7 @@ public class ClientBlockEvents {
                 }
             }
             if (!mainHand.isEmpty()) {
-                Config.ConfigData data = Config.getToolData(mainHand);
+                ConfigData data = ToolConfig.getToolData(mainHand);
                 if (data != null) {
                     if (miningLevel < data.getLevel()) {
                         event.setCanceled(true);
@@ -77,7 +77,7 @@ public class ClientBlockEvents {
                     }
                 }
             }
-            Config.ConfigData data = Config.getMiningData(blockState);
+            ConfigData data = MiningConfig.getMiningData(blockState);
             if (data != null) {
                 int levelReq = data.getLevel();
                 if (miningLevel < levelReq) {

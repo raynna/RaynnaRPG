@@ -13,8 +13,8 @@ import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.server.player.skills.Skills;
-import net.raynna.raynnarpg.server.utils.Colour;
-import net.raynna.raynnarpg.server.utils.MessageSender;
+import net.raynna.raynnarpg.utils.Colour;
+import net.raynna.raynnarpg.utils.MessageSender;
 
 public class SetLevelCommand {
 

@@ -1,20 +1,17 @@
 package net.raynna.raynnarpg.server.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
-import net.raynna.raynnarpg.network.packets.skills.SkillsPacketSender;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
-import net.raynna.raynnarpg.server.utils.Colour;
-import net.raynna.raynnarpg.server.utils.MessageSender;
-import net.raynna.raynnarpg.server.utils.Utils;
+import net.raynna.raynnarpg.utils.Colour;
+import net.raynna.raynnarpg.utils.MessageSender;
+import net.raynna.raynnarpg.utils.Utils;
 
 import static net.raynna.raynnarpg.RaynnaRPG.MOD_NAME;
 

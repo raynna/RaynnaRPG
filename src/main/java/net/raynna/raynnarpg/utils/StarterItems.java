@@ -1,4 +1,4 @@
-package net.raynna.raynnarpg.server.utils;
+package net.raynna.raynnarpg.utils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -7,7 +7,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.silentchaos512.gear.setup.SgItems;
-import net.silentchaos512.gear.setup.SgTags;
 
 import java.util.List;
 

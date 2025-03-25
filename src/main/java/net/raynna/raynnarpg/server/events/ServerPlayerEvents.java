@@ -11,8 +11,10 @@ import net.minecraft.world.inventory.SmokerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
-import net.raynna.raynnarpg.Config;
-import net.raynna.raynnarpg.data.*;
+import net.raynna.raynnarpg.config.ConfigData;
+import net.raynna.raynnarpg.config.crafting.CraftingConfig;
+import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
+import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
@@ -30,7 +32,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
-import net.raynna.raynnarpg.server.utils.CraftingTracker;
+import net.raynna.raynnarpg.utils.CraftingTracker;
 import net.silentchaos512.gear.api.item.GearItem;
 import net.silentchaos512.gear.core.component.GearPropertiesData;
 import net.silentchaos512.gear.util.GearData;
@@ -106,7 +108,7 @@ public class ServerPlayerEvents {
                         properties.put(key.getDisplayName().getString(), value.toString());
                     });
                     String harvestTierByName = properties.get("Harvest Tier");
-                    Config.ConfigData data = Config.getSilentGearData(harvestTierByName);
+                    ConfigData data = ToolConfig.getSilentGearData(harvestTierByName);
                     if (data != null) {
                         if (miningLevel < data.getLevel()) {
                             event.setCanceled(true);
@@ -117,7 +119,7 @@ public class ServerPlayerEvents {
                 }
             }
 
-            Config.ConfigData data = Config.getToolData(mainHand);
+            ConfigData data = ToolConfig.getToolData(mainHand);
             if (data != null) {
                 int playerMiningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
                 String toolName = player.getMainHandItem().getHoverName().getString();
@@ -142,7 +144,7 @@ public class ServerPlayerEvents {
                 ItemStack inputItem = furnaceMenu.getSlot(INPUT_SLOT).getItem();
                 ItemStack fuelItem = furnaceMenu.getSlot(FUEL_SLOT).getItem();
                 String smeltingItemName = event.getSmelting().getHoverName().getString();
-                Config.ConfigData data = Config.getSmeltingData(event.getSmelting());
+                ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
                 if (data != null) {
                     int requiredLevel = data.getLevel();
                     if (smeltingLevel < requiredLevel) {
@@ -189,7 +191,7 @@ public class ServerPlayerEvents {
                 ItemStack inputItem = furnaceMenu.getSlot(INPUT_SLOT).getItem();
                 ItemStack fuelItem = furnaceMenu.getSlot(FUEL_SLOT).getItem();
                 String smeltingItemName = event.getSmelting().getHoverName().getString();
-                Config.ConfigData data = Config.getSmeltingData(event.getSmelting());
+                ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
                 if (data != null) {
                     int requiredLevel = data.getLevel();
                     if (smeltingLevel < requiredLevel) {
@@ -236,7 +238,7 @@ public class ServerPlayerEvents {
                 ItemStack inputItem = furnaceMenu.getSlot(INPUT_SLOT).getItem();
                 ItemStack fuelItem = furnaceMenu.getSlot(FUEL_SLOT).getItem();
                 String smeltingItemName = event.getSmelting().getHoverName().getString();
-                Config.ConfigData data = Config.getSmeltingData(event.getSmelting());
+                ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
                 if (data != null) {
                     int requiredLevel = data.getLevel();
                     if (smeltingLevel < requiredLevel) {
@@ -305,11 +307,11 @@ public class ServerPlayerEvents {
                     String materialId = materialStack.getDescriptionId();
                     String materialName = materialStack.getHoverName().getString();
                     uniqueMaterials.add(materialName);
-                    Config.ConfigData configData = Config.getCraftingData(materialStack);
-                    if (configData.getXp() == 0) {
+                    ConfigData data = CraftingConfig.getCraftingData(materialStack);
+                    if (data == null) {
                         continue;
                     }
-                    int requiredLevel = configData.getLevel();
+                    int requiredLevel = data.getLevel();
                     if (playerCraftingLevel < requiredLevel) {
                         craftingBlocked = true;
                         serverPlayer.sendSystemMessage(Component.literal("You need a " + crafting.getType().getName() + " level of " + requiredLevel + " in order to use " + materialStack.getHoverName().getString() + " in crafting."));
@@ -323,7 +325,7 @@ public class ServerPlayerEvents {
                         event.getCrafting().setCount(0);
                         return;
                     }
-                    totalBaseExperience += configData.getXp();
+                    totalBaseExperience += data.getXp();
                 }
                 if (craftingBenchFull && uniqueMaterials.size() == 1 && totalSlotsUsed > 4) {
                     craftingBlocked = true;

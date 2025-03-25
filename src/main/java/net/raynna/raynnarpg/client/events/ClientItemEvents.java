@@ -1,46 +1,30 @@
 package net.raynna.raynnarpg.client.events;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransform;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
-import net.raynna.raynnarpg.data.*;
-import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
+import net.raynna.raynnarpg.config.*;
+import net.raynna.raynnarpg.config.crafting.CraftingConfig;
+import net.raynna.raynnarpg.config.mining.MiningConfig;
+import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
+import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.silentchaos512.gear.api.item.GearItem;
 import net.silentchaos512.gear.core.component.GearPropertiesData;
 import net.silentchaos512.gear.util.GearData;
-import org.apache.logging.log4j.core.jmx.Server;
 import org.lwjgl.glfw.GLFW;
 
-import javax.xml.crypto.Data;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +45,7 @@ public class ClientItemEvents {
         List<Component> toolTips = event.getToolTip();
         AtomicInteger insertIndex = new AtomicInteger(1);
         ClientSkills skills = new ClientSkills(mc.player);
-        Config.ConfigData data = Config.getMiningData(stack);
+        ConfigData data = MiningConfig.getMiningData(stack);
         int levelReq;
         double xp;
         if (data != null) {
@@ -83,7 +67,7 @@ public class ClientItemEvents {
             }
             tooltip.put("Mining", miningText.toString());
         }
-       data = Config.getCraftingData(stack);
+       data = CraftingConfig.getCraftingData(stack);
         if (data != null) {
             int craftingLevel = skills.getSkillLevel(SkillType.CRAFTING);
             levelReq = data.getLevel();
@@ -101,7 +85,7 @@ public class ClientItemEvents {
             tooltip.put("Crafting", craftingText.toString());
         }
 
-        data = Config.getSmeltingData(stack);
+        data = SmeltingConfig.getSmeltingData(stack);
         if (data != null) {
             int smeltingLevel = skills.getSkillLevel(SkillType.SMELTING);
             levelReq = data.getLevel();
@@ -126,7 +110,7 @@ public class ClientItemEvents {
                     properties.put(key.getDisplayName().getString(), value.toString());
                 });
                 String harvestTierByName = properties.get("Harvest Tier");
-                data = Config.getSilentGearData(harvestTierByName);
+                data = ToolConfig.getSilentGearData(harvestTierByName);
                 if (data != null) {
                     levelReq = data.getLevel();
                     StringBuilder toolText = new StringBuilder();
@@ -146,7 +130,7 @@ public class ClientItemEvents {
                 }
             }
         }
-        data = Config.getToolData(stack);
+        data = ToolConfig.getToolData(stack);
         if (data != null) {
             StringBuilder toolText = new StringBuilder();
             levelReq = data.getLevel();

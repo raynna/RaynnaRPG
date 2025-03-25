@@ -1,10 +1,9 @@
-package net.raynna.raynnarpg.server.utils;
+package net.raynna.raynnarpg.utils;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
-import net.raynna.raynnarpg.server.player.progress.Progress;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 
 import java.util.HashMap;
