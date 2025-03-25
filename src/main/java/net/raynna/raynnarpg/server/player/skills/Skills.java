@@ -80,6 +80,18 @@ public class Skills {
         return (long) Math.floor(totalXP / 2);
     }
 
+    public static double getXpForMaterial(int level, SkillType type) {
+        double baseXp = 1;
+        if (type == SkillType.MINING)
+            baseXp = 3;
+        if (type == SkillType.SMELTING)
+            baseXp = 6;
+        if (type == SkillType.CRAFTING)
+            baseXp = 3;
+        double xpIncreaseFactor = 1.12;
+        return baseXp * Math.pow(xpIncreaseFactor, level - 1);
+    }
+
     public Skill getSkill(SkillType type) {
         return skills.get(type);
     }

@@ -5,6 +5,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.raynna.raynnarpg.config.ConfigData;
+import net.raynna.raynnarpg.server.player.skills.SkillType;
+import net.raynna.raynnarpg.server.player.skills.Skills;
 import net.raynna.raynnarpg.utils.RegistryUtils;
 import net.raynna.raynnarpg.utils.Utils;
 
@@ -31,6 +33,9 @@ public class MiningConfig {
     public static void registerConfig(ModConfigSpec.Builder builder, String key, int level, double xp, String... tags) {
         String item = key.contains(":") ? key.split(":")[1] : key;
         String name = Utils.capitalize(item).replace("_", " ");
+        if (xp == 0) {
+            xp = Skills.getXpForMaterial(level, SkillType.MINING);
+        }
         ModConfigSpec.ConfigValue<Integer> levelValue = builder.translation(name + " Level: ")
                 .comment("Config on mining level requirement for " + name + ".")
                 .comment("Default: " + level)
