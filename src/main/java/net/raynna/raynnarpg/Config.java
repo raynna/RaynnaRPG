@@ -90,13 +90,22 @@ public class Config {
         public static void registerCraftingConfigs(ModConfigSpec.Builder builder) {
             boolean hasSilentGear = ModList.get().isLoaded("silentgear");
             ConfigRegister.registerCategory(builder, "crafting_config", "Crafting", "Settings for Crafting", () -> {
-                List<CraftingEntry> wood = new ArrayList<>();
 
                 //Wood
+                List<CraftingEntry> wood = new ArrayList<>();
                 wood.add(new CraftingEntry("minecraft:logs", 1, 4.0, "minecraft:logs"));
                 wood.add(new CraftingEntry("minecraft:planks", 1, 1.0, "minecraft:planks"));
                 wood.add(new CraftingEntry("minecraft:stick", 1, 0.25, "c:rods/wooden"));
                 CraftingConfig.registerMultipleConfigs(builder, "crafting_wood_materials", "Wood", wood);
+
+                //Stone
+                List<CraftingEntry> stone = new ArrayList<>();
+                stone.add(new CraftingEntry("minecraft:slabs", 1, 4.0, "minecraft:slabs"));
+                stone.add(new CraftingEntry("minecraft:terracotta", 4, 16.0, "minecraft:terracotta"));
+                stone.add(new CraftingEntry("minecraft:stone", 5, 20.0, "c:stones", "stone_bricks"));
+                stone.add(new CraftingEntry("minecraft:cobblestone", 5, 20.0, "c:cobblestones", "minecraft:stone_crafting_materials"));
+                stone.add(new CraftingEntry("minecraft:stick", 1, 0.25, "c:rods/wooden"));
+                CraftingConfig.registerMultipleConfigs(builder, "crafting_stone_materials", "Stone", stone);
 
                 //Metals
                 List<CraftingEntry> metals = new ArrayList<>();
