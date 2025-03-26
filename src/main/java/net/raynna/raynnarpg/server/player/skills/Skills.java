@@ -50,6 +50,7 @@ public class Skills {
                 return;
             }
             skill.addXp(xp);
+            skill.setXp(Math.round(skill.getXp() * 100.0) / 100.0);//round the xp to 2 decimals
             int newLevel = getLevelForXp(skill.getXp());
             if (newLevel > oldLevel) {
                 skill.setLevel(newLevel);
@@ -89,7 +90,9 @@ public class Skills {
         if (type == SkillType.CRAFTING)
             baseXp = 3;
         double xpIncreaseFactor = 1.12;
-        return baseXp * Math.pow(xpIncreaseFactor, level - 1);
+        double xp = baseXp * Math.pow(xpIncreaseFactor, level - 1);
+
+        return Math.round(xp * 100.0) / 100.0;
     }
 
     public Skill getSkill(SkillType type) {

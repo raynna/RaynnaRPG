@@ -181,8 +181,9 @@ public class ServerPlayerEvents {
                     int smeltedAmount = event.getSmelting().getCount();
                     String itemName = event.getSmelting().getHoverName().getString();
                     double totalExperience = baseExperience * smeltedAmount;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, totalExperience, smithing.getType(), () -> {
-                        progress.getSkills().addXp(SkillType.SMELTING, totalExperience);
+                    double roundedXp = Math.round(totalExperience * 100.0) / 100.0;
+                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, roundedXp, smithing.getType(), () -> {
+                        progress.getSkills().addXp(SkillType.SMELTING, roundedXp);
                     });
                 }
             }
@@ -228,8 +229,9 @@ public class ServerPlayerEvents {
                     int smeltedAmount = event.getSmelting().getCount();
                     String itemName = event.getSmelting().getHoverName().getString();
                     double totalExperience = baseExperience * smeltedAmount;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, totalExperience, smithing.getType(), () -> {
-                        progress.getSkills().addXp(SkillType.SMELTING, totalExperience);
+                    double roundedXp = Math.round(totalExperience * 100.0) / 100.0;
+                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, roundedXp, smithing.getType(), () -> {
+                        progress.getSkills().addXp(SkillType.SMELTING, roundedXp);
                     });
                 }
             }
@@ -275,8 +277,9 @@ public class ServerPlayerEvents {
                     int smeltedAmount = event.getSmelting().getCount();
                     String itemName = event.getSmelting().getHoverName().getString();
                     double totalExperience = baseExperience * smeltedAmount;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, totalExperience, smithing.getType(), () -> {
-                        progress.getSkills().addXp(SkillType.SMELTING, totalExperience);
+                    double roundedXp = Math.round(totalExperience * 100.0) / 100.0;
+                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, roundedXp, smithing.getType(), () -> {
+                        progress.getSkills().addXp(SkillType.SMELTING, roundedXp);
                     });
                 }
             }
@@ -332,10 +335,10 @@ public class ServerPlayerEvents {
                 }
                 if (!craftingBlocked) {
                     String itemName = event.getCrafting().getHoverName().getString();
-                    double totalExperience = totalBaseExperience;
+                    double roundedXp = Math.round(totalBaseExperience * 100.0) / 100.0;
                     int itemsCreated = event.getCrafting().getCount();
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, itemsCreated, totalExperience, crafting.getType(), () -> {
-                        progress.getSkills().addXp(SkillType.CRAFTING, totalExperience);
+                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, itemsCreated, roundedXp, crafting.getType(), () -> {
+                        progress.getSkills().addXp(SkillType.CRAFTING, roundedXp);
                     });
                 }
             }

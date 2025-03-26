@@ -51,7 +51,7 @@ public class Config {
 
                 List<SmeltingEntry> metals = new ArrayList<>();
                 metals.add(new SmeltingEntry("minecraft:copper_ingot", 10, "minecraft:raw_copper"));
-                metals.add(new SmeltingEntry("minecraft:iron_ingot", 20, "minecraft:raw_iron"));
+                metals.add(new SmeltingEntry("minecraft:iron_ingot", 15, "minecraft:raw_iron"));
                 metals.add(new SmeltingEntry("minecraft:gold_ingot", 25, "minecraft:raw_gold"));
                 metals.add(new SmeltingEntry("minecraft:diamond", 30, "minecraft:diamond_ore"));
                 metals.add(new SmeltingEntry("minecraft:netherite_scrap", 40, "minecraft:ancient_debris"));
@@ -100,7 +100,7 @@ public class Config {
                 metals.add(new CraftingEntry("minecraft:netherite_ingot", 40, "c:ingots/netherite"));
                 metals.add(new CraftingEntry("minecraft:netherite_scrap", 40, "c:ingots/netherite"));
                 if (hasSilentGear) {
-                    metals.add(new CraftingEntry("silentgear:blaze_gold", 20, "c:ingots/blaze_gold"));
+                    metals.add(new CraftingEntry("silentgear:blaze_gold", 25, "c:ingots/blaze_gold"));
                     metals.add(new CraftingEntry("silentgear:crimson_iron", 43, "c:ingots/crimson_iron"));
                     metals.add(new CraftingEntry("silentgear:crimson_steel_ingot", 46, "c:ingots/crimson_steel"));
                     metals.add(new CraftingEntry("silentgear:azure_silver_ingot", 48, "c:ingots/azure_silver"));
@@ -111,6 +111,7 @@ public class Config {
 
                 //Coal/Misc?
                 List<CraftingEntry> misc = new ArrayList<>();
+                misc.add(new CraftingEntry("minecraft:wheat", 1, 1.0, "c:crops"));
                 misc.add(new CraftingEntry("minecraft:coal_block", 3, "minecraft:coals"));
                 CraftingConfig.registerMultipleConfigs(builder, "crafting_misc_materials", "Misc", misc);
 
@@ -237,7 +238,7 @@ public class Config {
                     ToolConfig.registerMultipleConfigs(builder, "copper_tools", "Copper Tools", copperTools);
                     // Blaze Gold Tools
                     List<ToolEntry> blazeGoldTools = new ArrayList<>();
-                    blazeGoldTools.add(new ToolEntry("blaze_gold", 20, true));
+                    blazeGoldTools.add(new ToolEntry("blaze_gold", 25, true));
                     ToolConfig.registerMultipleConfigs(builder, "blaze_gold_tools", "Blaze Gold Tools", blazeGoldTools);
 
 
@@ -326,7 +327,7 @@ public class Config {
 
                 // Stones
                 List<MiningEntry> stones = new ArrayList<>();
-                stones.add(new MiningEntry("minecraft:stone", 1, "minecraft:stones", "end_stones", "c:cobblestones"));
+                stones.add(new MiningEntry("minecraft:stone", 1, "minecraft:stones", "end_stones", "c:cobblestones", "c:stones"));
                 stones.add(new MiningEntry("minecraft:stone_bricks", 2, "minecraft:stone_bricks"));
                 stones.add(new MiningEntry("minecraft:terracotta", 4, "minecraft:terracotta"));
                 MiningConfig.registerMultipleConfigs(builder, "mining_stone_ores", "Stone", stones);
