@@ -38,18 +38,19 @@ public class CraftingTracker {
     private static void sendCraftingSummary(ServerPlayer player, SkillType type) {
         CraftingTracker tracker = craftingData.get(player);
         if (tracker != null && tracker.shouldSendMessage()) {
+            double roundedXp = Math.round(tracker.getTotalExperience() * 100.0) / 100.0;
             if (tracker.getCraftedAmount() > 1) {
                 player.sendSystemMessage(Component.literal("You gained "
-                        + tracker.getTotalExperience() + " experience for creating "
+                        + roundedXp + " experience for creating "
                         + tracker.getCraftedAmount() + " x " + tracker.getItemName() + "'s."));
             } else {
                 player.sendSystemMessage(Component.literal("You gained "
-                        + tracker.getTotalExperience() + " experience for creating one " + tracker.getItemName() + "."));
+                        + roundedXp + " experience for creating one " + tracker.getItemName() + "."));
             }
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
-            double totalExp = tracker.getTotalExperience();
             double currentXp = progress.getSkills().getSkill(type).getXp();
-            double combinedXp = (currentXp + totalExp);
+            double combinedXp = (currentXp + roundedXp);
+            combinedXp = Math.round(combinedXp * 100.0) / 100.0;
             MessageSender.send(player, "You currently have " + combinedXp + " experiece in " + type.getName() + ".");
             craftingData.remove(player);
         }
