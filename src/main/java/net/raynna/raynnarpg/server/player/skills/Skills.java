@@ -10,6 +10,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.raynna.raynnarpg.network.packets.skills.SkillsPacketSender;
 import net.raynna.raynnarpg.network.packets.toasts.CustomToastPacketSender;
+import net.raynna.raynnarpg.server.player.PlayerProgress;
+import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
+import net.raynna.raynnarpg.server.player.playerdata.PlayerDataStorage;
 import net.raynna.raynnarpg.utils.Colour;
 import net.raynna.raynnarpg.utils.MessageSender;
 
@@ -138,9 +141,15 @@ public class Skills {
 
         String maxedMessage = playerName + " achieved the highest level possible in " + skillName + "!";
 
-        MessageSender.sendAllButSelf(player, levelUpMessage, Colour.DARK_GREEN);
+        MessageSender.sendAllButSelf(player, levelUpMessage, Colour.YELLOW);
         if (reachedMax) {
             MessageSender.sendAllButSelf(player, maxedMessage, Colour.GOLD);
+        }
+        if (player != null) {
+            PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+            progress.toNBT();
+            PlayerDataStorage storage = PlayerDataProvider.getData((ServerLevel) player.level());
+            storage.markDirty();
         }
     }
 
