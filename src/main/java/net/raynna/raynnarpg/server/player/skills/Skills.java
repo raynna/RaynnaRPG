@@ -1,9 +1,17 @@
 package net.raynna.raynnarpg.server.player.skills;
 
+import ca.weblite.objc.Message;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.raynna.raynnarpg.network.packets.skills.SkillsPacketSender;
+import net.raynna.raynnarpg.network.packets.toasts.CustomToastPacketSender;
+import net.raynna.raynnarpg.utils.Colour;
+import net.raynna.raynnarpg.utils.MessageSender;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -105,15 +113,37 @@ public class Skills {
     }
 
     private void onLevelUp(Skill skill, int level) {
+        String skillName = skill.getType().getName();
+        int currentLevel = skill.getLevel();
+        String playerName = player.getName().getString();
+
         if (level > 1) {
-            player.sendSystemMessage(Component.literal("Congratulations! You leveled up " + level + " " + skill.getType().getName() + " levels. You are now level " + skill.getLevel() + "!"));
+            MessageSender.send(player, "Congratulations! You leveled up " + level + " " + skillName + " levels. You are now level " + currentLevel + "!", Colour.GREEN);
         } else {
-            player.sendSystemMessage(Component.literal("Congratulations! You leveled up a " + skill.getType().getName() + " level. You are now level " + skill.getLevel() + "!"));
+            MessageSender.send(player, "Congratulations! You leveled up a " + skillName + " level. You are now level " + currentLevel + "!", Colour.GREEN);
         }
-        if (isMaxLevel(skill.getType())) {
-            player.sendSystemMessage(Component.literal("You've achieved the highest level possible in " + skill.getType().getName() + "!"));
+        player.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0f, 1.0f);
+        CustomToastPacketSender.send(player, "Level up!", "You have reached level " + currentLevel + " in " + skillName + "!");
+        boolean reachedMax = isMaxLevel(skill.getType());
+        if (reachedMax) {
+            MessageSender.send(player, "You've achieved the highest level possible in " + skillName + "!", Colour.GOLD);
+        }
+
+        MinecraftServer server = player.getServer();
+        if (server == null) return;
+
+        String levelUpMessage = (level > 1)
+                ? playerName + " has leveled up " + level + " " + skillName + " levels. " + playerName + " is now level " + currentLevel + "!"
+                : playerName + " has leveled up a " + skillName + " level. " + playerName + " is now level " + currentLevel + "!";
+
+        String maxedMessage = playerName + " achieved the highest level possible in " + skillName + "!";
+
+        MessageSender.sendAllButSelf(player, levelUpMessage, Colour.DARK_GREEN);
+        if (reachedMax) {
+            MessageSender.sendAllButSelf(player, maxedMessage, Colour.GOLD);
         }
     }
+
 
     public void resetSkills() {
         for (Skill skill : skills.values()) {

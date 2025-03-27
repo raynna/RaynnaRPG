@@ -14,8 +14,10 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.raynna.raynnarpg.client.events.ClientBlockEvents;
+import net.raynna.raynnarpg.client.events.ClientGuiEvents;
 import net.raynna.raynnarpg.client.events.ClientItemEvents;
-import net.raynna.raynnarpg.client.ui.SkillsHud;
+import net.raynna.raynnarpg.client.ui.SkillOverlay;
+import net.raynna.raynnarpg.recipe.ReversibleCraftingRegistry;
 import net.raynna.raynnarpg.server.commands.Commands;
 import net.raynna.raynnarpg.server.events.ServerBlockEvents;
 import net.raynna.raynnarpg.server.events.ServerPlayerEvents;
@@ -42,6 +44,7 @@ class SideProxy implements IProxy {
 
     private static void serverStarted(ServerStartedEvent event) {
         server = event.getServer();
+        ReversibleCraftingRegistry.init(event);
     }
 
     private static void serverStopping(ServerStoppingEvent event) {
@@ -81,7 +84,7 @@ class SideProxy implements IProxy {
             super(modEventBus);
             ClientBlockEvents.register();
             ClientItemEvents.register();
-            SkillsHud.register();
+            ClientGuiEvents.register();
             container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         }
 

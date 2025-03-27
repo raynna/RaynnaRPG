@@ -16,6 +16,7 @@ import net.raynna.raynnarpg.config.crafting.CraftingConfig;
 import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
+import net.raynna.raynnarpg.recipe.ReversibleCraftingRegistry;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataStorage;
@@ -33,6 +34,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.CraftingTracker;
+import net.raynna.raynnarpg.utils.MessageSender;
 import net.silentchaos512.gear.api.item.GearItem;
 import net.silentchaos512.gear.core.component.GearPropertiesData;
 import net.silentchaos512.gear.util.GearData;
@@ -292,6 +294,8 @@ public class ServerPlayerEvents {
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
 
             if (progress == null) return;
+            ItemStack itemCrafted = event.getCrafting();
+            String itemName = itemCrafted.getHoverName().getString();
             Skill crafting = progress.getSkills().getSkill(SkillType.CRAFTING);
             if (event.getInventory() instanceof CraftingContainer craftingContainer) {
                 int playerCraftingLevel = crafting.getLevel();
@@ -302,13 +306,13 @@ public class ServerPlayerEvents {
                 int totalSlotsUsed = 0;
                 for (int i = 0; i < craftingContainer.getContainerSize(); i++) {
                     ItemStack materialStack = craftingContainer.getItem(i);
+                    String materialId = materialStack.getDescriptionId();
+                    String materialName = materialStack.getHoverName().getString();
                     if (materialStack.isEmpty()) {
                         craftingBenchFull = false;
                         continue;
                     }
                     totalSlotsUsed++;
-                    String materialId = materialStack.getDescriptionId();
-                    String materialName = materialStack.getHoverName().getString();
                     uniqueMaterials.add(materialName);
                     ConfigData data = CraftingConfig.getCraftingData(materialStack);
                     if (data == null) {
@@ -316,8 +320,7 @@ public class ServerPlayerEvents {
                     }
                     int requiredLevel = data.getLevel();
                     if (playerCraftingLevel < requiredLevel) {
-                        craftingBlocked = true;
-                        serverPlayer.sendSystemMessage(Component.literal("You need a " + crafting.getType().getName() + " level of " + requiredLevel + " in order to use " + materialStack.getHoverName().getString() + " in crafting."));
+                        MessageSender.send(serverPlayer, "You need a " + crafting.getType().getName() + " level of " + requiredLevel + " in order to use " + materialName + " in crafting.");
                         for (int j = 0; j < craftingContainer.getContainerSize(); j++) {
                             ItemStack stack = craftingContainer.getItem(j);
                             if (!stack.isEmpty()) {
@@ -330,13 +333,16 @@ public class ServerPlayerEvents {
                     }
                     totalBaseExperience += data.getXp();
                 }
+                if (ReversibleCraftingRegistry.isReversible(itemCrafted.getItem())) {
+                    craftingBlocked = true;
+                    MessageSender.send(serverPlayer, "You did not get any experience from " + itemName + " due to it has a reversible recipe.");
+                }
                 if (craftingBenchFull && uniqueMaterials.size() == 1 && totalSlotsUsed > 4) {
                     craftingBlocked = true;
                 }
                 if (!craftingBlocked) {
-                    String itemName = event.getCrafting().getHoverName().getString();
                     double roundedXp = Math.round(totalBaseExperience * 100.0) / 100.0;
-                    int itemsCreated = event.getCrafting().getCount();
+                    int itemsCreated = itemCrafted.getCount();
                     CraftingTracker.accumulateCraftingData(serverPlayer, itemName, itemsCreated, roundedXp, crafting.getType(), () -> {
                         progress.getSkills().addXp(SkillType.CRAFTING, roundedXp);
                     });

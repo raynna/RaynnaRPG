@@ -1,7 +1,12 @@
 package net.raynna.raynnarpg.utils;
 
+import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
+import net.raynna.raynnarpg.RaynnaRPG;
+import net.raynna.raynnarpg.client.ui.OverlayManager;
+import net.raynna.raynnarpg.network.packets.xpdrop.FloatingTextSender;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
@@ -47,11 +52,6 @@ public class CraftingTracker {
                 player.sendSystemMessage(Component.literal("You gained "
                         + roundedXp + " experience for creating one " + tracker.getItemName() + "."));
             }
-            PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
-            double currentXp = progress.getSkills().getSkill(type).getXp();
-            double combinedXp = (currentXp + roundedXp);
-            combinedXp = Math.round(combinedXp * 100.0) / 100.0;
-            MessageSender.send(player, "You currently have " + combinedXp + " experiece in " + type.getName() + ".");
             craftingData.remove(player);
         }
     }

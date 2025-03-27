@@ -8,6 +8,10 @@ import net.raynna.raynnarpg.network.packets.message.MessagePacket;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketHandler;
 import net.raynna.raynnarpg.network.packets.skills.SkillsPacket;
 import net.raynna.raynnarpg.network.packets.skills.SkillsPacketHandler;
+import net.raynna.raynnarpg.network.packets.toasts.CustomToastPacket;
+import net.raynna.raynnarpg.network.packets.toasts.CustomToastPacketHandler;
+import net.raynna.raynnarpg.network.packets.xpdrop.FloatingTextPacket;
+import net.raynna.raynnarpg.network.packets.xpdrop.FloatingTextHandler;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class Packets {
@@ -22,11 +26,14 @@ public class Packets {
 
     public static void registerClientPackets(PayloadRegistrar registrar) {
         registrar.playToClient(MessagePacket.TYPE, MessagePacket.CODEC, new MessagePacketHandler());
+        registrar.playToClient(SkillsPacket.TYPE, SkillsPacket.CODEC, new SkillsPacketHandler());
+        registrar.playToClient(CustomToastPacket.TYPE, CustomToastPacket.CODEC, new CustomToastPacketHandler());
+        registrar.playToClient(FloatingTextPacket.TYPE, FloatingTextPacket.CODEC, new FloatingTextHandler());
     }
 
 
     private static void registerServerPackets(PayloadRegistrar registrar) {
-        registrar.playToClient(SkillsPacket.TYPE, SkillsPacket.CODEC, new SkillsPacketHandler());
+
     }
 
 }

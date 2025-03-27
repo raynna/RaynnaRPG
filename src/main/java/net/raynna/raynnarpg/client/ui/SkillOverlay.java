@@ -4,28 +4,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderGuiEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import net.raynna.raynnarpg.RaynnaRPG;
-import net.raynna.raynnarpg.client.events.ClientBlockEvents;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
-import net.raynna.raynnarpg.server.player.skills.Skills;
 import org.lwjgl.glfw.GLFW;
 
-@EventBusSubscriber(modid = RaynnaRPG.MOD_ID, value = Dist.CLIENT)
-public class SkillsHud {
+@OnlyIn(Dist.CLIENT)
+public class SkillOverlay {
 
     private static final int XP_BAR_WIDTH = 100;
     private static final int XP_BAR_HEIGHT = 5;
     private static final int LINE_SPACING = 26;
 
-    @SubscribeEvent(priority = EventPriority.NORMAL)
-    public static void onRenderHUD(RenderGuiEvent.Post event) {
+    public static void show(GuiGraphics graphics) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.options.hideGui) return;
 
@@ -46,7 +40,7 @@ public class SkillsHud {
             double totalXpInSkillNeededForNextLevel = ClientSkills.getXpForLevel(skill.getLevel() + 1);
             double xpForCurrentLevel = ClientSkills.getXpForLevel(skill.getLevel());
             double currentTotalXpInSkill = skill.getXp();
-            drawSkillHUD(event.getGuiGraphics(), type.getName(), skill.getLevel(), currentTotalXpInSkill, xpForCurrentLevel, totalXpInSkillNeededForNextLevel, xOffset, yOffset);
+            drawSkillHUD(graphics, type.getName(), skill.getLevel(), currentTotalXpInSkill, xpForCurrentLevel, totalXpInSkillNeededForNextLevel, xOffset, yOffset);
             yOffset += LINE_SPACING;
         }
     }
@@ -72,13 +66,8 @@ public class SkillsHud {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(0.6F, 1, 0.6F);
         int textWidth = (int) ((double) mc.font.width(xpText) * 0.75);
-        //int textXPosition = xOffset + 16 - (XP_BAR_WIDTH / 2);
         int textXPosition = xOffset + (XP_BAR_WIDTH - textWidth);
         guiGraphics.drawString(mc.font, Component.literal(xpText), textXPosition, yOffset + 11, 0xFFFFFF);
         guiGraphics.pose().popPose();
-    }
-
-    public static void register() {
-        NeoForge.EVENT_BUS.register(SkillsHud.class);
     }
 }

@@ -17,11 +17,12 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
+import net.raynna.raynnarpg.network.packets.xpdrop.FloatingTextSender;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 
-@EventBusSubscriber(modid = RaynnaRPG.MOD_ID, value = Dist.DEDICATED_SERVER)
+@EventBusSubscriber(modid = RaynnaRPG.MOD_ID)
 public class ServerNpcEvents {
 
     @SubscribeEvent
@@ -36,6 +37,7 @@ public class ServerNpcEvents {
 
                 if (progress != null) {
                     progress.getSkills().addXp(SkillType.COMBAT, combatXP);
+                    FloatingTextSender.sendOnEntity(player, "+"+combatXP+"!", mob);
                     MessagePacketSender.send(player, "You gained " + combatXP + " Combat XP for killing " + mob.getName().getString() + ".");
 
                 }

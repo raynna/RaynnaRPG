@@ -26,7 +26,7 @@ public enum Colour {
         this.rgb = rgb;
     }
 
-    public TextColor getTextColor() {
-        return TextColor.fromRgb(rgb);
+    public int getTextColor() {
+        return TextColor.fromRgb(rgb).getValue();
     }
 }

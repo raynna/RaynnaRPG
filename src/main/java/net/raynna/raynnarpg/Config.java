@@ -113,6 +113,7 @@ public class Config {
                 List<CraftingEntry> misc = new ArrayList<>();
                 misc.add(new CraftingEntry("minecraft:wheat", 1, 1.0, "c:crops"));
                 misc.add(new CraftingEntry("minecraft:coal_block", 3, "minecraft:coals"));
+                misc.add(new CraftingEntry("minecraft:redstone", 13, "c:dusts/redstone"));
                 CraftingConfig.registerMultipleConfigs(builder, "crafting_misc_materials", "Misc", misc);
 
                 //Gems

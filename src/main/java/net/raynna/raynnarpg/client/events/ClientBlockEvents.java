@@ -1,8 +1,11 @@
 package net.raynna.raynnarpg.client.events;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -15,10 +18,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.raynna.raynnarpg.client.ui.OverlayManager;
+import net.raynna.raynnarpg.client.ui.floating_text.FloatingText;
 import net.raynna.raynnarpg.config.ConfigData;
 import net.raynna.raynnarpg.config.mining.MiningConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
+import net.raynna.raynnarpg.utils.Colour;
+import net.raynna.raynnarpg.utils.Utils;
 import net.silentchaos512.gear.api.item.GearItem;
 import net.silentchaos512.gear.core.component.GearPropertiesData;
 import net.silentchaos512.gear.util.GearData;
@@ -39,6 +46,7 @@ public class ClientBlockEvents {
                 return;
             BlockPos blockPos = ((BlockHitResult) mc.hitResult).getBlockPos();
             BlockState blockState = mc.level.getBlockState(blockPos);
+            Block block = blockState.getBlock();
             ClientSkills skills = new ClientSkills(mc.player);
             ItemStack mainHand = mc.player.getMainHandItem();
             int miningLevel = skills.getSkillLevel(SkillType.MINING);
@@ -59,6 +67,7 @@ public class ClientBlockEvents {
                             event.setCanceled(true);
                             mc.player.swinging = false;
                             mc.player.resetAttackStrengthTicker();
+                            Utils.checkMiningMiss(mc.player, blockPos, 0.5f);
                             mc.player.displayClientMessage(Component.literal("You need a mining level of " + data.getLevel() + " in order to use " + toolName + " as a tool."), true);
                             return;
                         }
@@ -72,6 +81,7 @@ public class ClientBlockEvents {
                         event.setCanceled(true);
                         mc.player.swinging = false;
                         mc.player.resetAttackStrengthTicker();
+                        Utils.checkMiningMiss(mc.player, blockPos, 0.5f);
                         mc.player.displayClientMessage(Component.literal("You need a mining level of " + data.getLevel() + " in order to use " + mainHand.getHoverName().getString() + " as a tool."), true);
                         return;
                     }
@@ -85,6 +95,7 @@ public class ClientBlockEvents {
                     mc.player.swinging = false;
                     mc.player.resetAttackStrengthTicker();
                     String blockName = blockState.getBlock().getName().toFlatList().getFirst().getString();
+                    Utils.checkMiningMiss(mc.player, blockPos, 0.5f);
                     mc.player.displayClientMessage(Component.literal("You need a mining level of " + data.getLevel() + " in order to mine " + blockName + "."), true);
                 }
             }

@@ -1,21 +1,26 @@
 package net.raynna.raynnarpg.server.events;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.raynna.raynnarpg.config.ConfigData;
 import net.raynna.raynnarpg.config.mining.MiningConfig;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
+import net.raynna.raynnarpg.network.packets.xpdrop.FloatingTextSender;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.skills.Skill;
@@ -33,6 +38,7 @@ public class ServerBlockEvents {
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         BlockState blockState = event.getState();
         Block block = blockState.getBlock();
+        BlockPos pos = event.getPos();
         if (event.getPlayer() instanceof ServerPlayer player) {
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
             Skill mining = progress.getSkills().getSkill(SkillType.MINING);
@@ -62,14 +68,14 @@ public class ServerBlockEvents {
                     }
                 }
                 progress.getSkills().addXp(mining.getType(), data.getXp());
-                MessagePacketSender.send(player, "You gained " + data.getXp() + " mining experience.");
-                //MessageSender.send(player, "Mining Xp: " + mining.getXp() + ", Xp until level: " + progress.getSkills().getXpToLevelUp(mining.getType()));
+                String message = "+" + data.getXp();
+                FloatingTextSender.sendOnBlock(player, message, pos);
             }
         }
     }
-
 
     public static void register() {
         NeoForge.EVENT_BUS.register(ServerBlockEvents.class);
     }
 }
+

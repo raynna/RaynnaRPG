@@ -1,8 +1,10 @@
 package net.raynna.raynnarpg;
 
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.minecraft.util.RandomSource;
+import net.raynna.raynnarpg.client.ui.OverlayManager;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -35,6 +37,17 @@ public class RaynnaRPG
 
     public static RaynnaRPG INSTANCE;
     public static IProxy PROXY;
+
+    @OnlyIn(Dist.CLIENT)
+    private static OverlayManager clientOverlayManager;
+
+    @OnlyIn(Dist.CLIENT)
+    public static OverlayManager getOverlayManager() {
+        if (clientOverlayManager == null) {
+            clientOverlayManager = new OverlayManager();
+        }
+        return clientOverlayManager;
+    }
 
     public RaynnaRPG(IEventBus modEventBus, ModContainer modContainer)
     {
