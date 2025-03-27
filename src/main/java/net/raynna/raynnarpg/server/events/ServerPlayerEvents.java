@@ -2,6 +2,7 @@ package net.raynna.raynnarpg.server.events;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.food.FoodConstants;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.BlastFurnaceMenu;
@@ -11,6 +12,7 @@ import net.minecraft.world.inventory.SmokerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.raynna.raynnarpg.config.ConfigData;
 import net.raynna.raynnarpg.config.crafting.CraftingConfig;
 import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
@@ -56,10 +58,27 @@ public class ServerPlayerEvents {
     @SubscribeEvent
     public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            UUID playerUUID = serverPlayer.getUUID();
             ServerLevel level = serverPlayer.serverLevel();
+            PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
+            progress.toNBT();
             PlayerDataStorage dataStorage = PlayerDataProvider.getData(level);
             dataStorage.markDirty();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onServerStop(ServerStoppedEvent event) {
+        MinecraftServer server = event.getServer();
+
+        for (ServerLevel level : server.getAllLevels()) {
+            PlayerDataStorage dataStorage = PlayerDataProvider.getData(level);
+
+            for (ServerPlayer serverPlayer : level.players()) {
+                PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
+                progress.toNBT(); // Update progress state for saving
+            }
+
+            dataStorage.markDirty(); // Mark the whole storage as dirty once per level
         }
     }
 
