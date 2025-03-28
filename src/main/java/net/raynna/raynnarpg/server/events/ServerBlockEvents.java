@@ -103,7 +103,7 @@ public class ServerBlockEvents {
         double xp = miningData.getXp();
 
         progress.getSkills().addXp(miningType, xp);
-        FloatingTextSender.sendOnBlock(player, "+" + xp, pos, SkillType.MINING);
+        FloatingTextSender.sendOnBlock(player, "+" + xp + "xp", pos, SkillType.MINING);
     }
 
     public static void register() {

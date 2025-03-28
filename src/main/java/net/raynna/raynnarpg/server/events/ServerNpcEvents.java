@@ -37,7 +37,7 @@ public class ServerNpcEvents {
 
                 if (progress != null) {
                     progress.getSkills().addXp(SkillType.COMBAT, combatXP);
-                    FloatingTextSender.sendOnEntity(player, "+"+combatXP+"!", mob, SkillType.COMBAT);
+                    FloatingTextSender.sendOnEntity(player, "+"+combatXP+"xp", mob, SkillType.COMBAT);
                 }
             }
         }
