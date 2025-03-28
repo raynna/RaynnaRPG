@@ -1,5 +1,6 @@
 package net.raynna.raynnarpg.server.player.playerdata;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -73,6 +74,18 @@ public class PlayerDataStorage extends SavedData {
         });
     }
 
+    public static void savePlayer(ServerPlayer player) {
+        PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+        progress.toNBT();
+        PlayerDataProvider.getData(player.serverLevel()).markDirty();
+        if (progress.getSkills() != null) {
+            System.out.println("["+player.getName().getString()+"] Saved Skills: " + progress.getSkills().toNBT().toString());
+        }
+        if (progress.getProgress() != null) {
+            System.out.println("["+player.getName().getString()+"] Saved Progress: " + progress.getProgress().toNBT().toString());
+        }
+    }
+
 
     public CompoundTag getPlayerDataTag(UUID playerUUID) {
         PlayerProgress progress = playerProgress.get(playerUUID);
@@ -85,7 +98,6 @@ public class PlayerDataStorage extends SavedData {
     }
 
     public void markDirty() {
-        //System.out.println("MarkDirty was called.");
         setDirty();
     }
 }

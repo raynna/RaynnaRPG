@@ -60,23 +60,15 @@ public class ServerPlayerEvents {
     @SubscribeEvent
     public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            savePlayerProgress(player);
+            PlayerDataStorage.savePlayer(player);
         }
     }
 
     @SubscribeEvent
     public static void onServerStop(ServerStoppedEvent event) {
         event.getServer().getAllLevels().forEach(level -> {
-            PlayerDataStorage dataStorage = PlayerDataProvider.getData(level);
-            level.players().forEach(player -> savePlayerProgress((ServerPlayer) player));
-            dataStorage.markDirty();
+            level.players().forEach(PlayerDataStorage::savePlayer);
         });
-    }
-
-    private static void savePlayerProgress(ServerPlayer player) {
-        PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
-        progress.toNBT();
-        PlayerDataProvider.getData(player.serverLevel()).markDirty();
     }
 
     @SubscribeEvent

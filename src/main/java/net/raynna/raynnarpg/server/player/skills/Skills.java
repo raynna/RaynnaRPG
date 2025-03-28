@@ -146,10 +146,7 @@ public class Skills {
             MessageSender.sendAllButSelf(player, maxedMessage, Colour.GOLD);
         }
         if (player != null) {
-            PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
-            progress.toNBT();
-            PlayerDataStorage storage = PlayerDataProvider.getData((ServerLevel) player.level());
-            storage.markDirty();
+            PlayerDataStorage.savePlayer(player);
         }
     }
 

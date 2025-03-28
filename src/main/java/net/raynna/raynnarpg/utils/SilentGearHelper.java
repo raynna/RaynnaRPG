@@ -118,7 +118,6 @@ public class SilentGearHelper {
             return true;
         }
         if (!isWeapon(item)) {
-            System.out.println(item.getHoverName() + " is not a weapon.");
             return true;
         }
         String itemName = item.getItem().getName(item).getString();
