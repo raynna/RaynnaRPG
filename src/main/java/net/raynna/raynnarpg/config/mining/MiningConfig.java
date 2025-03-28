@@ -31,24 +31,26 @@ public class MiningConfig {
      * usage: MiningConfig.registerConfig(builder, "diamond_ore", 20, 10.0, "c:ores/diamond");
      */
     public static void registerConfig(ModConfigSpec.Builder builder, String key, int level, double xp, String... tags) {
+        String modId = key.contains(":") ? key.split(":")[0] : key;
         String item = key.contains(":") ? key.split(":")[1] : key;
-        String name = Utils.capitalize(item).replace("_", " ");
+        String readableName = item.replace("_", " "); // "wooden_pickaxe" -> "wooden pickaxe"
+        String keyTranslation = "[" + Utils.capitalize(modId) + "]" + Utils.capitalize(readableName);
         if (xp == 0) {
             xp = Skills.getXpForMaterial(level, SkillType.MINING);
         }
-        ModConfigSpec.ConfigValue<Integer> levelValue = builder.translation(name + " Level: ")
-                .comment("Config on mining level requirement for " + name + ".")
+        ModConfigSpec.ConfigValue<Integer> levelValue = builder.translation(keyTranslation + " Level: ")
+                .comment("Config on mining level requirement for " + readableName + ".")
                 .comment("Default: " + level)
-                .define(item + "_level", level);
-        ModConfigSpec.ConfigValue<Double> xpValue = builder.translation(name + " Xp: ")
-                .comment("Config on mining experience yield for " + name + ".")
+                .define(modId+"_"+item + "_level", level);
+        ModConfigSpec.ConfigValue<Double> xpValue = builder.translation(keyTranslation + " Xp: ")
+                .comment("Config on mining experience yield for " + readableName + ".")
                 .comment("Default: " + xp)
-                .define(item + "_xp", xp);
+                .define(modId+"_"+item + "_xp", xp);
 
         List<String> tagList = new ArrayList<>(List.of(tags));
-        ModConfigSpec.ConfigValue<List<String>> tagsValue = builder.translation(name + " Tags: ")
+        ModConfigSpec.ConfigValue<List<String>> tagsValue = builder.translation(keyTranslation + " Tags: ")
                 .comment("Default: " + tagList)
-                .define(item + "_tags", tagList);
+                .define(modId+"_"+item + "_tags", tagList);
         MINING_LEVEL.put(key, levelValue);
         MINING_XP.put(key, xpValue);
         MINING_TAGS.put(key, tagsValue);

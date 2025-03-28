@@ -34,26 +34,27 @@ public class CraftingConfig {
     public static void registerConfig(ModConfigSpec.Builder builder, String key, int level, double xp, String... tags) {
         String modId = key.contains(":") ? key.split(":")[0] : key;
         String item = key.contains(":") ? key.split(":")[1] : key;
-        if (modId.equals("silentgear")) {
 
-        }
-        String name = Utils.capitalize(item).replace("_", " ");
+        String readableName = item.replace("_", " "); // "wooden_pickaxe" -> "wooden pickaxe"
+        String keyTranslation = "[" + Utils.capitalize(modId) + "]" + Utils.capitalize(readableName);
+        if (key.contains("tier"))
+            key = key.split(":")[1];
         if (xp == 0) {
             xp = Skills.getXpForMaterial(level, SkillType.CRAFTING);
         }
-        ModConfigSpec.ConfigValue<Integer> levelValue = builder.translation(name + " Level: ")
-                .comment("Config on crafting level requirement for " + name + " materials")
+        ModConfigSpec.ConfigValue<Integer> levelValue = builder.translation(keyTranslation + " Level: ")
+                .comment("Config on crafting level requirement for " + readableName + " materials")
                 .comment("Default: " + level)
-                .define(item + "_level", level);
-        ModConfigSpec.ConfigValue<Double> xpValue = builder.translation(name + " Xp: ")
-                .comment("Config on crafting experience yield for " + name + " materials")
+                .define(modId+"_"+item+"_level", level);
+        ModConfigSpec.ConfigValue<Double> xpValue = builder.translation(keyTranslation + " Xp: ")
+                .comment("Config on crafting experience yield for " + readableName + " materials")
                 .comment("Default: " + xp)
-                .define(item + "_xp", xp);
+                .define(modId+"_"+item+"_xp", xp);
 
         List<String> tagList = new ArrayList<>(List.of(tags));
-        ModConfigSpec.ConfigValue<List<String>> tagsValue = builder.translation(name + " Tags: ")
+        ModConfigSpec.ConfigValue<List<String>> tagsValue = builder.translation(keyTranslation + " Tags: ")
                 .comment("Default: " + tagList)
-                .define(item + "_tags", tagList);
+                .define(modId+"_"+item+"_tags", tagList);
 
         CRAFTING_LEVEL.put(key, levelValue);
         CRAFTING_XP.put(key, xpValue);

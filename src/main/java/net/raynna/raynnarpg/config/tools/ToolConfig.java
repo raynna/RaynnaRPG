@@ -25,31 +25,24 @@ public class ToolConfig {
     public static void registerMultipleConfigs(ModConfigSpec.Builder builder, String subCategoryKey, String translation, List<ToolEntry> entries) {
         builder.translation(translation).push(subCategoryKey);
         for (ToolEntry entry : entries) {
-            registerConfig(builder, entry.key(), entry.level(), entry.silentgear());
+            registerConfig(builder, entry.key(), entry.level());
         }
         builder.pop();
     }
 
-    public static void registerConfig(ModConfigSpec.Builder builder, String key, int level, boolean silentgear) {
-        String type = (silentgear ? "Silentgear" : "Minecraft");
-        if (type.equals("Silentgear") && !ModList.get().isLoaded("silentgear")) {
-            System.out.println("Skipped registering silentgear tool: " + key);
-            return;
-        }
-        String item = key.contains(":") ? key.split(":")[1] : key;
-        String readableType = item.replace("_", " "); // "wooden_pickaxe" -> "wooden pickaxe"
-        String keyTranslation = "[" + type + "]" + Utils.capitalize(readableType) + " Level";
-
+    public static void registerConfig(ModConfigSpec.Builder builder, String key, int level) {
+        String modId = key.contains(":") ? key.split(":")[0] : key;
+        String itemId = key.contains(":") ? key.split(":")[1] : key;
+        String readableType = itemId.replace("_", " ");
+        String keyTranslation = "[" + Utils.capitalize(modId) + "]" + Utils.capitalize(readableType) + " Level";
+        if (key.contains("tier"))
+            key = key.split(":")[1];
         ModConfigSpec.ConfigValue<Integer> configValue = builder
                 .translation(keyTranslation)
                 .comment("Configurations for level requirements for " + readableType)
                 .comment("Default: " + level)
-                .define(item + "_level", level);
-        if (silentgear) {
-            SILENT_GEAR_TOOLS.put(key, configValue);
-        } else {
-            TOOLS.put(key, configValue);
-        }
+                .define(modId + "_" + itemId + "_level", level);
+        TOOLS.put(key, configValue);
     }
 
     public static ConfigData getSilentGearData(String harvestTier) {

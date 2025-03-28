@@ -30,22 +30,25 @@ public class SmeltingConfig {
      */
 
     public static void registerConfig(ModConfigSpec.Builder builder, String key, int level, double xp, String rawVariant) {
+        String modId = key.contains(":") ? key.split(":")[0] : key;
         String item = key.contains(":") ? key.split(":")[1] : key;
         String name = Utils.capitalize(item).replace("_", " ");
+        if (key.contains("tier"))
+            key = key.split(":")[1];
         if (xp == 0) {
             xp = Skills.getXpForMaterial(level, SkillType.SMELTING);
         }
         ModConfigSpec.ConfigValue<Integer> levelValue = builder.translation(name + " Level: ")
                 .comment("Config on smelting level requirement for " + name + ".")
                 .comment("Default: " + level)
-                .define(item + "_level" , level);
+                .define(modId+"_"+item + "_level" , level);
         ModConfigSpec.ConfigValue<Double> xpValue = builder.translation(name + " Xp: ")
                 .comment("Config on smelting experience yield for " + name + ".")
                 .comment("Default: " + xp)
-                .define(item + "_xp" , xp);
+                .define(modId+"_"+item + "_xp" , xp);
         ModConfigSpec.ConfigValue<String> rawValue = builder.translation(name + " Raw Variant: ")
                 .comment("Default: " + rawVariant)
-                .define(item + "_raw" , rawVariant);
+                .define(modId+"_"+item + "_raw" , rawVariant);
 
         SMELTING_LEVEL.put(key, levelValue);
         SMELTING_XP.put(key, xpValue);

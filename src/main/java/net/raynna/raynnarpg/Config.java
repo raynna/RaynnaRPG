@@ -5,6 +5,7 @@ import java.util.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -39,218 +40,163 @@ public class Config {
             SPEC = builder.build();
         }
 
-
         public static void registerCombatConfigs(ModConfigSpec.Builder builder) {
+            boolean hasSilentGear = ModList.get().isLoaded("silentgear");
+            boolean hasSilentGems = ModList.get().isLoaded("silentgems");
+            boolean hasIceAndFire = ModList.get().isLoaded("iceandfire");
             ConfigRegister.registerCategory(builder, "combat_config", "Combat", "Settings for Combat", () -> {
+
                 List<CombatEntry> weapons = new ArrayList<>();
-                //wood
                 weapons.add(new CombatEntry("minecraft:wooden_sword", 1, false));
                 weapons.add(new CombatEntry("minecraft:wooden_axe", 1, false));
-                weapons.add(new CombatEntry("wood", 1, false));
-                //terracotta
-                weapons.add(new CombatEntry("terracotta", 3, false));
-                //stone
                 weapons.add(new CombatEntry("minecraft:stone_sword", 5, false));
                 weapons.add(new CombatEntry("minecraft:stone_axe", 5, false));
-                weapons.add(new CombatEntry("stone", 5, false));
-                //flint
-                weapons.add(new CombatEntry("flint", 7, false));
-                //copper
-                weapons.add(new CombatEntry("copper", 10, false));
-                weapons.add(new CombatEntry("iceandfire:copper_sword", 10, false));
-                weapons.add(new CombatEntry("iceandfire:copper_axe", 10, false));
-                //silver
-                weapons.add(new CombatEntry("iceandfire:silver_sword", 12, false));
-                weapons.add(new CombatEntry("iceandfire:silver_axe", 12, false));
-                //iron
                 weapons.add(new CombatEntry("minecraft:iron_sword", 15, false));
                 weapons.add(new CombatEntry("minecraft:iron_axe", 15, false));
-                weapons.add(new CombatEntry("iron", 15, false));
-                //gold
                 weapons.add(new CombatEntry("minecraft:golden_sword", 15, false));
                 weapons.add(new CombatEntry("minecraft:golden_axe", 15, false));
-                weapons.add(new CombatEntry("gold", 15, false));
-                //bronze
-                weapons.add(new CombatEntry("bronze", 17, false));
-                //blaze gold
-                weapons.add(new CombatEntry("blaze_gold", 20, false));
-                //emerald
-                weapons.add(new CombatEntry("emerald", 25, false));
-                //diamond
                 weapons.add(new CombatEntry("minecraft:diamond_sword", 30, false));
                 weapons.add(new CombatEntry("minecraft:diamond_axe", 30, false));
-                weapons.add(new CombatEntry("diamond", 30, false));
-                //dimerald
-                weapons.add(new CombatEntry("dimerald", 32, false));
-                //netherite
                 weapons.add(new CombatEntry("minecraft:netherite_sword", 40, false));
                 weapons.add(new CombatEntry("minecraft:netherite_axe", 40, false));
-                weapons.add(new CombatEntry("netherite", 40, false));
-                //crimson iron
-                weapons.add(new CombatEntry("crimson_iron", 43, false));
-                //crimson steel
-                weapons.add(new CombatEntry("crimson_steel", 46, false));
-                //azure silver
-                weapons.add(new CombatEntry("azure_silver", 48, false));
-                //azure electrum
-                weapons.add(new CombatEntry("azure_electrum", 49, false));
-                //tyrian steel
-                weapons.add(new CombatEntry("tyrian_steel", 50, false));
-
-                if (ModList.get().isLoaded("silentgems")) {
-                //silentgems
-                //ruby
-                weapons.add(new CombatEntry("ruby", 15, false));
-                //sapphire
-                weapons.add(new CombatEntry("sapphire", 15, false));
-                //iolite
-                weapons.add(new CombatEntry("iolite", 15, false));
-                //moldavite
-                weapons.add(new CombatEntry("moldavite", 15, false));
-                //peridot
-                weapons.add(new CombatEntry("peridot", 15, false));
-                //carnelian
-                weapons.add(new CombatEntry("carnelian", 17, false));
-                //topaz
-                weapons.add(new CombatEntry("topaz", 19, false));
-                //citrine
-                weapons.add(new CombatEntry("citrine", 22, false));
-                //citrine
-                weapons.add(new CombatEntry("heliodor", 25, false));
-                //turquoise
-                weapons.add(new CombatEntry("turquoise", 30, false));
-                //alexandrite
-                weapons.add(new CombatEntry("alexandrite", 30, false));
-                //ammolite
-                weapons.add(new CombatEntry("ammolite", 30, false));
-                //black_diamond
-                weapons.add(new CombatEntry("black_diamond", 32, false));
-                //kyanite
-                weapons.add(new CombatEntry("kyanite", 40, false));
-                //rose_quartz
-                weapons.add(new CombatEntry("rose_quartz", 40, false));
-                //kyanite
-                weapons.add(new CombatEntry("kyanite", 40, false));
-                //white_diamond
-                weapons.add(new CombatEntry("white_diamond", 45, false));
-                }
                 CombatConfig.registerMultipleConfigs(builder, "combat_weapons", "Weapons", weapons);
 
                 List<CombatEntry> gears = new ArrayList<>();
-                //leather
                 gears.add(new CombatEntry("minecraft:leather_helmet", 1));
                 gears.add(new CombatEntry("minecraft:leather_chestplate", 1));
                 gears.add(new CombatEntry("minecraft:leather_leggings", 1));
                 gears.add(new CombatEntry("minecraft:leather_boots", 1));
-                //wood
-                gears.add(new CombatEntry("wood", 1));
-                //terracotta
-                gears.add(new CombatEntry("terracotta", 3));
-                //stone
                 gears.add(new CombatEntry("minecraft:stone_helmet", 5));
                 gears.add(new CombatEntry("minecraft:stone_chestplate", 5));
                 gears.add(new CombatEntry("minecraft:stone_leggings", 5));
                 gears.add(new CombatEntry("minecraft:stone_boots", 5));
-                gears.add(new CombatEntry("stone", 5));
-                //flint
-                gears.add(new CombatEntry("flint", 7));
-                //copper
-                gears.add(new CombatEntry("copper", 10));
-                gears.add(new CombatEntry("iceandfire:armor_copper_metal_helmet", 10));
-                gears.add(new CombatEntry("iceandfire:armor_copper_metal_chestplate", 10));
-                gears.add(new CombatEntry("iceandfire:armor_copper_metal_leggings", 10));
-                gears.add(new CombatEntry("iceandfire:armor_copper_metal_boots", 10));
-                //chain
                 gears.add(new CombatEntry("minecraft:chainmail_helmet", 12));
                 gears.add(new CombatEntry("minecraft:chainmail_chestplate", 12));
                 gears.add(new CombatEntry("minecraft:chainmail_leggings", 12));
                 gears.add(new CombatEntry("minecraft:chainmail_boots", 12));
-                gears.add(new CombatEntry("iceandfire:armor_silver_metal_helmet", 12));
-                gears.add(new CombatEntry("iceandfire:armor_silver_metal_chestplate", 12));
-                gears.add(new CombatEntry("iceandfire:armor_silver_metal_leggings", 12));
-                gears.add(new CombatEntry("iceandfire:armor_silver_metal_boots", 12));
-                //iron
                 gears.add(new CombatEntry("minecraft:iron_helmet", 15));
                 gears.add(new CombatEntry("minecraft:iron_chestplate", 15));
                 gears.add(new CombatEntry("minecraft:iron_leggings", 15));
                 gears.add(new CombatEntry("minecraft:iron_boots", 15));
-                gears.add(new CombatEntry("iron", 15));
-                //gold
                 gears.add(new CombatEntry("minecraft:golden_helmet", 15));
                 gears.add(new CombatEntry("minecraft:golden_chestplate", 15));
                 gears.add(new CombatEntry("minecraft:golden_leggings", 15));
                 gears.add(new CombatEntry("minecraft:golden_boots", 15));
-                gears.add(new CombatEntry("gold", 15));
-                //bronze
-                gears.add(new CombatEntry("bronze", 17));
-                //blaze gold
-                gears.add(new CombatEntry("blaze_gold", 20));
-                //emerald
-                gears.add(new CombatEntry("emerald", 25));
-                //diamond
                 gears.add(new CombatEntry("minecraft:diamond_helmet", 30));
                 gears.add(new CombatEntry("minecraft:diamond_chestplate", 30));
                 gears.add(new CombatEntry("minecraft:diamond_leggings", 30));
                 gears.add(new CombatEntry("minecraft:diamond_boots", 30));
-                gears.add(new CombatEntry("diamond", 30));
-                //dimerald
-                gears.add(new CombatEntry("dimerald", 32));
-                //netherite
                 gears.add(new CombatEntry("minecraft:netherite_helmet", 40));
                 gears.add(new CombatEntry("minecraft:netherite_chestplate", 40));
                 gears.add(new CombatEntry("minecraft:netherite_leggings", 40));
                 gears.add(new CombatEntry("minecraft:netherite_boots", 40));
-                gears.add(new CombatEntry("netherite", 40));
-                //crimson iron
-                gears.add(new CombatEntry("crimson_iron", 43));
-                //crimson steel
-                gears.add(new CombatEntry("crimson_steel", 46));
-                //azure silver
-                gears.add(new CombatEntry("azure_silver", 48));
-                //azure electrum
-                gears.add(new CombatEntry("azure_electrum", 49));
-                //tyrian steel
-                gears.add(new CombatEntry("tyrian_steel", 50));
+                CombatConfig.registerMultipleConfigs(builder, "combat_armour", "Armours", gears);
 
-                if (ModList.get().isLoaded("silentgems")) {
-                    //silentgems
-                    //ruby
-                    gears.add(new CombatEntry("ruby", 15));
-                    //sapphire
-                    gears.add(new CombatEntry("sapphire", 15));
-                    //iolite
-                    gears.add(new CombatEntry("iolite", 15));
-                    //moldavite
-                    gears.add(new CombatEntry("moldavite", 15));
-                    //peridot
-                    gears.add(new CombatEntry("peridot", 15));
-                    //carnelian
-                    gears.add(new CombatEntry("carnelian", 17));
-                    //topaz
-                    gears.add(new CombatEntry("topaz", 19));
-                    //citrine
-                    gears.add(new CombatEntry("citrine", 22));
-                    //citrine
-                    gears.add(new CombatEntry("heliodor", 25));
-                    //turquoise
-                    gears.add(new CombatEntry("turquoise", 30));
-                    //alexandrite
-                    gears.add(new CombatEntry("alexandrite", 30));
-                    //ammolite
-                    gears.add(new CombatEntry("ammolite", 30));
-                    //black_diamond
-                    gears.add(new CombatEntry("black_diamond", 32));
-                    //kyanite
-                    gears.add(new CombatEntry("kyanite", 40));
-                    //rose_quartz
-                    gears.add(new CombatEntry("rose_quartz", 40));
-                    //kyanite
-                    gears.add(new CombatEntry("kyanite", 40));
-                    //white_diamond
-                    gears.add(new CombatEntry("white_diamond", 45));
+                if (hasSilentGear) {
+                    List<CombatEntry> silentgear_weapons = new ArrayList<>();
+                    silentgear_weapons.add(new CombatEntry("tier:wood", 1, false));
+                    silentgear_weapons.add(new CombatEntry("tier:terracotta", 3, false));
+                    silentgear_weapons.add(new CombatEntry("tier:stone", 5, false));
+                    silentgear_weapons.add(new CombatEntry("tier:flint", 7, false));
+                    silentgear_weapons.add(new CombatEntry("tier:copper", 10, false));
+                    silentgear_weapons.add(new CombatEntry("tier:iron", 15, false));
+                    silentgear_weapons.add(new CombatEntry("tier:gold", 15, false));
+                    silentgear_weapons.add(new CombatEntry("tier:bronze", 17, false));
+                    silentgear_weapons.add(new CombatEntry("tier:blaze_gold", 20, false));
+                    silentgear_weapons.add(new CombatEntry("tier:emerald", 25, false));
+                    silentgear_weapons.add(new CombatEntry("tier:diamond", 30, false));
+                    silentgear_weapons.add(new CombatEntry("tier:dimerald", 32, false));
+                    silentgear_weapons.add(new CombatEntry("tier:netherite", 40, false));
+                    silentgear_weapons.add(new CombatEntry("tier:crimson_iron", 43, false));
+                    silentgear_weapons.add(new CombatEntry("tier:crimson_steel", 46, false));
+                    silentgear_weapons.add(new CombatEntry("tier:azure_silver", 48, false));
+                    silentgear_weapons.add(new CombatEntry("tier:azure_electrum", 49, false));
+                    silentgear_weapons.add(new CombatEntry("tier:tyrian_steel", 50, false));
+                    CombatConfig.registerMultipleConfigs(builder, "silentgear_weapons", "Silentgear Weapons", silentgear_weapons);
+
+                    List<CombatEntry> silentgear_armours = new ArrayList<>();
+                    silentgear_armours.add(new CombatEntry("tier:wood", 1));
+                    silentgear_armours.add(new CombatEntry("tier:terracotta", 3));
+                    silentgear_armours.add(new CombatEntry("tier:stone", 5));
+                    silentgear_armours.add(new CombatEntry("tier:flint", 7));
+                    silentgear_armours.add(new CombatEntry("tier:copper", 10));
+                    silentgear_armours.add(new CombatEntry("tier:iron", 15));
+                    silentgear_armours.add(new CombatEntry("tier:gold", 15));
+                    silentgear_armours.add(new CombatEntry("tier:bronze", 17));
+                    silentgear_armours.add(new CombatEntry("tier:blaze_gold", 20));
+                    silentgear_armours.add(new CombatEntry("tier:emerald", 25));
+                    silentgear_armours.add(new CombatEntry("tier:diamond", 30));
+                    silentgear_armours.add(new CombatEntry("tier:dimerald", 32));
+                    silentgear_armours.add(new CombatEntry("tier:netherite", 40));
+                    silentgear_armours.add(new CombatEntry("tier:crimson_iron", 43));
+                    silentgear_armours.add(new CombatEntry("tier:crimson_steel", 46));
+                    silentgear_armours.add(new CombatEntry("tier:azure_silver", 48));
+                    silentgear_armours.add(new CombatEntry("tier:azure_electrum", 49));
+                    silentgear_armours.add(new CombatEntry("tier:tyrian_steel", 50));
+                    CombatConfig.registerMultipleConfigs(builder, "silentgear_armours", "Silentgear Armours", silentgear_armours);
                 }
-                CombatConfig.registerMultipleConfigs(builder, "combat_gears", "Armour", gears);
 
+                if (hasSilentGems) {
+                    List<CombatEntry> silentgem_weapons = new ArrayList<>();
+                    silentgem_weapons.add(new CombatEntry("tier:ruby", 15, false));
+                    silentgem_weapons.add(new CombatEntry("tier:sapphire", 15, false));
+                    silentgem_weapons.add(new CombatEntry("tier:iolite", 15, false));
+                    silentgem_weapons.add(new CombatEntry("tier:moldavite", 15, false));
+                    silentgem_weapons.add(new CombatEntry("tier:peridot", 15, false));
+                    silentgem_weapons.add(new CombatEntry("tier:carnelian", 17, false));
+                    silentgem_weapons.add(new CombatEntry("tier:topaz", 19, false));
+                    silentgem_weapons.add(new CombatEntry("tier:citrine", 22, false));
+                    silentgem_weapons.add(new CombatEntry("tier:heliodor", 25, false));
+                    silentgem_weapons.add(new CombatEntry("tier:turquoise", 30, false));
+                    silentgem_weapons.add(new CombatEntry("tier:alexandrite", 30, false));
+                    silentgem_weapons.add(new CombatEntry("tier:ammolite", 30, false));
+                    silentgem_weapons.add(new CombatEntry("tier:black_diamond", 32, false));
+                    silentgem_weapons.add(new CombatEntry("tier:kyanite", 40, false));
+                    silentgem_weapons.add(new CombatEntry("tier:rose_quartz", 40, false));
+                    silentgem_weapons.add(new CombatEntry("tier:kyanite", 40, false));
+                    silentgem_weapons.add(new CombatEntry("tier:white_diamond", 45, false));
+                    CombatConfig.registerMultipleConfigs(builder, "silentgem_weapons", "Silent gem Weapons", silentgem_weapons);
+
+                    List<CombatEntry> silentgem_armours = new ArrayList<>();
+                    silentgem_armours.add(new CombatEntry("tier:ruby", 15));
+                    silentgem_armours.add(new CombatEntry("tier:sapphire", 15));
+                    silentgem_armours.add(new CombatEntry("tier:iolite", 15));
+                    silentgem_armours.add(new CombatEntry("tier:moldavite", 15));
+                    silentgem_armours.add(new CombatEntry("tier:peridot", 15));
+                    silentgem_armours.add(new CombatEntry("tier:carnelian", 17));
+                    silentgem_armours.add(new CombatEntry("tier:topaz", 19));
+                    silentgem_armours.add(new CombatEntry("tier:citrine", 22));
+                    silentgem_armours.add(new CombatEntry("tier:heliodor", 25));
+                    silentgem_armours.add(new CombatEntry("tier:turquoise", 30));
+                    silentgem_armours.add(new CombatEntry("tier:alexandrite", 30));
+                    silentgem_armours.add(new CombatEntry("tier:ammolite", 30));
+                    silentgem_armours.add(new CombatEntry("tier:black_diamond", 32));
+                    silentgem_armours.add(new CombatEntry("tier:kyanite", 40));
+                    silentgem_armours.add(new CombatEntry("tier:rose_quartz", 40));
+                    silentgem_armours.add(new CombatEntry("tier:kyanite", 40));
+                    silentgem_armours.add(new CombatEntry("tier:white_diamond", 45));
+                    CombatConfig.registerMultipleConfigs(builder, "silentgem_armours", "Silent gem Armours", silentgem_armours);
+                }
+
+                if (hasIceAndFire) {
+                    List<CombatEntry> iceandfire_weapons = new ArrayList<>();
+                    iceandfire_weapons.add(new CombatEntry("iceandfire:copper_sword", 10, false));
+                    iceandfire_weapons.add(new CombatEntry("iceandfire:copper_axe", 10, false));
+                    iceandfire_weapons.add(new CombatEntry("iceandfire:silver_sword", 12, false));
+                    iceandfire_weapons.add(new CombatEntry("iceandfire:silver_axe", 12, false));
+                    CombatConfig.registerMultipleConfigs(builder, "iceandfire_weapons", "Ice & Fire Weapons", iceandfire_weapons);
+
+                    List<CombatEntry> iceandfire_armours = new ArrayList<>();
+                    iceandfire_armours.add(new CombatEntry("iceandfire:armor_copper_metal_helmet", 10));
+                    iceandfire_armours.add(new CombatEntry("iceandfire:armor_copper_metal_chestplate", 10));
+                    iceandfire_armours.add(new CombatEntry("iceandfire:armor_copper_metal_leggings", 10));
+                    iceandfire_armours.add(new CombatEntry("iceandfire:armor_copper_metal_boots", 10));
+                    iceandfire_armours.add(new CombatEntry("iceandfire:armor_silver_metal_helmet", 12));
+                    iceandfire_armours.add(new CombatEntry("iceandfire:armor_silver_metal_chestplate", 12));
+                    iceandfire_armours.add(new CombatEntry("iceandfire:armor_silver_metal_leggings", 12));
+                    iceandfire_armours.add(new CombatEntry("iceandfire:armor_silver_metal_boots", 12));
+                    CombatConfig.registerMultipleConfigs(builder, "iceandfire_armours", "Ice & Fire Armours", iceandfire_armours);
+                }
             });
         }
 
@@ -294,6 +240,7 @@ public class Config {
         public static void registerCraftingConfigs(ModConfigSpec.Builder builder) {
             boolean hasSilentGear = ModList.get().isLoaded("silentgear");
             boolean hasSilentGems = ModList.get().isLoaded("silentgems");
+            boolean hasIceAndFire = ModList.get().isLoaded("iceandfire");
             ConfigRegister.registerCategory(builder, "crafting_config", "Crafting", "Settings for Crafting", () -> {
 
                 //Wood
@@ -313,20 +260,11 @@ public class Config {
 
                 //Metals
                 List<CraftingEntry> metals = new ArrayList<>();
-                metals.add(new CraftingEntry("silentgems:silver_ingot", 12, "c:ingots/silver"));
                 metals.add(new CraftingEntry("minecraft:iron_ingot", 15, "c:ingots/iron"));
                 metals.add(new CraftingEntry("minecraft:copper_ingot", 10, "c:ingots/copper"));
                 metals.add(new CraftingEntry("minecraft:gold_ingot", 20, "c:ingots/gold"));
                 metals.add(new CraftingEntry("minecraft:netherite_ingot", 40, "c:ingots/netherite"));
                 metals.add(new CraftingEntry("minecraft:netherite_scrap", 40, "c:ingots/netherite"));
-                if (hasSilentGear) {
-                    metals.add(new CraftingEntry("silentgear:blaze_gold", 25, "c:ingots/blaze_gold"));
-                    metals.add(new CraftingEntry("silentgear:crimson_iron", 43, "c:ingots/crimson_iron"));
-                    metals.add(new CraftingEntry("silentgear:crimson_steel_ingot", 46, "c:ingots/crimson_steel"));
-                    metals.add(new CraftingEntry("silentgear:azure_silver_ingot", 48, "c:ingots/azure_silver"));
-                    metals.add(new CraftingEntry("silentgear:azure_electrum_ingot", 49, "c:ingots/azure_electrum"));
-                    metals.add(new CraftingEntry("silentgear:tyrian_steel_ingot", 50, "c:ingots/tyrian_steel"));
-                }
                 CraftingConfig.registerMultipleConfigs(builder, "crafting_metal_materials", "Metals", metals);
 
                 //Coal/Misc?
@@ -339,12 +277,25 @@ public class Config {
                 //Gems
                 List<CraftingEntry> gems = new ArrayList<>();
                 gems.add(new CraftingEntry("silentgear:bort", 15, "c:gems/bort"));
-                gems.add(new CraftingEntry("minecraft:quartz", 18, 20.0,"c:gems/quartz"));
+                gems.add(new CraftingEntry("minecraft:quartz", 18, 20.0, "c:gems/quartz"));
                 gems.add(new CraftingEntry("quartz", 18));
                 gems.add(new CraftingEntry("minecraft:diamond", 30, "c:gems/diamond"));
                 CraftingConfig.registerMultipleConfigs(builder, "crafting_gem_materials", "Gems", gems);
+
+                List<CraftingEntry> silentgear = new ArrayList<>();
+                if (hasSilentGear) {
+                    silentgear.add(new CraftingEntry("silentgear:blaze_gold", 25, "c:ingots/blaze_gold"));
+                    silentgear.add(new CraftingEntry("silentgear:crimson_iron", 43, "c:ingots/crimson_iron"));
+                    silentgear.add(new CraftingEntry("silentgear:crimson_steel_ingot", 46, "c:ingots/crimson_steel"));
+                    silentgear.add(new CraftingEntry("silentgear:azure_silver_ingot", 48, "c:ingots/azure_silver"));
+                    silentgear.add(new CraftingEntry("silentgear:azure_electrum_ingot", 49, "c:ingots/azure_electrum"));
+                    silentgear.add(new CraftingEntry("silentgear:tyrian_steel_ingot", 50, "c:ingots/tyrian_steel"));
+                    CraftingConfig.registerMultipleConfigs(builder, "crafting_silentgear", "Silent Gear", silentgear);
+                }
                 if (hasSilentGems) {
                     List<CraftingEntry> silentgems = new ArrayList<>();
+                    //silver
+                    silentgems.add(new CraftingEntry("silentgems:silver_ingot", 12, "c:ingots/silver"));
                     //ruby
                     silentgems.add(new CraftingEntry("silentgems:ruby", 15));
                     //sapphire
@@ -395,154 +346,70 @@ public class Config {
                 }
             });
         }
-
+//test discordgithub
         public static void registerToolConfigs(ModConfigSpec.Builder builder) {
             ConfigRegister.registerCategory(builder, "tools_config", "Tools", "Settings for Tools", () -> {
                 boolean hasSilentGear = ModList.get().isLoaded("silentgear");
                 boolean hasSilentGems = ModList.get().isLoaded("silentgems");
-                // Wooden Tools
-                List<ToolEntry> woodTools = new ArrayList<>();
-                woodTools.add(new ToolEntry("minecraft:wooden_pickaxe", 1));
-                woodTools.add(new ToolEntry("wood", 1, true));
-                ToolConfig.registerMultipleConfigs(builder, "wood_tools", "Wood Tools", woodTools);
-
-                // Stone Tools
-                List<ToolEntry> stoneTools = new ArrayList<>();
-                stoneTools.add(new ToolEntry("minecraft:stone_pickaxe", 5));
-                stoneTools.add(new ToolEntry("stone", 5, true));
-                ToolConfig.registerMultipleConfigs(builder, "stone_tools", "Stone Tools", stoneTools);
-
-                // Iron Tools
-                List<ToolEntry> ironTools = new ArrayList<>();
-                ironTools.add(new ToolEntry("minecraft:iron_pickaxe", 15));
-                ironTools.add(new ToolEntry("iron", 15, true));
-                ToolConfig.registerMultipleConfigs(builder, "iron_tools", "Iron Tools", ironTools);
-
-                // Silver Tools
-                List<ToolEntry> silverTools = new ArrayList<>();
-                ironTools.add(new ToolEntry("iceandfire:silver_pickaxe", 12));
-                ToolConfig.registerMultipleConfigs(builder, "silver_tools", "Silver Tools", silverTools);
-
-                // Bronze Tools
-                List<ToolEntry> bronzeTools = new ArrayList<>();
-                bronzeTools.add(new ToolEntry("minecraft:bronze_pickaxe", 15));
-                bronzeTools.add(new ToolEntry("bronze", 15, true));
-                ToolConfig.registerMultipleConfigs(builder, "bronze_tools", "Bronze Tools", bronzeTools);
-
-                // Gold Tools
-                List<ToolEntry> goldTools = new ArrayList<>();
-                goldTools.add(new ToolEntry("minecraft:golden_pickaxe", 15));
-                goldTools.add(new ToolEntry("gold", 15, true));
-                ToolConfig.registerMultipleConfigs(builder, "gold_tools", "Gold Tools", goldTools);
-
-                // Diamond Tools
-                List<ToolEntry> diamondTools = new ArrayList<>();
-                diamondTools.add(new ToolEntry("minecraft:diamond_pickaxe", 30));
-                diamondTools.add(new ToolEntry("diamond", 30, true));
-                ToolConfig.registerMultipleConfigs(builder, "diamond_tools", "Diamond Tools", diamondTools);
-
-                // Netherite Tools
-                List<ToolEntry> netheriteTools = new ArrayList<>();
-                netheriteTools.add(new ToolEntry("minecraft:netherite_pickaxe", 40));
-                netheriteTools.add(new ToolEntry("netherite", 40, true));
-                ToolConfig.registerMultipleConfigs(builder, "netherite_tools", "Netherite Tools", netheriteTools);
-
-
+                boolean hasIceAndFire = ModList.get().isLoaded("iceandfire");
+                List<ToolEntry> tools = new ArrayList<>();
+                tools.add(new ToolEntry("minecraft:wooden_pickaxe", 1));
+                tools.add(new ToolEntry("minecraft:stone_pickaxe", 5));
+                tools.add(new ToolEntry("minecraft:iron_pickaxe", 15));
+                tools.add(new ToolEntry("minecraft:golden_pickaxe", 15));
+                tools.add(new ToolEntry("minecraft:diamond_pickaxe", 30));
+                tools.add(new ToolEntry("minecraft:netherite_pickaxe", 40));
+                ToolConfig.registerMultipleConfigs(builder, "minecraft_tools", "Tools", tools);
                 if (hasSilentGear) {
-                    // Terracotta Tools
-                    List<ToolEntry> terracottaTools = new ArrayList<>();
-                    terracottaTools.add(new ToolEntry("terracotta", 4, true));
-                    ToolConfig.registerMultipleConfigs(builder, "terracotta_tools", "Terracotta Tools", terracottaTools);
-
-                    // Flint Tools
-                    List<ToolEntry> flintTools = new ArrayList<>();
-                    flintTools.add(new ToolEntry("flint", 7, true));
-                    ToolConfig.registerMultipleConfigs(builder, "flint_tools", "Flint Tools", flintTools);
-
-                    // Copper Tools
-                    List<ToolEntry> copperTools = new ArrayList<>();
-                    copperTools.add(new ToolEntry("minecraft:copper_pickaxe", 10));
-                    copperTools.add(new ToolEntry("copper", 10, true));
-                    ToolConfig.registerMultipleConfigs(builder, "copper_tools", "Copper Tools", copperTools);
-                    // Blaze Gold Tools
-                    List<ToolEntry> blazeGoldTools = new ArrayList<>();
-                    blazeGoldTools.add(new ToolEntry("blaze_gold", 25, true));
-                    ToolConfig.registerMultipleConfigs(builder, "blaze_gold_tools", "Blaze Gold Tools", blazeGoldTools);
-
-
-                    // Emerald Tools
-                    List<ToolEntry> emeraldTools = new ArrayList<>();
-                    emeraldTools.add(new ToolEntry("emerald", 25, true));
-                    ToolConfig.registerMultipleConfigs(builder, "emerald_tools", "Emerald Tools", emeraldTools);
-
-
-                    // Dimerald Tools
-                    List<ToolEntry> dimeraldTools = new ArrayList<>();
-                    dimeraldTools.add(new ToolEntry("dimerald", 32, true));
-                    ToolConfig.registerMultipleConfigs(builder, "dimerald_tools", "Dimerald Tools", dimeraldTools);
-
-                    // Crimson Iron Tools
-                    List<ToolEntry> crimsonIronTools = new ArrayList<>();
-                    crimsonIronTools.add(new ToolEntry("crimson_iron", 43, true));
-                    ToolConfig.registerMultipleConfigs(builder, "crimson_iron_tools", "Crimson Iron Tools", crimsonIronTools);
-
-                    // Crimson Steel Tools
-                    List<ToolEntry> crimsonSteelTools = new ArrayList<>();
-                    crimsonSteelTools.add(new ToolEntry("crimson_steel", 46, true));
-                    ToolConfig.registerMultipleConfigs(builder, "crimson_steel_tools", "Crimson Steel Tools", crimsonSteelTools);
-
-                    // Azure Silver Tools
-                    List<ToolEntry> azureSilverTools = new ArrayList<>();
-                    azureSilverTools.add(new ToolEntry("azure_silver", 48, true));
-                    ToolConfig.registerMultipleConfigs(builder, "azure_silver_tools", "Azure Silver Tools", azureSilverTools);
-
-                    // Azure Electrum Tools
-                    List<ToolEntry> azureElectrumTools = new ArrayList<>();
-                    azureElectrumTools.add(new ToolEntry("azure_electrum", 49, true));
-                    ToolConfig.registerMultipleConfigs(builder, "azure_electrum_tools", "Azure Electrum Tools", azureElectrumTools);
-
-                    // Tyrian Steel Tools
-                    List<ToolEntry> tyrianSteelTools = new ArrayList<>();
-                    tyrianSteelTools.add(new ToolEntry("tyrian_steel", 50, true));
-                    ToolConfig.registerMultipleConfigs(builder, "tyrian_steel_tools", "Tyrian Steel Tools", tyrianSteelTools);
+                    List<ToolEntry> silentgear_tools = new ArrayList<>();
+                    silentgear_tools.add(new ToolEntry("tier:wood", 1));
+                    silentgear_tools.add(new ToolEntry("tier:terracotta", 3));
+                    silentgear_tools.add(new ToolEntry("tier:stone", 5));
+                    silentgear_tools.add(new ToolEntry("tier:flint", 7));
+                    silentgear_tools.add(new ToolEntry("tier:copper", 10));
+                    silentgear_tools.add(new ToolEntry("tier:iron", 15));
+                    silentgear_tools.add(new ToolEntry("tier:bronze", 15));
+                    silentgear_tools.add(new ToolEntry("tier:gold", 15));
+                    silentgear_tools.add(new ToolEntry("tier:blaze_gold", 25));
+                    silentgear_tools.add(new ToolEntry("tier:emerald", 25));
+                    silentgear_tools.add(new ToolEntry("tier:diamond", 30));
+                    silentgear_tools.add(new ToolEntry("tier:dimerald", 32));
+                    silentgear_tools.add(new ToolEntry("tier:netherite", 40));
+                    silentgear_tools.add(new ToolEntry("tier:crimson_iron", 43));
+                    silentgear_tools.add(new ToolEntry("tier:crimson_steel", 46));
+                    silentgear_tools.add(new ToolEntry("tier:azure_silver", 48));
+                    silentgear_tools.add(new ToolEntry("tier:azure_electrum", 49));
+                    silentgear_tools.add(new ToolEntry("tier:tyrian_steel", 50));
+                    ToolConfig.registerMultipleConfigs(builder, "silentgear_tools", "Silentgear Tools", silentgear_tools);
                 }
+
                 if (hasSilentGems) {
-                    List<ToolEntry> silentgems = new ArrayList<>();
-                    //ruby
-                    silentgems.add(new ToolEntry("silentgems:ruby", 15, true));
-                    //sapphire
-                    silentgems.add(new ToolEntry("silentgems:sapphire", 15, true));
-                    //iolite
-                    silentgems.add(new ToolEntry("silentgems:iolite", 15, true));
-                    //moldavite
-                    silentgems.add(new ToolEntry("silentgems:moldavite", 15, true));
-                    //peridot
-                    silentgems.add(new ToolEntry("silentgems:peridot", 15, true));
-                    //carnelian
-                    silentgems.add(new ToolEntry("silentgems:carnelian", 17, true));
-                    //topaz
-                    silentgems.add(new ToolEntry("silentgems:topaz", 19, true));
-                    //citrine
-                    silentgems.add(new ToolEntry("silentgems:citrine", 22, true));
-                    //citrine
-                    silentgems.add(new ToolEntry("silentgems:heliodor", 25, true));
-                    //turquoise
-                    silentgems.add(new ToolEntry("silentgems:turquoise", 30, true));
-                    //alexandrite
-                    silentgems.add(new ToolEntry("silentgems:alexandrite", 30, true));
-                    //ammolite
-                    silentgems.add(new ToolEntry("silentgems:ammolite", 30, true));
-                    //black_diamond
-                    silentgems.add(new ToolEntry("silentgems:black_diamond", 32, true));
-                    //kyanite
-                    silentgems.add(new ToolEntry("silentgems:kyanite", 40, true));
-                    //rose_quartz
-                    silentgems.add(new ToolEntry("silentgems:rose_quartz", 40, true));
-                    //kyanite
-                    silentgems.add(new ToolEntry("silentgems:kyanite", 40, true));
-                    //white_diamond
-                    silentgems.add(new ToolEntry("silentgems:white_diamond", 45, true));
-                    ToolConfig.registerMultipleConfigs(builder, "tool_silentgems", "Silent Gems", silentgems);
+                    List<ToolEntry> silentgems_tools = new ArrayList<>();
+                    silentgems_tools.add(new ToolEntry("tier:ruby", 15));
+                    silentgems_tools.add(new ToolEntry("tier:sapphire", 15));
+                    silentgems_tools.add(new ToolEntry("tier:iolite", 15));
+                    silentgems_tools.add(new ToolEntry("tier:moldavite", 15));
+                    silentgems_tools.add(new ToolEntry("tier:peridot", 15));
+                    silentgems_tools.add(new ToolEntry("tier:carnelian", 17));
+                    silentgems_tools.add(new ToolEntry("tier:topaz", 19));
+                    silentgems_tools.add(new ToolEntry("tier:citrine", 22));
+                    silentgems_tools.add(new ToolEntry("tier:heliodor", 25));
+                    silentgems_tools.add(new ToolEntry("tier:turquoise", 30));
+                    silentgems_tools.add(new ToolEntry("tier:alexandrite", 30));
+                    silentgems_tools.add(new ToolEntry("tier:ammolite", 30));
+                    silentgems_tools.add(new ToolEntry("tier:black_diamond", 32));
+                    silentgems_tools.add(new ToolEntry("tier:kyanite", 40));
+                    silentgems_tools.add(new ToolEntry("tier:rose_quartz", 40));
+                    silentgems_tools.add(new ToolEntry("tier:kyanite", 40));
+                    silentgems_tools.add(new ToolEntry("tier:white_diamond", 45));
+                    ToolConfig.registerMultipleConfigs(builder, "silentgems_tools", "Silentgems Tools", silentgems_tools);
+                }
+
+                if (hasIceAndFire) {
+                    List<ToolEntry> iceandfire_tools = new ArrayList<>();
+                    iceandfire_tools.add(new ToolEntry("iceandfire:copper_pickaxe", 10));
+                    iceandfire_tools.add(new ToolEntry("iceandfire:silver_pickaxe", 12));
+                    ToolConfig.registerMultipleConfigs(builder, "iceandfire_tools", "Ice & Fire Tools", iceandfire_tools);
                 }
             });
         }

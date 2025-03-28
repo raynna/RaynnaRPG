@@ -36,14 +36,16 @@ public class CombatConfig {
     public static void registerConfig(ModConfigSpec.Builder builder, String key, int level, boolean armour) {
         String modId = key.contains(":") ? key.split(":")[0] : key;
         String itemId = key.contains(":") ? key.split(":")[1] : key;
-        String readableType = itemId.replace("_", " "); // "wooden_pickaxe" -> "wooden pickaxe"
-        String keyTranslation = "[" + Utils.capitalize(modId) + "]" + Utils.capitalize(readableType) + " Level";
+        if (key.contains("tier"))
+            key = key.split(":")[1];
+        String readableType = itemId.replace("_", " ");
+        String keyTranslation = Utils.capitalize(readableType) + " Level";
 
         ModConfigSpec.ConfigValue<Integer> configValue = builder
                 .translation(keyTranslation)
                 .comment("Configurations for level requirements for " + readableType)
                 .comment("Default: " + level)
-                .define(itemId + "_level", level);
+                .define(modId+"_"+itemId +"_level", level);
         if (armour) {
             GEARS.put(key, configValue);
         } else {
