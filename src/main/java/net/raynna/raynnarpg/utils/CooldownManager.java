@@ -21,7 +21,6 @@ public class CooldownManager {
 
         long currentTime = System.currentTimeMillis();
         
-        // Get or create the cooldown map for this key
         Map<Player, Long> entityCooldowns = cooldownMap.computeIfAbsent(cooldownKey, k -> new HashMap<>());
         
         Long lastTime = entityCooldowns.get(player);
@@ -78,7 +77,6 @@ public class CooldownManager {
         cooldownMap.clear();
     }
     
-    // Optional: Store default cooldown durations if needed
     private static final Map<String, Long> defaultCooldowns = new HashMap<>();
     
     /**

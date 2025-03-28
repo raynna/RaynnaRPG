@@ -1,5 +1,6 @@
 package net.raynna.raynnarpg.client.events;
 
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -9,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.raynna.raynnarpg.Global;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.minecraft.client.Minecraft;
@@ -21,10 +23,12 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.raynna.raynnarpg.client.ui.OverlayManager;
 import net.raynna.raynnarpg.client.ui.floating_text.FloatingText;
 import net.raynna.raynnarpg.config.ConfigData;
+import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.mining.MiningConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.Colour;
+import net.raynna.raynnarpg.utils.SilentGearHelper;
 import net.raynna.raynnarpg.utils.Utils;
 import net.silentchaos512.gear.api.item.GearItem;
 import net.silentchaos512.gear.core.component.GearPropertiesData;
@@ -36,69 +40,108 @@ import java.util.*;
 public class ClientBlockEvents {
 
     @SubscribeEvent
-    public static void onBlockBreak(InputEvent.InteractionKeyMappingTriggered event) {
+    public static void onClickEvent(InputEvent.InteractionKeyMappingTriggered event) {
+        if (!shouldProcessBreakEvent(event)) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
-        assert mc.level != null;
-        assert mc.player != null;
+        BlockHitResult hitResult = (BlockHitResult) mc.hitResult;
+        if (mc.player == null || mc.level == null || hitResult == null) return;
 
-        if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK) {
-            if (!event.isAttack())
-                return;
-            BlockPos blockPos = ((BlockHitResult) mc.hitResult).getBlockPos();
-            BlockState blockState = mc.level.getBlockState(blockPos);
-            Block block = blockState.getBlock();
-            ClientSkills skills = new ClientSkills(mc.player);
-            ItemStack mainHand = mc.player.getMainHandItem();
-            int miningLevel = skills.getSkillLevel(SkillType.MINING);
-            if (ModList.get().isLoaded("silentgear")) {
-                if (!mainHand.isEmpty() && mainHand.getItem() instanceof GearItem silent) {
-                    String toolName = silent.asItem().getName(mainHand).getString();
-                    Map<String, String> properties = new HashMap<>();
-                    GearPropertiesData propertiesData = GearData.getProperties(mainHand);
+        BlockPos blockPos = hitResult.getBlockPos();
+        BlockState blockState = mc.level.getBlockState(blockPos);
+        ClientSkills skills = new ClientSkills(mc.player);
+        ItemStack mainHand = mc.player.getMainHandItem();
+        int miningLevel = skills.getSkillLevel(SkillType.MINING);
+        int combatLevel = skills.getSkillLevel(SkillType.COMBAT);
 
-                    propertiesData.properties().forEach((key, value) -> {
-                        properties.put(key.getDisplayName().getString(), value.toString());
-                    });
+        if (checkToolRequirements(mc, event, mainHand, miningLevel, blockPos)) {
+            return;
+        }
+        if (!canUseWeapon(mc.player, mainHand, combatLevel)) {
+            event.setCanceled(true);
+            mc.player.swinging = false;
+            mc.player.resetAttackStrengthTicker();
+            return;
+        }
+        checkBlockMiningRequirements(mc, event, blockState, miningLevel, blockPos);
+    }
 
-                    String harvestTierByName = properties.get("Harvest Tier");
-                    ConfigData data = ToolConfig.getSilentGearData(harvestTierByName);
-                    if (data != null) {
-                        if (miningLevel < data.getLevel()) {
-                            event.setCanceled(true);
-                            mc.player.swinging = false;
-                            mc.player.resetAttackStrengthTicker();
-                            Utils.checkMiningMiss(mc.player, blockPos, 0.5f);
-                            mc.player.displayClientMessage(Component.literal("You need a mining level of " + data.getLevel() + " in order to use " + toolName + " as a tool."), true);
-                            return;
-                        }
-                    }
-                }
+    private static boolean shouldProcessBreakEvent(InputEvent.InteractionKeyMappingTriggered event) {
+        Minecraft mc = Minecraft.getInstance();
+        return event.isAttack()
+                && mc.hitResult != null
+                && mc.hitResult.getType() == HitResult.Type.BLOCK
+                && mc.level != null
+                && mc.player != null;
+    }
+
+    private static boolean canUseWeapon(Player player, ItemStack weapon, int combatLevel) {
+        if (weapon.isEmpty()) return true;
+
+        if (SilentGearHelper.isSilentGearLoaded() && weapon.getItem() instanceof GearItem && SilentGearHelper.isWeapon(weapon)) {
+            if (!SilentGearHelper.checkCombatLevel(player, weapon, combatLevel, false)) {
+                return false;
             }
-            if (!mainHand.isEmpty()) {
-                ConfigData data = ToolConfig.getToolData(mainHand);
-                if (data != null) {
-                    if (miningLevel < data.getLevel()) {
-                        event.setCanceled(true);
-                        mc.player.swinging = false;
-                        mc.player.resetAttackStrengthTicker();
-                        Utils.checkMiningMiss(mc.player, blockPos, 0.5f);
-                        mc.player.displayClientMessage(Component.literal("You need a mining level of " + data.getLevel() + " in order to use " + mainHand.getHoverName().getString() + " as a tool."), true);
-                        return;
-                    }
-                }
+        }
+
+        ConfigData data = CombatConfig.getData(weapon, false);
+        if (data != null && combatLevel < data.getLevel()) {
+            player.displayClientMessage(
+                    Component.literal("You need combat level " + data.getLevel() +
+                            " to use " + weapon.getHoverName().getString()),
+                    true
+            );
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private static boolean checkToolRequirements(Minecraft mc, InputEvent.InteractionKeyMappingTriggered event,
+                                                 ItemStack mainHand, int miningLevel, BlockPos blockPos) {
+        if (mainHand.isEmpty()) {
+            return false;
+        }
+
+        if (SilentGearHelper.isSilentGearLoaded() && mainHand.getItem() instanceof GearItem && SilentGearHelper.isPickaxe(mainHand)) {
+            if (!SilentGearHelper.checkMiningLevel(mc.player, mainHand, miningLevel)) {
+                handleFailedRequirement(mc, event, blockPos, null);
+                return true;
             }
-            ConfigData data = MiningConfig.getMiningData(blockState);
-            if (data != null) {
-                int levelReq = data.getLevel();
-                if (miningLevel < levelReq) {
-                    event.setCanceled(true);
-                    mc.player.swinging = false;
-                    mc.player.resetAttackStrengthTicker();
-                    String blockName = blockState.getBlock().getName().toFlatList().getFirst().getString();
-                    Utils.checkMiningMiss(mc.player, blockPos, 0.5f);
-                    mc.player.displayClientMessage(Component.literal("You need a mining level of " + data.getLevel() + " in order to mine " + blockName + "."), true);
-                }
-            }
+        }
+
+        ConfigData toolData = ToolConfig.getToolData(mainHand);
+        if (toolData != null && miningLevel < toolData.getLevel()) {
+            handleFailedRequirement(mc, event, blockPos,
+                    "You need a mining level of " + toolData.getLevel() +
+                            " in order to use " + mainHand.getHoverName().getString() + " as a tool.");
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void checkBlockMiningRequirements(Minecraft mc, InputEvent.InteractionKeyMappingTriggered event,
+                                                     BlockState blockState, int miningLevel, BlockPos blockPos) {
+        ConfigData miningData = MiningConfig.getMiningData(blockState);
+        if (miningData != null && miningLevel < miningData.getLevel()) {
+            String blockName = blockState.getBlock().getName().toFlatList().getFirst().getString();
+            handleFailedRequirement(mc, event, blockPos,
+                    "You need a mining level of " + miningData.getLevel() +
+                            " in order to mine " + blockName + ".");
+        }
+    }
+
+    private static void handleFailedRequirement(Minecraft mc, InputEvent.InteractionKeyMappingTriggered event,
+                                                BlockPos blockPos, String message) {
+        event.setCanceled(true);
+        mc.player.swinging = false;
+        mc.player.resetAttackStrengthTicker();
+        Utils.checkMiningMiss(mc.player, blockPos, 0.5f);
+        if (message != null) {
+            mc.player.displayClientMessage(Component.literal(message), true);
         }
     }
 

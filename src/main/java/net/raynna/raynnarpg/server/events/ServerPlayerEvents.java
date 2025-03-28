@@ -1,375 +1,384 @@
 package net.raynna.raynnarpg.server.events;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodConstants;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.inventory.BlastFurnaceMenu;
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.inventory.FurnaceMenu;
-import net.minecraft.world.inventory.SmokerMenu;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.fml.ModList;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
-import net.raynna.raynnarpg.config.ConfigData;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.raynna.raynnarpg.config.*;
+import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.crafting.CraftingConfig;
 import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
 import net.raynna.raynnarpg.recipe.ReversibleCraftingRegistry;
-import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
+import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataStorage;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
-import net.raynna.raynnarpg.utils.CraftingTracker;
-import net.raynna.raynnarpg.utils.MessageSender;
+import net.raynna.raynnarpg.utils.*;
 import net.silentchaos512.gear.api.item.GearItem;
-import net.silentchaos512.gear.core.component.GearPropertiesData;
-import net.silentchaos512.gear.util.GearData;
 
 import java.util.*;
 
 public class ServerPlayerEvents {
 
+    private static final int FUEL_SLOT = 1;
+    private static final int INPUT_SLOT = 0;
+    private static final Map<UUID, Integer> lastEquipAttempt = new HashMap<>();
+
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        Player player = event.getEntity();
-
-        if (player instanceof ServerPlayer serverPlayer) {
-            PlayerProgress playerProgress = PlayerDataProvider.getPlayerProgress(serverPlayer);
-            playerProgress.init(serverPlayer);
+        if (event.getEntity() instanceof ServerPlayer player) {
+            PlayerDataProvider.getPlayerProgress(player).init(player);
         }
     }
 
     @SubscribeEvent
     public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            ServerLevel level = serverPlayer.serverLevel();
-            PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
-            progress.toNBT();
-            PlayerDataStorage dataStorage = PlayerDataProvider.getData(level);
-            dataStorage.markDirty();
+        if (event.getEntity() instanceof ServerPlayer player) {
+            savePlayerProgress(player);
         }
     }
 
     @SubscribeEvent
     public static void onServerStop(ServerStoppedEvent event) {
-        MinecraftServer server = event.getServer();
-
-        for (ServerLevel level : server.getAllLevels()) {
+        event.getServer().getAllLevels().forEach(level -> {
             PlayerDataStorage dataStorage = PlayerDataProvider.getData(level);
-
-            for (ServerPlayer serverPlayer : level.players()) {
-                PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
-                progress.toNBT(); // Update progress state for saving
-            }
-
-            dataStorage.markDirty(); // Mark the whole storage as dirty once per level
-        }
+            level.players().forEach(player -> savePlayerProgress((ServerPlayer) player));
+            dataStorage.markDirty();
+        });
     }
 
-    @SubscribeEvent
-    public static void onPlayerRightClick(PlayerInteractEvent.EntityInteract event) {
-        // Check if the entity being interacted with is a player
-        if (event.getEntity() instanceof ServerPlayer interactingPlayer) {
-            // Check if the target entity is another player
-            if (event.getTarget() instanceof Player targetPlayer) {
-
-                ItemStack itemInHand = interactingPlayer.getMainHandItem();
-                FoodProperties food = itemInHand.getItem().getFoodProperties(itemInHand, targetPlayer);
-                boolean isHandEmpty = itemInHand.isEmpty();
-                if (!isHandEmpty && food != null) {
-                    if (targetPlayer.getFoodData().getFoodLevel() < FoodConstants.MAX_FOOD) {
-                        ItemStack result = targetPlayer.eat(interactingPlayer.level(), itemInHand);
-                        if (result.isEmpty() || result.getCount() < itemInHand.getCount()) {
-                            itemInHand.shrink(1);
-                            interactingPlayer.sendSystemMessage(Component.literal("You have fed " + targetPlayer.getName().getString() + "."));
-                            targetPlayer.sendSystemMessage(Component.literal(interactingPlayer.getName().getString() + " has fed you."));
-                        }
-                    } else {
-                        interactingPlayer.sendSystemMessage(Component.literal(targetPlayer.getName().getString() + " is already full."));
-                    }
-                }
-            }
-        }
+    private static void savePlayerProgress(ServerPlayer player) {
+        PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+        progress.toNBT();
+        PlayerDataProvider.getData(player.serverLevel()).markDirty();
     }
 
     @SubscribeEvent
     public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-        Level level = event.getLevel();
-        BlockPos blockPos = event.getPos();
-        BlockState state = level.getBlockState(blockPos);
         if (event.getEntity() instanceof ServerPlayer player) {
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
-            if (progress == null)
-                return;
-            int miningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
+            if (progress == null) return;
+
             ItemStack mainHand = player.getMainHandItem();
-            if (ModList.get().isLoaded("silentgear")) {
-                if (mainHand.getItem() instanceof GearItem silent) {
-                    String toolName = silent.asItem().getName(mainHand).getString();
+            int miningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
+            int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
 
-                    Map<String, String> properties = new HashMap<>();
-                    GearPropertiesData propertiesData = GearData.getProperties(mainHand);
-                    propertiesData.properties().forEach((key, value) -> {
-                        properties.put(key.getDisplayName().getString(), value.toString());
-                    });
-                    String harvestTierByName = properties.get("Harvest Tier");
-                    ConfigData data = ToolConfig.getSilentGearData(harvestTierByName);
-                    if (data != null) {
-                        if (miningLevel < data.getLevel()) {
-                            event.setCanceled(true);
-                            MessagePacketSender.send(player, "You need a mining level of " + data.getLevel() + " in order to use " + toolName + " as a tool.");
-                            return;
-                        }
-                    }
-                }
+            if (!validateToolUse(player, mainHand, miningLevel)) {
+                event.setCanceled(true);
             }
-
-            ConfigData data = ToolConfig.getToolData(mainHand);
-            if (data != null) {
-                int playerMiningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
-                String toolName = player.getMainHandItem().getHoverName().getString();
-                if (playerMiningLevel < data.getLevel()) {
-                    event.setCanceled(true);
-                    MessagePacketSender.send(player, "You need a mining level of " + data.getLevel() + " in order to use " + toolName + " as a tool.");
-                }
+            if (!canUseWeapon(player, mainHand, combatLevel)) {
+                player.swing(event.getHand());
+                event.setCanceled(true);
             }
         }
     }
 
-    private static final int FUEL_SLOT = 1, INPUT_SLOT = 0;
+    @SubscribeEvent
+    public static void onEntityAttack(AttackEntityEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+            if (progress == null) return;
+
+            ItemStack weapon = player.getMainHandItem();
+            if (!canUseWeapon(player, weapon, progress.getSkills().getSkill(SkillType.COMBAT).getLevel())) {
+                player.swing(InteractionHand.MAIN_HAND);
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            if (event.getTarget() instanceof Player target) {
+                handlePlayerFeeding(player, target);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onEquip(LivingEquipmentChangeEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+
+        EquipmentSlot slot = event.getSlot();
+        ItemStack newItem = event.getTo();
+        ItemStack oldItem = event.getFrom();
+
+        if (newItem.isEmpty() || !isEquipmentSlot(slot)) {
+            return;
+        }
+
+        PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+        if (progress == null) {
+            return;
+        }
+
+        if (!canEquipItem(player, newItem, slot, progress)) {
+            revertEquipmentChange(player, event);
+            player.closeContainer();
+            syncEquipmentState(player);
+        }
+    }
+
+    private static void revertEquipmentChange(ServerPlayer player, LivingEquipmentChangeEvent event) {
+        ItemStack attemptedItem = event.getTo().copy();
+        EquipmentSlot slot = event.getSlot();
+
+        if (!attemptedItem.isEmpty()) {
+            player.getInventory().placeItemBackInInventory(attemptedItem);
+        }
+        player.setItemSlot(slot, ItemStack.EMPTY);
+    }
+
+    private static void syncEquipmentState(ServerPlayer player) {
+        List<Pair<EquipmentSlot, ItemStack>> equipmentList = new ArrayList<>();
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            equipmentList.add(new Pair<>(slot, player.getItemBySlot(slot)));
+        }
+        player.connection.send(new ClientboundSetEquipmentPacket(player.getId(), equipmentList));
+
+        player.inventoryMenu.broadcastChanges();
+
+        player.getServer().execute(() -> {
+            player.containerMenu.slotsChanged(player.getInventory());
+        });
+    }
+
+    private static boolean canEquipItem(ServerPlayer player, ItemStack item, EquipmentSlot slot, PlayerProgress progress) {
+        int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
+        boolean isArmor = isArmorSlot(slot);
+        if (SilentGearHelper.isSilentGearLoaded() && item.getItem() instanceof GearItem) {
+            if (!SilentGearHelper.checkCombatLevel(player, item, combatLevel, isArmor)) {
+                return false;
+            }
+        }
+
+        ConfigData data = CombatConfig.getData(item, isArmor);
+        if (data != null && combatLevel < data.getLevel()) {
+            MessagePacketSender.send(player,
+                    "You need combat level " + data.getLevel() +
+                            " to equip " + item.getHoverName().getString());
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isEquipmentSlot(EquipmentSlot slot) {
+        return isArmorSlot(slot) ||
+                slot == EquipmentSlot.OFFHAND;
+    }
+
+    private static boolean isArmorSlot(EquipmentSlot slot) {
+        return slot == EquipmentSlot.HEAD ||
+                slot == EquipmentSlot.CHEST ||
+                slot == EquipmentSlot.LEGS ||
+                slot == EquipmentSlot.FEET;
+    }
 
     @SubscribeEvent
     public static void onFurnace(PlayerEvent.ItemSmeltedEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
-            if (progress == null) return;
-            Skill smithing = progress.getSkills().getSkill(SkillType.SMELTING);
-            if (serverPlayer.containerMenu instanceof SmokerMenu furnaceMenu) {
-                int smeltingLevel = progress.getSkills().getSkill(SkillType.SMELTING).getLevel();
-                ItemStack inputItem = furnaceMenu.getSlot(INPUT_SLOT).getItem();
-                ItemStack fuelItem = furnaceMenu.getSlot(FUEL_SLOT).getItem();
-                String smeltingItemName = event.getSmelting().getHoverName().getString();
-                ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
-                if (data != null) {
-                    int requiredLevel = data.getLevel();
-                    if (smeltingLevel < requiredLevel) {
-                        int outputCount = event.getSmelting().getCount();
-                        event.getSmelting().setCount(0);
-                        serverPlayer.sendSystemMessage(Component.literal("You need a smelting level of " + requiredLevel + " in order to create " + smeltingItemName + "s."));
-                        Item raw = BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw()));
-                        ItemStack rawMaterial = new ItemStack(raw);
-                        if (inputItem.isEmpty()) {
-                            rawMaterial = new ItemStack(raw, outputCount);
-                            furnaceMenu.getSlot(INPUT_SLOT).set(rawMaterial);
-                            return;
-                        }
-                        boolean invalidInputItem = !furnaceMenu.getSlot(INPUT_SLOT).getItem().getDescriptionId().equals(rawMaterial.getDescriptionId());
-                        if (invalidInputItem) {
-                            rawMaterial = new ItemStack(raw, outputCount);
-                            serverPlayer.getInventory().placeItemBackInInventory(rawMaterial);
-                            return;
-                        }
-                        boolean fullInput = furnaceMenu.getSlot(INPUT_SLOT).getItem().getCount() + outputCount > furnaceMenu.getSlot(INPUT_SLOT).getItem().getMaxStackSize();
-                        if (fullInput) {
-                            ItemStack newInputItem = inputItem.copy();
-                            newInputItem.setCount(outputCount);
-                            serverPlayer.getInventory().placeItemBackInInventory(newInputItem);
-                            return;
-                        }
-                        ItemStack newInputItem = inputItem.copy();
-                        newInputItem.grow(outputCount);
-                        furnaceMenu.getSlot(INPUT_SLOT).set(newInputItem);
-                        return;
-                    }
-                    double baseExperience = 0;
-                    baseExperience += data.getXp();
-                    int smeltedAmount = event.getSmelting().getCount();
-                    String itemName = event.getSmelting().getHoverName().getString();
-                    double totalExperience = baseExperience * smeltedAmount;
-                    double roundedXp = Math.round(totalExperience * 100.0) / 100.0;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, roundedXp, smithing.getType(), () -> {
-                        progress.getSkills().addXp(SkillType.SMELTING, roundedXp);
-                    });
-                }
-            }
-            if (serverPlayer.containerMenu instanceof BlastFurnaceMenu furnaceMenu) {
-                int smeltingLevel = progress.getSkills().getSkill(SkillType.SMELTING).getLevel();
-                ItemStack inputItem = furnaceMenu.getSlot(INPUT_SLOT).getItem();
-                ItemStack fuelItem = furnaceMenu.getSlot(FUEL_SLOT).getItem();
-                String smeltingItemName = event.getSmelting().getHoverName().getString();
-                ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
-                if (data != null) {
-                    int requiredLevel = data.getLevel();
-                    if (smeltingLevel < requiredLevel) {
-                        int outputCount = event.getSmelting().getCount();
-                        event.getSmelting().setCount(0);
-                        serverPlayer.sendSystemMessage(Component.literal("You need a smelting level of " + requiredLevel + " in order to create " + smeltingItemName + "s."));
-                        Item raw = BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw()));
-                        ItemStack rawMaterial = new ItemStack(raw);
-                        if (inputItem.isEmpty()) {
-                            rawMaterial = new ItemStack(raw, outputCount);
-                            furnaceMenu.getSlot(INPUT_SLOT).set(rawMaterial);
-                            return;
-                        }
-                        boolean invalidInputItem = !furnaceMenu.getSlot(INPUT_SLOT).getItem().getDescriptionId().equals(rawMaterial.getDescriptionId());
-                        if (invalidInputItem) {
-                            rawMaterial = new ItemStack(raw, outputCount);
-                            serverPlayer.getInventory().placeItemBackInInventory(rawMaterial);
-                            return;
-                        }
-                        boolean fullInput = furnaceMenu.getSlot(INPUT_SLOT).getItem().getCount() + outputCount > furnaceMenu.getSlot(INPUT_SLOT).getItem().getMaxStackSize();
-                        if (fullInput) {
-                            ItemStack newInputItem = inputItem.copy();
-                            newInputItem.setCount(outputCount);
-                            serverPlayer.getInventory().placeItemBackInInventory(newInputItem);
-                            return;
-                        }
-                        ItemStack newInputItem = inputItem.copy();
-                        newInputItem.grow(outputCount);
-                        furnaceMenu.getSlot(INPUT_SLOT).set(newInputItem);
-                        return;
-                    }
-                    double baseExperience = 0;
-                    baseExperience += data.getXp();
-                    int smeltedAmount = event.getSmelting().getCount();
-                    String itemName = event.getSmelting().getHoverName().getString();
-                    double totalExperience = baseExperience * smeltedAmount;
-                    double roundedXp = Math.round(totalExperience * 100.0) / 100.0;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, roundedXp, smithing.getType(), () -> {
-                        progress.getSkills().addXp(SkillType.SMELTING, roundedXp);
-                    });
-                }
-            }
-            if (serverPlayer.containerMenu instanceof FurnaceMenu furnaceMenu) {
-                int smeltingLevel = progress.getSkills().getSkill(SkillType.SMELTING).getLevel();
-                ItemStack inputItem = furnaceMenu.getSlot(INPUT_SLOT).getItem();
-                ItemStack fuelItem = furnaceMenu.getSlot(FUEL_SLOT).getItem();
-                String smeltingItemName = event.getSmelting().getHoverName().getString();
-                ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
-                if (data != null) {
-                    int requiredLevel = data.getLevel();
-                    if (smeltingLevel < requiredLevel) {
-                        int outputCount = event.getSmelting().getCount();
-                        event.getSmelting().setCount(0);
-                        serverPlayer.sendSystemMessage(Component.literal("You need a smelting level of " + requiredLevel + " in order to create " + smeltingItemName + "s."));
-                        Item raw = BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw()));
-                        ItemStack rawMaterial = new ItemStack(raw);
-                        if (inputItem.isEmpty()) {
-                            rawMaterial = new ItemStack(raw, outputCount);
-                            furnaceMenu.getSlot(INPUT_SLOT).set(rawMaterial);
-                            return;
-                        }
-                        boolean invalidInputItem = !furnaceMenu.getSlot(INPUT_SLOT).getItem().getDescriptionId().equals(rawMaterial.getDescriptionId());
-                        if (invalidInputItem) {
-                            rawMaterial = new ItemStack(raw, outputCount);
-                            serverPlayer.getInventory().placeItemBackInInventory(rawMaterial);
-                            return;
-                        }
-                        boolean fullInput = furnaceMenu.getSlot(INPUT_SLOT).getItem().getCount() + outputCount > furnaceMenu.getSlot(INPUT_SLOT).getItem().getMaxStackSize();
-                        if (fullInput) {
-                            ItemStack newInputItem = inputItem.copy();
-                            newInputItem.setCount(outputCount);
-                            serverPlayer.getInventory().placeItemBackInInventory(newInputItem);
-                            return;
-                        }
-                        ItemStack newInputItem = inputItem.copy();
-                        newInputItem.grow(outputCount);
-                        furnaceMenu.getSlot(INPUT_SLOT).set(newInputItem);
-                        return;
-                    }
-                    double baseExperience = 0;
-                    baseExperience += data.getXp();
-                    int smeltedAmount = event.getSmelting().getCount();
-                    String itemName = event.getSmelting().getHoverName().getString();
-                    double totalExperience = baseExperience * smeltedAmount;
-                    double roundedXp = Math.round(totalExperience * 100.0) / 100.0;
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, smeltedAmount, roundedXp, smithing.getType(), () -> {
-                        progress.getSkills().addXp(SkillType.SMELTING, roundedXp);
-                    });
-                }
-            }
+        if (event.getEntity() instanceof ServerPlayer player && event.getEntity().containerMenu instanceof AbstractFurnaceMenu furnaceMenu) {
+            handleSmeltingEvent(player, furnaceMenu, event);
         }
     }
 
     @SubscribeEvent
     public static void onCraftEvent(PlayerEvent.ItemCraftedEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            PlayerProgress progress = PlayerDataProvider.getPlayerProgress(serverPlayer);
+        if (event.getEntity() instanceof ServerPlayer player && event.getInventory() instanceof CraftingContainer container) {
+            handleCraftingEvent(player, container, event);
+        }
+    }
 
-            if (progress == null) return;
-            ItemStack itemCrafted = event.getCrafting();
-            String itemName = itemCrafted.getHoverName().getString();
-            Skill crafting = progress.getSkills().getSkill(SkillType.CRAFTING);
-            if (event.getInventory() instanceof CraftingContainer craftingContainer) {
-                int playerCraftingLevel = crafting.getLevel();
-                boolean craftingBlocked = false;
-                double totalBaseExperience = 0.0;
-                boolean craftingBenchFull = true;
-                Set<String> uniqueMaterials = new HashSet<>();
-                int totalSlotsUsed = 0;
-                for (int i = 0; i < craftingContainer.getContainerSize(); i++) {
-                    ItemStack materialStack = craftingContainer.getItem(i);
-                    String materialId = materialStack.getDescriptionId();
-                    String materialName = materialStack.getHoverName().getString();
-                    if (materialStack.isEmpty()) {
-                        craftingBenchFull = false;
-                        continue;
-                    }
-                    totalSlotsUsed++;
-                    uniqueMaterials.add(materialName);
-                    ConfigData data = CraftingConfig.getCraftingData(materialStack);
-                    if (data == null) {
-                        continue;
-                    }
-                    int requiredLevel = data.getLevel();
-                    if (playerCraftingLevel < requiredLevel) {
-                        MessageSender.send(serverPlayer, "You need a " + crafting.getType().getName() + " level of " + requiredLevel + " in order to use " + materialName + " in crafting.");
-                        for (int j = 0; j < craftingContainer.getContainerSize(); j++) {
-                            ItemStack stack = craftingContainer.getItem(j);
-                            if (!stack.isEmpty()) {
-                                serverPlayer.getInventory().placeItemBackInInventory(stack);
-                                craftingContainer.setItem(j, ItemStack.EMPTY);
-                            }
-                        }
-                        event.getCrafting().setCount(0);
-                        return;
-                    }
-                    totalBaseExperience += data.getXp();
+    private static boolean canUseWeapon(ServerPlayer player, ItemStack weapon, int combatLevel) {
+        if (weapon.isEmpty()) return true;
+
+        if (SilentGearHelper.isSilentGearLoaded() && weapon.getItem() instanceof GearItem && SilentGearHelper.isWeapon(weapon)) {
+            if (!SilentGearHelper.checkCombatLevel(player, weapon, combatLevel, false)) {
+                return false;
+            }
+        }
+
+        ConfigData data = CombatConfig.getData(weapon, false);
+        if (data != null && combatLevel < data.getLevel()) {
+            MessagePacketSender.send(player, "You need combat level " + data.getLevel() + " to use " + weapon.getHoverName().getString());
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean validateToolUse(ServerPlayer player, ItemStack tool, int miningLevel) {
+        if (SilentGearHelper.isSilentGearLoaded() && tool.getItem() instanceof GearItem && SilentGearHelper.isTool(tool)) {
+            if (!SilentGearHelper.checkMiningLevel(player, tool, miningLevel)) {
+                return false;
+            }
+        }
+
+        ConfigData data = ToolConfig.getToolData(tool);
+        if (data != null && miningLevel < data.getLevel()) {
+            MessagePacketSender.send(player, "You need mining level " + data.getLevel() + " to use " + tool.getHoverName().getString());
+            return false;
+        }
+        return true;
+    }
+
+    private static void handlePlayerFeeding(ServerPlayer feeder, Player target) {
+        ItemStack foodItem = feeder.getMainHandItem();
+        FoodProperties foodProps = foodItem.getItem().getFoodProperties(foodItem, target);
+
+        if (!foodItem.isEmpty() && foodProps != null) {
+            if (target.getFoodData().getFoodLevel() < FoodConstants.MAX_FOOD) {
+                ItemStack result = target.eat(feeder.level(), foodItem);
+                if (result.isEmpty() || result.getCount() < foodItem.getCount()) {
+                    foodItem.shrink(1);
+                    sendFeedingMessages(feeder, target);
                 }
-                if (ReversibleCraftingRegistry.isReversible(itemCrafted.getItem())) {
-                    craftingBlocked = true;
-                    MessageSender.send(serverPlayer, "You did not get any experience from " + itemName + " due to it has a reversible recipe.");
-                }
-                if (craftingBenchFull && uniqueMaterials.size() == 1 && totalSlotsUsed > 4) {
-                    craftingBlocked = true;
-                }
-                if (!craftingBlocked) {
-                    double roundedXp = Math.round(totalBaseExperience * 100.0) / 100.0;
-                    int itemsCreated = itemCrafted.getCount();
-                    CraftingTracker.accumulateCraftingData(serverPlayer, itemName, itemsCreated, roundedXp, crafting.getType(), () -> {
-                        progress.getSkills().addXp(SkillType.CRAFTING, roundedXp);
-                    });
-                }
+            } else {
+                feeder.sendSystemMessage(Component.literal(target.getName().getString() + " doesn't have any hunger."));
             }
         }
     }
 
+    private static void sendFeedingMessages(Player feeder, Player target) {
+        feeder.sendSystemMessage(Component.literal("You have fed " + target.getName().getString() + "."));
+        target.sendSystemMessage(Component.literal(feeder.getName().getString() + " has fed you."));
+    }
+
+    private static void handleSmeltingEvent(ServerPlayer player, AbstractFurnaceMenu menu, PlayerEvent.ItemSmeltedEvent event) {
+        PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+        if (progress == null) return;
+
+        ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
+        if (data == null) return;
+
+        if (progress.getSkills().getSkill(SkillType.SMELTING).getLevel() < data.getLevel()) {
+            handleFailedSmelting(player, menu, event, data);
+        } else {
+            grantSmeltingExperience(player, progress, event, data);
+        }
+    }
+
+    private static void handleFailedSmelting(ServerPlayer player, AbstractFurnaceMenu menu, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
+        event.getSmelting().setCount(0);
+        player.sendSystemMessage(Component.literal("You need smelting level " + data.getLevel() + " to create " + event.getSmelting().getHoverName().getString()));
+
+        ItemStack input = menu.getSlot(INPUT_SLOT).getItem();
+        ItemStack rawMaterial = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw())), event.getSmelting().getCount());
+
+        if (input.isEmpty()) {
+            menu.getSlot(INPUT_SLOT).set(rawMaterial);
+        } else if (!input.getDescriptionId().equals(rawMaterial.getDescriptionId())) {
+            player.getInventory().placeItemBackInInventory(rawMaterial);
+        } else if (input.getCount() + rawMaterial.getCount() > input.getMaxStackSize()) {
+            ItemStack overflow = input.copy();
+            overflow.setCount(rawMaterial.getCount());
+            player.getInventory().placeItemBackInInventory(overflow);
+        } else {
+            input.grow(rawMaterial.getCount());
+            menu.getSlot(INPUT_SLOT).set(input);
+        }
+    }
+
+    private static void grantSmeltingExperience(ServerPlayer player, PlayerProgress progress, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
+        double xp = Math.round(data.getXp() * event.getSmelting().getCount() * 100) / 100.0;
+        CraftingTracker.accumulateCraftingData(player, event.getSmelting().getHoverName().getString(), event.getSmelting().getCount(), xp, SkillType.SMELTING, () -> progress.getSkills().addXp(SkillType.SMELTING, xp));
+    }
+
+    private static void handleCraftingEvent(ServerPlayer player, CraftingContainer container, PlayerEvent.ItemCraftedEvent event) {
+        PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+        if (progress == null) return;
+
+        CraftingResult result = checkCraftingMaterials(player, container, progress);
+        if (result.blocked) {
+            event.getCrafting().setCount(0);
+        } else if (shouldGrantExperience(event.getCrafting(), result)) {
+            grantCraftingExperience(player, progress, event.getCrafting(), result);
+        }
+    }
+
+    private static CraftingResult checkCraftingMaterials(ServerPlayer player, CraftingContainer container, PlayerProgress progress) {
+        CraftingResult result = new CraftingResult();
+        int playerLevel = progress.getSkills().getSkill(SkillType.CRAFTING).getLevel();
+
+        for (int i = 0; i < container.getContainerSize(); i++) {
+            ItemStack material = container.getItem(i);
+            if (material.isEmpty()) {
+                result.hasEmptySlots = true;
+                continue;
+            }
+
+            result.totalSlotsUsed++;
+            result.uniqueMaterials.add(material.getHoverName().getString());
+
+            ConfigData data = CraftingConfig.getCraftingData(material);
+            if (data == null) continue;
+
+            if (playerLevel < data.getLevel()) {
+                handleInvalidCraftingMaterial(player, container, material, data.getLevel(), progress.getSkills().getSkill(SkillType.CRAFTING));
+                result.blocked = true;
+                break;
+            }
+
+            result.totalExperience += data.getXp();
+        }
+        return result;
+    }
+
+    private static void handleInvalidCraftingMaterial(ServerPlayer player, CraftingContainer container, ItemStack material, int requiredLevel, Skill skill) {
+        MessageSender.send(player, "You need " + skill.getType().getName() + " level " + requiredLevel + " to use " + material.getHoverName().getString() + " in crafting.");
+
+        for (int i = 0; i < container.getContainerSize(); i++) {
+            ItemStack stack = container.getItem(i);
+            if (!stack.isEmpty()) {
+                player.getInventory().placeItemBackInInventory(stack);
+                container.setItem(i, ItemStack.EMPTY);
+            }
+        }
+    }
+
+    private static boolean shouldGrantExperience(ItemStack craftedItem, CraftingResult result) {
+        return !ReversibleCraftingRegistry.isReversible(craftedItem.getItem()) && (result.hasEmptySlots || result.uniqueMaterials.size() != 1 || result.totalSlotsUsed <= 4);
+    }
+
+    private static void grantCraftingExperience(ServerPlayer player, PlayerProgress progress, ItemStack craftedItem, CraftingResult result) {
+        double xp = Math.round(result.totalExperience * 100) / 100.0;
+        CraftingTracker.accumulateCraftingData(player, craftedItem.getHoverName().getString(), craftedItem.getCount(), xp, SkillType.CRAFTING, () -> progress.getSkills().addXp(SkillType.CRAFTING, xp));
+    }
+
+    private static class CraftingResult {
+        boolean blocked = false;
+        boolean hasEmptySlots = false;
+        int totalSlotsUsed = 0;
+        Set<String> uniqueMaterials = new HashSet<>();
+        double totalExperience = 0.0;
+    }
 
     public static void register() {
         NeoForge.EVENT_BUS.register(ServerPlayerEvents.class);

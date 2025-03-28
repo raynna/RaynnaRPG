@@ -23,6 +23,36 @@ public class Utils {
         }
     }
 
+    public static String extractModId(String key) {
+        if (!key.contains(":")) {
+            return Utils.capitalize(key.replace("_", " "));
+        }
+
+        String itemName = key.split(":")[0];
+        String[] parts = itemName.split("_");
+
+        if (parts.length > 0) {
+            return Utils.capitalize(parts[0]);
+        }
+
+        return key;
+    }
+
+    public static String extractItemId(String key) {
+        if (!key.contains(":")) {
+            return Utils.capitalize(key.replace("_", " "));
+        }
+
+        String itemName = key.split(":")[1];
+        String[] parts = itemName.split("_");
+
+        if (parts.length > 0) {
+            return Utils.capitalize(parts[0]);
+        }
+
+        return key;
+    }
+
     private static final Random RANDOM = new Random();
 
     /**

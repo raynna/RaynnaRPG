@@ -32,7 +32,11 @@ public class CraftingConfig {
     }
 
     public static void registerConfig(ModConfigSpec.Builder builder, String key, int level, double xp, String... tags) {
+        String modId = key.contains(":") ? key.split(":")[0] : key;
         String item = key.contains(":") ? key.split(":")[1] : key;
+        if (modId.equals("silentgear")) {
+
+        }
         String name = Utils.capitalize(item).replace("_", " ");
         if (xp == 0) {
             xp = Skills.getXpForMaterial(level, SkillType.CRAFTING);

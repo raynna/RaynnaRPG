@@ -18,7 +18,6 @@ public class FloatingText {
 
     private static final float GUI_LAYER = 5000f;
 
-    // Timing controls
     private static final long DEFAULT_DURATION = 3000; // Total visible time in milliseconds
     private static final float DEFAULT_SPEED = 1000f; // Higher = slower upward movement
 
@@ -151,7 +150,6 @@ public class FloatingText {
 
 
     private void renderWorldSpace(GuiGraphics guiGraphics, Camera camera, float fade) {
-        // Calculate vertical float offset
         float yOffset = (float) (System.currentTimeMillis() - createTime) / DEFAULT_SPEED; // Standardized speed
 
         ScreenPosition screenPos = calculateScreenPosition(position.add(0, yOffset, 0), camera);
@@ -160,7 +158,6 @@ public class FloatingText {
             return;
         }
 
-        // Apply distance scaling (simplified formula)
         float finalScale = (float) (scale * (SCALE_DISTANCE_FACTOR / Math.max(1, screenPos.distance)));
 
         renderText(guiGraphics, screenPos.x, screenPos.y, finalScale, fade, 0);
@@ -183,27 +180,24 @@ public class FloatingText {
         poseStack.scale(scale, scale, 1f);
 
         if (screenSpace) {
-            RenderSystem.disableDepthTest(); // Disable for screen-space elements
+            RenderSystem.disableDepthTest();
         } else {
-            RenderSystem.enableDepthTest(); // Enable for world-space elements
+            RenderSystem.enableDepthTest();
         }
 
         int textWidth = mc.font.width(text);
         int alpha = (int)(0xFF * fade);
 
-        // Background
         guiGraphics.fill(-textWidth/2-2, -2, textWidth/2+2, 10, (alpha/2 << 24));
 
         int finalColor = (alpha << 24) | (color & 0x00FFFFFF);
 
-        // Text
         guiGraphics.drawString(mc.font, text, -textWidth/2, 0, finalColor);
 
         poseStack.popPose();
         RenderSystem.enableDepthTest();
     }
 
-    // Calculation helpers
     private ScreenPosition calculateScreenPosition(Vec3 worldPos, Camera camera) {
         Vec3 viewPos = worldPos.subtract(camera.getPosition());
         double distance = viewPos.length();
@@ -237,7 +231,6 @@ public class FloatingText {
     }
 
     private float calculateFade() {
-        // Quadratic fade (stays visible longer then fades quickly)
         return 1.0f - (float) Math.pow((System.currentTimeMillis() - createTime) / (float) duration, 2);
     }
 
@@ -245,7 +238,6 @@ public class FloatingText {
         return System.currentTimeMillis() - createTime >= duration;
     }
 
-    // Debug logging
     private void logCreation() {
         if (DEBUG) System.out.printf("[FloatingText] Created at %s: %s (ScreenSpace: %b, WorldFloating: %b)%n",
                 position.toString(), text.getString(), screenSpace);

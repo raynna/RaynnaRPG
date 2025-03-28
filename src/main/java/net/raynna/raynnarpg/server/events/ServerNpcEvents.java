@@ -38,15 +38,12 @@ public class ServerNpcEvents {
                 if (progress != null) {
                     progress.getSkills().addXp(SkillType.COMBAT, combatXP);
                     FloatingTextSender.sendOnEntity(player, "+"+combatXP+"!", mob);
-                    MessagePacketSender.send(player, "You gained " + combatXP + " Combat XP for killing " + mob.getName().getString() + ".");
-
                 }
             }
         }
     }
 
     private static double getCombatXPForMob(Mob mob) {
-        // Hostile mobs
         if (mob instanceof Zombie) {
             return 75.0; // Zombies give 75 XP
         } else if (mob instanceof Skeleton) {

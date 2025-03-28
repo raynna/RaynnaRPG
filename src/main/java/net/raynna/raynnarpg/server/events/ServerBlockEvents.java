@@ -36,42 +36,74 @@ public class ServerBlockEvents {
 
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
+        if (!(event.getPlayer() instanceof ServerPlayer player)) {
+            return;
+        }
+
+        PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+        if (progress == null) return;
+
         BlockState blockState = event.getState();
-        Block block = blockState.getBlock();
-        BlockPos pos = event.getPos();
-        if (event.getPlayer() instanceof ServerPlayer player) {
-            PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
-            Skill mining = progress.getSkills().getSkill(SkillType.MINING);
-            ConfigData data = MiningConfig.getMiningData(blockState);
-            if (data != null) {
-                int miningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
-                int levelReq = data.getLevel();
-                if (miningLevel < levelReq) {
-                    event.setCanceled(true);
-                    MessagePacketSender.send(player, "You need a mining level of " + levelReq + " in order to mine " + block.getName().toFlatList().getFirst().getString() + ".");
-                    return;
-                }
+        ConfigData miningData = MiningConfig.getMiningData(blockState);
+        if (miningData == null) return;
 
-                ItemStack tool = player.getMainHandItem();
+        handleMiningEvent(player, progress, event, blockState, miningData);
+    }
 
-                ItemEnchantments itemEnchantments = (ItemEnchantments) tool.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-                HolderLookup.RegistryLookup<Enchantment> lookup = CommonHooks.resolveLookup(Registries.ENCHANTMENT);
+    private static void handleMiningEvent(ServerPlayer player, PlayerProgress progress,
+                                          BlockEvent.BreakEvent event, BlockState blockState,
+                                          ConfigData miningData) {
+        if (!checkMiningLevel(player, progress, event, blockState, miningData)) {
+            return;
+        }
+        if (hasSilkTouch(player.getMainHandItem())) {
+            MessagePacketSender.send(player, "No XP gained because you used Silk Touch.");
+            return;
+        }
+        grantMiningExperience(player, progress, miningData, event.getPos());
+    }
 
-                if (lookup != null) {
-                    itemEnchantments = tool.getAllEnchantments(lookup);
-                }
+    private static boolean checkMiningLevel(ServerPlayer player, PlayerProgress progress,
+                                            BlockEvent.BreakEvent event, BlockState blockState,
+                                            ConfigData miningData) {
+        int miningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
+        int requiredLevel = miningData.getLevel();
 
-                for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
-                    if (entry.getKey().is(Enchantments.SILK_TOUCH)) {
-                        MessagePacketSender.send(player, "No XP gained because you used Silk Touch.");
-                        return;
-                    }
-                }
-                progress.getSkills().addXp(mining.getType(), data.getXp());
-                String message = "+" + data.getXp();
-                FloatingTextSender.sendOnBlock(player, message, pos);
+        if (miningLevel < requiredLevel) {
+            event.setCanceled(true);
+            String blockName = blockState.getBlock().getName().toFlatList().getFirst().getString();
+            MessagePacketSender.send(player,
+                    "You need a mining level of " + requiredLevel +
+                            " in order to mine " + blockName + ".");
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean hasSilkTouch(ItemStack tool) {
+        ItemEnchantments enchantments = (ItemEnchantments) tool.getOrDefault(
+                DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+
+        HolderLookup.RegistryLookup<Enchantment> lookup = CommonHooks.resolveLookup(Registries.ENCHANTMENT);
+        if (lookup != null) {
+            enchantments = tool.getAllEnchantments(lookup);
+        }
+
+        for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
+            if (entry.getKey().is(Enchantments.SILK_TOUCH)) {
+                return true;
             }
         }
+        return false;
+    }
+
+    private static void grantMiningExperience(ServerPlayer player, PlayerProgress progress,
+                                              ConfigData miningData, BlockPos pos) {
+        SkillType miningType = SkillType.MINING;
+        double xp = miningData.getXp();
+
+        progress.getSkills().addXp(miningType, xp);
+        FloatingTextSender.sendOnBlock(player, "+" + xp, pos);
     }
 
     public static void register() {

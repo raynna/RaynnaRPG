@@ -182,7 +182,6 @@ public class Skills {
                 SkillType type = SkillType.valueOf(skillName);
                 skills.skills.put(type, deserializeSkill(type, tag.getCompound(skillName)));
             } catch (IllegalArgumentException e) {
-                //remove skill here?
                 System.out.println("Warning: SkillType " + skillName + " does not exist and will be removed.");
             }
         }

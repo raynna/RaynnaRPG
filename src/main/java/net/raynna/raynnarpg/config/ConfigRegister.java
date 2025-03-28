@@ -13,27 +13,8 @@ public class ConfigRegister {
      */
 
     public static void registerCategory(ModConfigSpec.Builder builder, String path, String translation, String comment, Runnable category) {
-        registerSub(builder, path, translation, comment, category);
-        builder.pop();
-    }
-
-    public static void registerSub(ModConfigSpec.Builder builder, String path, String translation, String comment, Runnable category) {
         builder.translation(translation).comment(comment).push(path);
         category.run();
-    }
-
-    public static String extractCategory(String key) {
-        if (!key.contains(":")) {
-            return Utils.capitalize(key.replace("_", " "));
-        }
-
-        String itemName = key.split(":")[1];
-        String[] parts = itemName.split("_");
-
-        if (parts.length > 0) {
-            return Utils.capitalize(parts[0]);
-        }
-
-        return key;
+        builder.pop();
     }
 }
