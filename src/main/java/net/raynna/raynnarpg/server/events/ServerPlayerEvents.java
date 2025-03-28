@@ -91,6 +91,23 @@ public class ServerPlayerEvents {
     }
 
     @SubscribeEvent
+    public static void onLeftClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+            if (progress == null) return;
+
+            ItemStack mainHand = player.getMainHandItem();
+            if (SilentGearHelper.isBow(mainHand)) {
+                int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
+                if (!canUseWeapon(player, mainHand, combatLevel)) {
+                    player.swing(event.getHand());
+                    event.setCanceled(true);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void onEntityAttack(AttackEntityEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);

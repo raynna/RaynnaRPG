@@ -74,6 +74,12 @@ public class SilentGearHelper {
         return itemId.matches(".*(sword|_axe|katana|blade|dagger|scythe|halberd|mace|warhammer|bow|crossbow|staff|wand|spear|trident|knife|slingshot|sickle|hammer|mattock|excavator|paxel|saw).*");
     }
 
+    public static boolean isBow(ItemStack item) {
+        if (item.isEmpty()) return false;
+        String itemId = BuiltInRegistries.ITEM.getKey(item.getItem()).toString();
+        return itemId.matches(".*(bow|crossbow|staff|wand|trident|slingshot).*");
+    }
+
     public static boolean isTool(ItemStack item) {
         if (item.isEmpty()) return false;
         String itemId = BuiltInRegistries.ITEM.getKey(item.getItem()).toString();
@@ -123,11 +129,16 @@ public class SilentGearHelper {
         String itemName = item.getItem().getName(item).getString();
         String tier = getGearProperty(item, GearProperties.HARVEST_TIER.get());
         ConfigData data = CombatConfig.getSilentGearData(tier, armour);
-
         if (data != null && combatLevel < data.getLevel()) {
-            MessagePacketSender.send((ServerPlayer) player,
-                    "You need a combat level of " + data.getLevel() +
-                            " in order to " + (armour ? "equip" : "attack with") + " " + itemName + ".");
+            String message = "You need a combat level of " + data.getLevel() +
+                    " in order to " + (armour ? "equip" : "attack with") + " " + itemName + ".";
+            if (player.level().isClientSide) {
+                player.displayClientMessage(Component.literal(
+                        message), true);
+            } else if (player instanceof ServerPlayer serverPlayer) {
+                MessagePacketSender.send(serverPlayer,
+                        message);
+            }
             return false;
         }
         return true;
