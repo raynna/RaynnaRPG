@@ -459,6 +459,8 @@ public class Config {
 
                 if (hasSilentGems) {
                     List<MiningEntry> silentgems = new ArrayList<>();
+                    silentgems.add(new MiningEntry("silentgems:silver_ore", 12));
+                    silentgems.add(new MiningEntry("silentgems:deepslate_silver_ore", 12));
                     silentgems.add(new MiningEntry("silentgems:ruby_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:deepslate_ruby_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:nether_ruby_ore", 30));
