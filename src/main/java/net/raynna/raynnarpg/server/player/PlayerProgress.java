@@ -60,6 +60,8 @@ public class PlayerProgress {
         for (SkillType type : SkillType.values()) {
             MessageSender.send(player, type.getName() + " - Level: " + skills.getSkill(type).getLevel() + ", Xp: " + Utils.formatNumber(skills.getSkill(type).getXp()), Colour.YELLOW);
         }
+        System.out.println("["+player.getName().getString()+"] Loaded Skills: " + skills.toNBT().toString());
+        System.out.println("["+player.getName().getString()+"] Loaded Progress: " + progress.toNBT().toString());
     }
 
 
@@ -96,7 +98,6 @@ public class PlayerProgress {
 
         if (tag.contains("skills")) {
             playerProgress.skills = Skills.fromNBT(tag.getCompound("skills"));
-            System.out.println("[Server] Loaded Skills: " + playerProgress.skills.toNBT().toString());
             for (SkillType type : SkillType.values()) {
                 if (playerProgress.skills.getSkill(type) == null) {
                     playerProgress.skills.getSkills().put(type, new Skill(type));
@@ -107,7 +108,6 @@ public class PlayerProgress {
 
         if (tag.contains("progress")) {
             playerProgress.progress = Progress.fromNBT(tag.getCompound("progress"));
-            System.out.println("[Server] Loaded Progress: " + playerProgress.progress.toNBT().toString());
         }
 
         return playerProgress;

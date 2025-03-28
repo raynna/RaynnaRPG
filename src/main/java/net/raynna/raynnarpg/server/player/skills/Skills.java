@@ -184,7 +184,6 @@ public class Skills {
             }
         }
 
-
         return skills;
     }
 

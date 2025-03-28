@@ -5,7 +5,10 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.raynna.raynnarpg.config.ConfigData;
+import net.raynna.raynnarpg.utils.SilentGearHelper;
 import net.raynna.raynnarpg.utils.Utils;
+import net.silentchaos512.gear.api.item.GearItem;
+import net.silentchaos512.gear.setup.gear.GearProperties;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +18,6 @@ import java.util.Map;
 public class ToolConfig {
 
     public static final Map<String, ModConfigSpec.ConfigValue<Integer>> TOOLS = new HashMap<>();
-    public static final Map<String, ModConfigSpec.ConfigValue<Integer>> SILENT_GEAR_TOOLS = new HashMap<>();
 
     /**
      * usage: ToolConfig.registerConfig(builder, "minecraft:netherite_pickaxe", 40, false);
@@ -45,21 +47,19 @@ public class ToolConfig {
         TOOLS.put(key, configValue);
     }
 
-    public static ConfigData getSilentGearData(String harvestTier) {
-        return getSilentGearDataByKey(harvestTier);
-    }
-
-    private static ConfigData getSilentGearDataByKey(String key) {
-        ModConfigSpec.ConfigValue<Integer> levelValue = SILENT_GEAR_TOOLS.get(key);
-        int level = levelValue != null ? levelValue.get() : 0;
-        if (level != 0) {
-            return new ConfigData(level, 0);
-        }
-        return null;
+    public static ConfigData getSilentGearData(String tier) {
+        ModConfigSpec.ConfigValue<Integer> levelValue = TOOLS.get(tier.toLowerCase());
+        return levelValue != null ?
+                new ConfigData(levelValue.get(), 0) :
+                null;
     }
 
     public static ConfigData getToolData(ItemStack stack) {
         String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+        if (SilentGearHelper.isSilentGearLoaded() && stack.getItem() instanceof GearItem && SilentGearHelper.isPickaxe(stack)) {
+            String tier = SilentGearHelper.getGearProperty(stack, GearProperties.HARVEST_TIER.get());
+            return getSilentGearData(tier);
+        }
         return getToolDataByKey(itemId);
     }
 
