@@ -3,10 +3,12 @@ package net.raynna.raynnarpg.server.events;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -91,19 +93,30 @@ public class ServerPlayerEvents {
     }
 
     @SubscribeEvent
-    public static void onLeftClickBlock(PlayerInteractEvent.RightClickBlock event) {
+    public static void onBowdraw(LivingEntityUseItemEvent.Start event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+        if (progress == null) return;
+        ItemStack mainHand = player.getMainHandItem();
+        if (SilentGearHelper.isBow(mainHand)) {
+            int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
+            if (!canUseWeapon(player, mainHand, combatLevel)) {
+                player.releaseUsingItem();
+                player.connection.send(new ClientboundSetEntityDataPacket(player.getId(),
+                        player.getEntityData().getNonDefaultValues()));
+                player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 0.5f, 0.5f);
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
             if (progress == null) return;
 
             ItemStack mainHand = player.getMainHandItem();
-            if (SilentGearHelper.isBow(mainHand)) {
-                int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
-                if (!canUseWeapon(player, mainHand, combatLevel)) {
-                    player.swing(event.getHand());
-                    event.setCanceled(true);
-                }
-            }
         }
     }
 

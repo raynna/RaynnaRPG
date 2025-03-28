@@ -451,7 +451,7 @@ public class Config {
 
                 if (hasSilentGear) {
                     List<MiningEntry> mining_silentgear = new ArrayList<>();
-                    gems.add(new MiningEntry("silentgear:bort_ore", 15, "c:ores/bort"));
+                    mining_silentgear.add(new MiningEntry("silentgear:bort_ore", 15, "c:ores/bort"));
                     mining_silentgear.add(new MiningEntry("silentgear:crimson_iron_ore", 43, "c:ores/crimson_iron"));
                     mining_silentgear.add(new MiningEntry("silentgear:azure_silver_ore", 48, "c:ores/azure_silver"));
                     MiningConfig.registerMultipleConfigs(builder, "mining_silentgear", "Silentgear", mining_silentgear);
