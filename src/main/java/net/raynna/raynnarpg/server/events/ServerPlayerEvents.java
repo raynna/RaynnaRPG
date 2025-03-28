@@ -48,7 +48,6 @@ public class ServerPlayerEvents {
 
     private static final int FUEL_SLOT = 1;
     private static final int INPUT_SLOT = 0;
-    private static final Map<UUID, Integer> lastEquipAttempt = new HashMap<>();
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {

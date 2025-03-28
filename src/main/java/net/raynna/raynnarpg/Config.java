@@ -346,7 +346,7 @@ public class Config {
                 }
             });
         }
-//test discordgithub
+
         public static void registerToolConfigs(ModConfigSpec.Builder builder) {
             ConfigRegister.registerCategory(builder, "tools_config", "Tools", "Settings for Tools", () -> {
                 boolean hasSilentGear = ModList.get().isLoaded("silentgear");
@@ -415,9 +415,9 @@ public class Config {
         }
 
         public static void registerMiningConfigs(ModConfigSpec.Builder builder) {
-            // Start of Mining category
             boolean hasSilentGear = ModList.get().isLoaded("silentgear");
             boolean hasSilentGems = ModList.get().isLoaded("silentgems");
+            boolean hasIceAndFire = ModList.get().isLoaded("iceandfire");
             ConfigRegister.registerCategory(builder, "mining_config", "Mining", "Settings for Mining", () -> {
 
                 // Stones
@@ -429,24 +429,14 @@ public class Config {
 
                 // Metals
                 List<MiningEntry> metals = new ArrayList<>();
-                metals.add(new MiningEntry("silentgems:silver_ore", 12, "c:ores/silver"));
-                metals.add(new MiningEntry("iceandfire:silver_ore", 12));
-                metals.add(new MiningEntry("iceandfire:deepslate_silver_ore", 12));
                 metals.add(new MiningEntry("minecraft:iron_ore", 15, "minecraft:iron_ores"));
                 metals.add(new MiningEntry("minecraft:copper_ore", 10, "minecraft:copper_ores"));
                 metals.add(new MiningEntry("minecraft:gold_ore", 20, "minecraft:gold_ores"));
                 metals.add(new MiningEntry("minecraft:ancient_debris", 40, "c:ores/netherite_scrap"));
-                if (hasSilentGear) {
-                    metals.add(new MiningEntry("silentgear:crimson_iron_ore", 43, "c:ores/crimson_iron"));
-                    metals.add(new MiningEntry("silentgear:azure_silver_ore", 48, "c:ores/azure_silver"));
-                }
                 MiningConfig.registerMultipleConfigs(builder, "mining_metal_ores", "Metals", metals);
 
                 // Gems
                 List<MiningEntry> gems = new ArrayList<>();
-                if (hasSilentGear) {
-                    gems.add(new MiningEntry("silentgear:bort_ore", 15, "c:ores/bort"));
-                }
                 gems.add(new MiningEntry("minecraft:lapis_ore", 16, "minecraft:lapis_ores"));
                 gems.add(new MiningEntry("minecraft:diamond_ore", 30, "minecraft:diamond_ores"));
                 gems.add(new MiningEntry("minecraft:emerald_ore", 35, "minecraft:emerald_ores"));
@@ -458,110 +448,94 @@ public class Config {
                 ores.add(new MiningEntry("minecraft:redstone_ore", 13, "minecraft:redstone_ores"));
                 ores.add(new MiningEntry("minecraft:nether_quartz_ore", 18, "c:ores/quartz"));
                 MiningConfig.registerMultipleConfigs(builder, "mining_misc_ores", "Misc", ores);
+
+                if (hasSilentGear) {
+                    List<MiningEntry> mining_silentgear = new ArrayList<>();
+                    gems.add(new MiningEntry("silentgear:bort_ore", 15, "c:ores/bort"));
+                    mining_silentgear.add(new MiningEntry("silentgear:crimson_iron_ore", 43, "c:ores/crimson_iron"));
+                    mining_silentgear.add(new MiningEntry("silentgear:azure_silver_ore", 48, "c:ores/azure_silver"));
+                    MiningConfig.registerMultipleConfigs(builder, "mining_silentgear", "Silentgear", mining_silentgear);
+                }
+
                 if (hasSilentGems) {
                     List<MiningEntry> silentgems = new ArrayList<>();
-                    //ruby
                     silentgems.add(new MiningEntry("silentgems:ruby_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:deepslate_ruby_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:nether_ruby_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_ruby_ore", 40));
-
-                    //sapphire
                     silentgems.add(new MiningEntry("silentgems:sapphire_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:deepslate_sapphire_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:nether_sapphire_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_sapphire_ore", 40));
-
-                    //iolite
                     silentgems.add(new MiningEntry("silentgems:iolite_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:deepslate_iolite_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:nether_iolite_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_iolite_ore", 40));
-
-                    //moldavite
                     silentgems.add(new MiningEntry("silentgems:moldavite_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:deepslate_moldavite_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:nether_moldavite_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_moldavite_ore", 40));
-
-                    //peridot
                     silentgems.add(new MiningEntry("silentgems:peridot_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:deepslate_peridot_ore", 15));
                     silentgems.add(new MiningEntry("silentgems:nether_peridot_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_peridot_ore", 40));
-
-                    //carnelian
                     silentgems.add(new MiningEntry("silentgems:carnelian_ore", 17));
                     silentgems.add(new MiningEntry("silentgems:deepslate_carnelian_ore", 17));
                     silentgems.add(new MiningEntry("silentgems:nether_carnelian_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_carnelian_ore", 40));
-
-                    //topaz
                     silentgems.add(new MiningEntry("silentgems:topaz_ore", 19));
                     silentgems.add(new MiningEntry("silentgems:deepslate_topaz_ore", 19));
                     silentgems.add(new MiningEntry("silentgems:nether_topaz_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_topaz_ore", 40));
-
-                    //citrine
                     silentgems.add(new MiningEntry("silentgems:citrine_ore", 22));
                     silentgems.add(new MiningEntry("silentgems:deepslate_citrine_ore", 22));
                     silentgems.add(new MiningEntry("silentgems:nether_citrine_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_citrine_ore", 40));
-
-                    //citrine
                     silentgems.add(new MiningEntry("silentgems:heliodor_ore", 25));
                     silentgems.add(new MiningEntry("silentgems:deepslate_heliodor_ore", 25));
                     silentgems.add(new MiningEntry("silentgems:nether_heliodor_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_heliodor_ore", 40));
-
-                    //turquoise
                     silentgems.add(new MiningEntry("silentgems:turquoise_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:deepslate_turquoise_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:nether_turquoise_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_turquoise_ore", 40));
-
-                    //alexandrite
                     silentgems.add(new MiningEntry("silentgems:alexandrite_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:deepslate_alexandrite_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:nether_alexandrite_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_alexandrite_ore", 40));
-
-                    //ammolite
                     silentgems.add(new MiningEntry("silentgems:ammolite_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:deepslate_ammolite_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:nether_ammolite_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_ammolite_ore", 40));
-
-                    //black_diamond
                     silentgems.add(new MiningEntry("silentgems:black_diamond_ore", 32));
                     silentgems.add(new MiningEntry("silentgems:deepslate_black_diamond_ore", 32));
                     silentgems.add(new MiningEntry("silentgems:nether_black_diamond_ore", 32));
                     silentgems.add(new MiningEntry("silentgems:end_black_diamond_ore", 40));
-
-                    //kyanite
                     silentgems.add(new MiningEntry("silentgems:kyanite_ore", 40));
                     silentgems.add(new MiningEntry("silentgems:deepslate_kyanite_ore", 40));
                     silentgems.add(new MiningEntry("silentgems:nether_kyanite_ore", 40));
                     silentgems.add(new MiningEntry("silentgems:end_kyanite_ore", 40));
-
-                    //rose_quartz
                     silentgems.add(new MiningEntry("silentgems:rose_quartz_ore", 40));
                     silentgems.add(new MiningEntry("silentgems:deepslate_rose_quartz_ore", 40));
                     silentgems.add(new MiningEntry("silentgems:nether_rose_quartz_ore", 40));
                     silentgems.add(new MiningEntry("silentgems:end_rose_quartz_ore", 40));
-
-                    //kyanite
                     silentgems.add(new MiningEntry("silentgems:kyanite_ore", 40));
                     silentgems.add(new MiningEntry("silentgems:deepslate_kyanite_ore", 40));
                     silentgems.add(new MiningEntry("silentgems:nether_kyanite_ore", 40));
                     silentgems.add(new MiningEntry("silentgems:end_kyanite_ore", 40));
-
-                    //white_diamond
                     silentgems.add(new MiningEntry("silentgems:white_diamond_ore", 45));
                     silentgems.add(new MiningEntry("silentgems:deepslate_white_diamond_ore", 45));
                     silentgems.add(new MiningEntry("silentgems:nether_white_diamond_ore", 45));
                     silentgems.add(new MiningEntry("silentgems:end_white_diamond_ore", 45));
                     MiningConfig.registerMultipleConfigs(builder, "mining_silentgems", "Silent Gems", silentgems);
+                }
+
+                if (hasIceAndFire) {
+                    List<MiningEntry> iceandfire = new ArrayList<>();
+                    iceandfire.add(new MiningEntry("iceandfire:silver_ore", 12));
+                    iceandfire.add(new MiningEntry("iceandfire:deepslate_silver_ore", 12));
+                    iceandfire.add(new MiningEntry("iceandfire:sapphire_ore", 15));
+                    MiningConfig.registerMultipleConfigs(builder, "mining_iceandfire", "Ice & Fire", iceandfire);
                 }
             });
         }

@@ -34,7 +34,7 @@ public class ToolConfig {
         String modId = key.contains(":") ? key.split(":")[0] : key;
         String itemId = key.contains(":") ? key.split(":")[1] : key;
         String readableType = itemId.replace("_", " ");
-        String keyTranslation = "[" + Utils.capitalize(modId) + "]" + Utils.capitalize(readableType) + " Level";
+        String keyTranslation = Utils.capitalize(readableType) + " Level";
         if (key.contains("tier"))
             key = key.split(":")[1];
         ModConfigSpec.ConfigValue<Integer> configValue = builder

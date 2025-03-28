@@ -81,7 +81,7 @@ public class CraftingTracker {
     }
 
     public boolean shouldSendMessage() {
-        return System.currentTimeMillis() - lastEventTime >= 300; // 300 milliseconds of inactivity
+        return System.currentTimeMillis() - lastEventTime >= 300;
     }
 
     public String getItemName() {

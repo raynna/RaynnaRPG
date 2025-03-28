@@ -46,10 +46,6 @@ public class Skills {
         return player;
     }
 
-    private static final Map<ServerPlayer, Long> lastMessageTime = new ConcurrentHashMap<>();
-    private static final Map<ServerPlayer, Double> accumulatedXp = new ConcurrentHashMap<>();
-    private static final long MESSAGE_COOLDOWN_MS = 1000; // 1 second
-
     public void addXp(SkillType type, double xp) {
         Skill skill = getSkill(type);
         if (skill != null) {

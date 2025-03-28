@@ -35,8 +35,8 @@ public class CraftingConfig {
         String modId = key.contains(":") ? key.split(":")[0] : key;
         String item = key.contains(":") ? key.split(":")[1] : key;
 
-        String readableName = item.replace("_", " "); // "wooden_pickaxe" -> "wooden pickaxe"
-        String keyTranslation = "[" + Utils.capitalize(modId) + "]" + Utils.capitalize(readableName);
+        String readableName = item.replace("_", " ");
+        String keyTranslation = Utils.capitalize(readableName);
         if (key.contains("tier"))
             key = key.split(":")[1];
         if (xp == 0) {

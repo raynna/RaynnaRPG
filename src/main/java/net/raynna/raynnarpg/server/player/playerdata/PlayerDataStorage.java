@@ -31,10 +31,9 @@ public class PlayerDataStorage extends SavedData {
                     System.err.println("Invalid or missing playerUUID for UUID: " + uuidStr + ". Skipping...");
                     continue;
                 }
-
+                System.out.println("Loading playerUUID: " + uuidStr);
                 PlayerProgress progress = PlayerProgress.fromNBT(playerTag);
                 data.playerProgress.put(uuid, progress);
-                System.out.println("Loading player: " + uuidStr);
 
             } catch (Exception e) {
                 System.err.println("Failed to load data for player UUID: " + uuidStr + ". Skipping entry.");

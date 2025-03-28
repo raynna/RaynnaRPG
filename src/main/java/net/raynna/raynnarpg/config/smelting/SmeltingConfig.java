@@ -57,7 +57,13 @@ public class SmeltingConfig {
 
     public static ConfigData getSmeltingData(ItemStack stack) {
         String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-        return getSmeltingDataByKey(itemId);
+        ConfigData data = getSmeltingDataByKey(itemId);
+
+        if (data == null) {
+            data = findDataByRawVariant(itemId);
+        }
+
+        return data;
     }
 
 
@@ -72,6 +78,20 @@ public class SmeltingConfig {
 
         if (level != 0 || xp != 0 || !raw.isEmpty()) {
             return new ConfigData(level, xp, "none", raw);
+        }
+        return null;
+    }
+
+    private static ConfigData findDataByRawVariant(String rawItemId) {
+        for (Map.Entry<String, ModConfigSpec.ConfigValue<String>> entry : SMELTING_RAW_MATERIAL.entrySet()) {
+            if (rawItemId.equals(entry.getValue().get())) {
+                return new ConfigData(
+                        SMELTING_LEVEL.get(entry.getKey()).get(),
+                        SMELTING_XP.get(entry.getKey()).get(),
+                        "none",
+                        rawItemId
+                );
+            }
         }
         return null;
     }

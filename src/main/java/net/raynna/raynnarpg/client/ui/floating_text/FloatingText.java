@@ -18,15 +18,15 @@ public class FloatingText {
 
     private static final float GUI_LAYER = 5000f;
 
-    private static final long DEFAULT_DURATION = 3000; // Total visible time in milliseconds
-    private static final float DEFAULT_SPEED = 1000f; // Higher = slower upward movement
+    private static final long DEFAULT_DURATION = 3000;
+    private static final float DEFAULT_SPEED = 1000f;
 
-    private static final float SCALE_DISTANCE_FACTOR = 5f; // How quickly text shrinks with distance
+    private static final float SCALE_DISTANCE_FACTOR = 5f;
     private static final float DEFAULT_SCALE = 1.0f;
-    private static final float SCREEN_SPACE_SCALE = 0.75f; // Separate scale for screen-space text
+    private static final float SCREEN_SPACE_SCALE = 0.75f;
 
 
-    private static final boolean DEBUG = true; // Toggle debug output
+    private static final boolean DEBUG = true;
 
     private final Component text;
     private final Vec3 position;

@@ -33,8 +33,8 @@ public class MiningConfig {
     public static void registerConfig(ModConfigSpec.Builder builder, String key, int level, double xp, String... tags) {
         String modId = key.contains(":") ? key.split(":")[0] : key;
         String item = key.contains(":") ? key.split(":")[1] : key;
-        String readableName = item.replace("_", " "); // "wooden_pickaxe" -> "wooden pickaxe"
-        String keyTranslation = "[" + Utils.capitalize(modId) + "]" + Utils.capitalize(readableName);
+        String readableName = item.replace("_", " ");
+        String keyTranslation = Utils.capitalize(readableName);
         if (xp == 0) {
             xp = Skills.getXpForMaterial(level, SkillType.MINING);
         }

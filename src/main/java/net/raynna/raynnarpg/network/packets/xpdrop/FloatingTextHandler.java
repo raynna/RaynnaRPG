@@ -8,6 +8,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.raynna.raynnarpg.RaynnaRPG;
+import net.raynna.raynnarpg.client.ui.SkillOverlay;
 import net.raynna.raynnarpg.client.ui.floating_text.FloatingText;
 
 public class FloatingTextHandler implements IPayloadHandler<FloatingTextPacket> {
@@ -51,6 +52,7 @@ public class FloatingTextHandler implements IPayloadHandler<FloatingTextPacket> 
             }
 
             RaynnaRPG.getOverlayManager().addText(floatingText);
+            SkillOverlay.markSkillUpdated(packet.skillType());
         });
     }
 }

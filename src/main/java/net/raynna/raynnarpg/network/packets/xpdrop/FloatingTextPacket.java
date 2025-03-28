@@ -8,8 +8,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import net.raynna.raynnarpg.server.player.skills.SkillType;
 
-public record FloatingTextPacket(String message, Vec3 position, boolean screenSpace, boolean centered) implements CustomPacketPayload {
+import javax.annotation.Nullable;
+
+public record FloatingTextPacket(String message, Vec3 position, boolean screenSpace, boolean centered, @Nullable SkillType skillType) implements CustomPacketPayload {
 
     public static final Type<FloatingTextPacket> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath("raynnarpg", "floating_text"));
@@ -28,38 +31,43 @@ public record FloatingTextPacket(String message, Vec3 position, boolean screenSp
             buf.writeDouble(packet.position().z);
             buf.writeBoolean(packet.screenSpace());
             buf.writeBoolean(packet.centered());
+            buf.writeBoolean(packet.skillType() != null);
+            if (packet.skillType() != null) {
+                buf.writeEnum(packet.skillType());
+            }
         }
 
         @Override
         public FloatingTextPacket decode(FriendlyByteBuf buf) {
-            return new FloatingTextPacket(
-                    buf.readUtf(Short.MAX_VALUE),
-                    new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble()),
-                    buf.readBoolean(),
-                    buf.readBoolean()
-            );
+            String message = buf.readUtf(Short.MAX_VALUE);
+            Vec3 position = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
+            boolean screenSpace = buf.readBoolean();
+            boolean centered = buf.readBoolean();
+            boolean hasSkillType = buf.readBoolean();
+            SkillType skillType = hasSkillType ? buf.readEnum(SkillType.class) : null;
+            return new FloatingTextPacket(message, position, screenSpace, centered, skillType);
         }
     };
 
-    public static FloatingTextPacket atCenter(String message) {
-        return new FloatingTextPacket(message, Vec3.ZERO, true, true);
+    public static FloatingTextPacket atCenter(String message, @Nullable SkillType skillType) {
+        return new FloatingTextPacket(message, Vec3.ZERO, true, true, skillType);
     }
 
-    public static FloatingTextPacket onBlock(String message, BlockPos pos) {
+    public static FloatingTextPacket onBlock(String message, BlockPos pos, @Nullable SkillType skillType) {
         return new FloatingTextPacket(message,
                 new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
-                false, false);
+                false, false, skillType);
     }
 
-    public static FloatingTextPacket atEntity(String message, Entity entity) {
-        return new FloatingTextPacket(message, entity.position(), false, false);
+    public static FloatingTextPacket atEntity(String message, Entity entity, @Nullable SkillType skillType) {
+        return new FloatingTextPacket(message, entity.position(), false, false, skillType);
     }
 
-    public static FloatingTextPacket atPlayer(String message, ServerPlayer player) {
-        return new FloatingTextPacket(message, player.position(), false, false);
+    public static FloatingTextPacket atPlayer(String message, ServerPlayer player, @Nullable SkillType skillType) {
+        return new FloatingTextPacket(message, player.position(), false, false, skillType);
     }
 
-    public static FloatingTextPacket atScreen(String message, double screenX, double screenY) {
-        return new FloatingTextPacket(message, new Vec3(screenX, screenY, 0), true, false);
+    public static FloatingTextPacket atScreen(String message, double screenX, double screenY, @Nullable SkillType skillType) {
+        return new FloatingTextPacket(message, new Vec3(screenX, screenY, 0), true, false, skillType);
     }
 }
