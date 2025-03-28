@@ -71,7 +71,7 @@ public class SilentGearHelper {
                 item.is(ItemTags.AXES)) {
             return true;
         }
-        return itemId.matches(".*(sword|_axe|katana|blade|dagger|scythe|halberd|mace|warhammer|bow|crossbow|staff|wand|spear|trident).*");
+        return itemId.matches(".*(sword|_axe|katana|blade|dagger|scythe|halberd|mace|warhammer|bow|crossbow|staff|wand|spear|trident|knife|slingshot|sickle|hammer|mattock|excavator|paxel).*");
     }
 
     public static boolean isTool(ItemStack item) {
@@ -92,7 +92,7 @@ public class SilentGearHelper {
         if (item.is(ItemTags.PICKAXES)) {
             return true;
         }
-        return itemId.matches(".*(paxel|hammer|mattock|pickaxe|pick|drill|miner|excavator).*");
+        return itemId.matches(".*(paxel|hammer|mattock|pickaxe|pick|drill|miner).*");
     }
 
     public static boolean isArmor(ItemStack item) {

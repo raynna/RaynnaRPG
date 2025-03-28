@@ -57,6 +57,11 @@ public class Config {
                 weapons.add(new CombatEntry("flint", 7, false));
                 //copper
                 weapons.add(new CombatEntry("copper", 10, false));
+                weapons.add(new CombatEntry("iceandfire:copper_sword", 10, false));
+                weapons.add(new CombatEntry("iceandfire:copper_axe", 10, false));
+                //silver
+                weapons.add(new CombatEntry("iceandfire:silver_sword", 12, false));
+                weapons.add(new CombatEntry("iceandfire:silver_axe", 12, false));
                 //iron
                 weapons.add(new CombatEntry("minecraft:iron_sword", 15, false));
                 weapons.add(new CombatEntry("minecraft:iron_axe", 15, false));
@@ -100,8 +105,8 @@ public class Config {
                 weapons.add(new CombatEntry("sapphire", 15, false));
                 //iolite
                 weapons.add(new CombatEntry("iolite", 15, false));
-                //modavite
-                weapons.add(new CombatEntry("modavite", 15, false));
+                //moldavite
+                weapons.add(new CombatEntry("moldavite", 15, false));
                 //peridot
                 weapons.add(new CombatEntry("peridot", 15, false));
                 //carnelian
@@ -131,8 +136,12 @@ public class Config {
                 }
                 CombatConfig.registerMultipleConfigs(builder, "combat_weapons", "Weapons", weapons);
 
-
                 List<CombatEntry> gears = new ArrayList<>();
+                //leather
+                gears.add(new CombatEntry("minecraft:leather_helmet", 1));
+                gears.add(new CombatEntry("minecraft:leather_chestplate", 1));
+                gears.add(new CombatEntry("minecraft:leather_leggings", 1));
+                gears.add(new CombatEntry("minecraft:leather_boots", 1));
                 //wood
                 gears.add(new CombatEntry("wood", 1));
                 //terracotta
@@ -147,6 +156,19 @@ public class Config {
                 gears.add(new CombatEntry("flint", 7));
                 //copper
                 gears.add(new CombatEntry("copper", 10));
+                gears.add(new CombatEntry("iceandfire:armor_copper_metal_helmet", 10));
+                gears.add(new CombatEntry("iceandfire:armor_copper_metal_chestplate", 10));
+                gears.add(new CombatEntry("iceandfire:armor_copper_metal_leggings", 10));
+                gears.add(new CombatEntry("iceandfire:armor_copper_metal_boots", 10));
+                //chain
+                gears.add(new CombatEntry("minecraft:chainmail_helmet", 12));
+                gears.add(new CombatEntry("minecraft:chainmail_chestplate", 12));
+                gears.add(new CombatEntry("minecraft:chainmail_leggings", 12));
+                gears.add(new CombatEntry("minecraft:chainmail_boots", 12));
+                gears.add(new CombatEntry("iceandfire:armor_silver_metal_helmet", 12));
+                gears.add(new CombatEntry("iceandfire:armor_silver_metal_chestplate", 12));
+                gears.add(new CombatEntry("iceandfire:armor_silver_metal_leggings", 12));
+                gears.add(new CombatEntry("iceandfire:armor_silver_metal_boots", 12));
                 //iron
                 gears.add(new CombatEntry("minecraft:iron_helmet", 15));
                 gears.add(new CombatEntry("minecraft:iron_chestplate", 15));
@@ -198,8 +220,8 @@ public class Config {
                     gears.add(new CombatEntry("sapphire", 15));
                     //iolite
                     gears.add(new CombatEntry("iolite", 15));
-                    //modavite
-                    gears.add(new CombatEntry("modavite", 15));
+                    //moldavite
+                    gears.add(new CombatEntry("moldavite", 15));
                     //peridot
                     gears.add(new CombatEntry("peridot", 15));
                     //carnelian
@@ -247,6 +269,7 @@ public class Config {
 
                 List<SmeltingEntry> metals = new ArrayList<>();
                 metals.add(new SmeltingEntry("minecraft:copper_ingot", 10, "minecraft:raw_copper"));
+                metals.add(new SmeltingEntry("iceandfire:silver_ingot", 12, "iceandfire:raw_silver"));
                 metals.add(new SmeltingEntry("minecraft:iron_ingot", 15, "minecraft:raw_iron"));
                 metals.add(new SmeltingEntry("minecraft:gold_ingot", 25, "minecraft:raw_gold"));
                 metals.add(new SmeltingEntry("minecraft:diamond", 30, "minecraft:diamond_ore"));
@@ -290,6 +313,7 @@ public class Config {
 
                 //Metals
                 List<CraftingEntry> metals = new ArrayList<>();
+                metals.add(new CraftingEntry("silentgems:silver_ingot", 12, "c:ingots/silver"));
                 metals.add(new CraftingEntry("minecraft:iron_ingot", 15, "c:ingots/iron"));
                 metals.add(new CraftingEntry("minecraft:copper_ingot", 10, "c:ingots/copper"));
                 metals.add(new CraftingEntry("minecraft:gold_ingot", 20, "c:ingots/gold"));
@@ -327,8 +351,8 @@ public class Config {
                     silentgems.add(new CraftingEntry("silentgems:sapphire", 15));
                     //iolite
                     silentgems.add(new CraftingEntry("silentgems:iolite", 15));
-                    //modavite
-                    silentgems.add(new CraftingEntry("silentgems:modavite", 15));
+                    //moldavite
+                    silentgems.add(new CraftingEntry("silentgems:moldavite", 15));
                     //peridot
                     silentgems.add(new CraftingEntry("silentgems:peridot", 15));
                     //carnelian
@@ -393,6 +417,11 @@ public class Config {
                 ironTools.add(new ToolEntry("minecraft:iron_pickaxe", 15));
                 ironTools.add(new ToolEntry("iron", 15, true));
                 ToolConfig.registerMultipleConfigs(builder, "iron_tools", "Iron Tools", ironTools);
+
+                // Silver Tools
+                List<ToolEntry> silverTools = new ArrayList<>();
+                ironTools.add(new ToolEntry("iceandfire:silver_pickaxe", 12));
+                ToolConfig.registerMultipleConfigs(builder, "silver_tools", "Silver Tools", silverTools);
 
                 // Bronze Tools
                 List<ToolEntry> bronzeTools = new ArrayList<>();
@@ -485,8 +514,8 @@ public class Config {
                     silentgems.add(new ToolEntry("silentgems:sapphire", 15, true));
                     //iolite
                     silentgems.add(new ToolEntry("silentgems:iolite", 15, true));
-                    //modavite
-                    silentgems.add(new ToolEntry("silentgems:modavite", 15, true));
+                    //moldavite
+                    silentgems.add(new ToolEntry("silentgems:moldavite", 15, true));
                     //peridot
                     silentgems.add(new ToolEntry("silentgems:peridot", 15, true));
                     //carnelian
@@ -533,6 +562,9 @@ public class Config {
 
                 // Metals
                 List<MiningEntry> metals = new ArrayList<>();
+                metals.add(new MiningEntry("silentgems:silver_ore", 12, "c:ores/silver"));
+                metals.add(new MiningEntry("iceandfire:silver_ore", 12));
+                metals.add(new MiningEntry("iceandfire:deepslate_silver_ore", 12));
                 metals.add(new MiningEntry("minecraft:iron_ore", 15, "minecraft:iron_ores"));
                 metals.add(new MiningEntry("minecraft:copper_ore", 10, "minecraft:copper_ores"));
                 metals.add(new MiningEntry("minecraft:gold_ore", 20, "minecraft:gold_ores"));
@@ -579,11 +611,11 @@ public class Config {
                     silentgems.add(new MiningEntry("silentgems:nether_iolite_ore", 30));
                     silentgems.add(new MiningEntry("silentgems:end_iolite_ore", 40));
 
-                    //modavite
-                    silentgems.add(new MiningEntry("silentgems:modavite_ore", 15));
-                    silentgems.add(new MiningEntry("silentgems:deepslate_modavite_ore", 15));
-                    silentgems.add(new MiningEntry("silentgems:nether_modavite_ore", 30));
-                    silentgems.add(new MiningEntry("silentgems:end_modavite_ore", 40));
+                    //moldavite
+                    silentgems.add(new MiningEntry("silentgems:moldavite_ore", 15));
+                    silentgems.add(new MiningEntry("silentgems:deepslate_moldavite_ore", 15));
+                    silentgems.add(new MiningEntry("silentgems:nether_moldavite_ore", 30));
+                    silentgems.add(new MiningEntry("silentgems:end_moldavite_ore", 40));
 
                     //peridot
                     silentgems.add(new MiningEntry("silentgems:peridot_ore", 15));
