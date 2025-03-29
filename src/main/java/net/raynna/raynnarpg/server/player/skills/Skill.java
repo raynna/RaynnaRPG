@@ -36,4 +36,14 @@ public class Skill {
          this.xp += xp;
     }
 
+    private double lastPulseXp;
+
+    public double getLastPulseXp() {
+        return lastPulseXp;
+    }
+
+    public void setLastPulseXp(double xp) {
+        this.lastPulseXp = xp;
+    }
+
 }

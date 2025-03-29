@@ -13,12 +13,11 @@ public class PlayerDamageTracker {
     private static final Map<UUID, Map<UUID, DamageRecord>> damageMap = new ConcurrentHashMap<>();
 
     public static void recordDamage(ServerPlayer attacker, LivingEntity target, float amount) {
-        float actualDamage = Math.min(amount, target.getHealth());
         damageMap.computeIfAbsent(attacker.getUUID(), k -> new ConcurrentHashMap<>()).compute(target.getUUID(), (k, v) -> {
             if (v == null) {
-                return new DamageRecord(actualDamage);
+                return new DamageRecord(amount);
             } else {
-                return v.addDamage(actualDamage);
+                return v.addDamage(amount);
             }
         });
     }

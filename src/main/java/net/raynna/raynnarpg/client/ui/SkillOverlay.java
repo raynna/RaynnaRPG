@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.raynna.raynnarpg.client.ui.skills.SkillBar;
@@ -37,7 +38,6 @@ public class SkillOverlay {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.options.hideGui) return;
 
-        // Check if shift is held to hide the overlay
         if (GLFW.glfwGetKey(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS) {
             return;
         }
@@ -48,7 +48,6 @@ public class SkillOverlay {
         int x = 10;
         int y = screenHeight / 4;
 
-        // Render all skill bars
         for (SkillBar bar : skillBars.values()) {
             bar.render(graphics, x, y);
             y += LINE_SPACING;
@@ -58,7 +57,15 @@ public class SkillOverlay {
     public static void markSkillUpdated(SkillType type) {
         SkillBar bar = skillBars.get(type);
         if (bar != null) {
-            bar.triggerPulse();
+            bar.triggerPulse(0);
         }
     }
+
+    public static void updateXpGain(SkillType type, double amount) {
+        SkillBar bar = skillBars.get(type);
+        if (bar != null) {
+            bar.addXpGain(amount);
+        }
+    }
+
 }

@@ -52,7 +52,12 @@ public class FloatingTextHandler implements IPayloadHandler<FloatingTextPacket> 
             }
 
             RaynnaRPG.getOverlayManager().addText(floatingText);
-            SkillOverlay.markSkillUpdated(packet.skillType());
+            //SkillOverlay.markSkillUpdated(packet.skillType());
+            if (packet.message().toLowerCase().contains("+") && packet.message().toLowerCase().contains("xp")) {
+                String numericPart = packet.message().replaceAll("[^0-9.]", "");
+                double xp = Double.parseDouble(numericPart);
+                SkillOverlay.updateXpGain(packet.skillType(), xp);
+            }
         });
     }
 }

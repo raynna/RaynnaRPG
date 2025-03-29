@@ -22,10 +22,11 @@ public class ServerNpcEvents {
     public static void onLivingHurt(LivingIncomingDamageEvent event) {
         if (event.getSource().getEntity() instanceof ServerPlayer player) {
             LivingEntity target = event.getEntity();
-            PlayerDamageTracker.recordDamage(player, target, event.getAmount());
+            float actualDamage = Math.min(event.getAmount(), target.getHealth());
+            PlayerDamageTracker.recordDamage(player, target, actualDamage);
             Vec3 vec = new Vec3(target.getX(), target.getY() + 1, target.getZ());
             FloatingTextSender.sendOnEntity(player,
-                    String.format("§c%.1f", event.getAmount()),
+                    String.format("§c%.1f", actualDamage),
                     vec,
                     null
             );
