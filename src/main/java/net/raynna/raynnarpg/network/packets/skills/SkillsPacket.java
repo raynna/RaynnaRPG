@@ -43,8 +43,7 @@ public record SkillsPacket(Skills skills) implements CustomPacketPayload {
                 int skillLevel = buf.readInt();
                 double skillXp = buf.readDouble();
                 SkillType skillType = SkillType.valueOf(skillName.toUpperCase());
-                skills.getSkill(skillType).setLevel(skillLevel);
-                skills.getSkill(skillType).setXp(skillXp);
+                skills.getSkill(skillType).updateSkill(skillLevel, skillXp);
             }
 
             return new SkillsPacket(skills);

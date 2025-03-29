@@ -4,8 +4,8 @@ public class Skill {
 
     private final SkillType type;
 
-    private int level = 1;
-    private double xp = 0;
+    private int level, previousLevel = 1;
+    private double xp, previousXp = 0;
 
 
     public Skill(SkillType type) {
@@ -36,14 +36,26 @@ public class Skill {
          this.xp += xp;
     }
 
-    private double lastPulseXp;
-
-    public double getLastPulseXp() {
-        return lastPulseXp;
+    public void updateSkill(int level, double xp) {
+        this.previousLevel = this.level;
+        this.previousXp = this.xp;
+        this.level = level;
+        this.xp = xp;
     }
 
-    public void setLastPulseXp(double xp) {
-        this.lastPulseXp = xp;
+    public double getPreviousXp() {
+        return previousXp;
     }
 
+    public void setPreviousXp(double previousXp) {
+        this.previousXp = previousXp;
+    }
+
+    public int getPreviousLevel() {
+        return previousLevel;
+    }
+
+    public void setPreviousLevel(int previousLevel) {
+        this.previousLevel = previousLevel;
+    }
 }

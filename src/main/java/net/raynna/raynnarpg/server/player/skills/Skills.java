@@ -56,10 +56,12 @@ public class Skills {
                 skill.setXp(MAX_XP);
                 return;
             }
+            skill.setPreviousXp(skill.getXp());
             skill.addXp(xp);
-            skill.setXp(Math.round(skill.getXp() * 100.0) / 100.0);//round the xp to 2 decimals
+            skill.setXp(Math.round(skill.getXp() * 100.0) / 100.0);
             int newLevel = getLevelForXp(skill.getXp());
             if (newLevel > oldLevel) {
+                skill.setPreviousLevel(oldLevel);
                 skill.setLevel(newLevel);
                 int levels = newLevel - oldLevel;
                 onLevelUp(skill, levels);

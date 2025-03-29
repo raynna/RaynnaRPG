@@ -2,15 +2,9 @@ package net.raynna.raynnarpg.client.ui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.raynna.raynnarpg.Config;
-import net.raynna.raynnarpg.RaynnaRPG;
-import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.raynna.raynnarpg.client.ui.skills.SkillBar;
-import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import org.lwjgl.glfw.GLFW;
 
@@ -51,13 +45,6 @@ public class SkillOverlay {
         for (SkillBar bar : skillBars.values()) {
             bar.render(graphics, x, y);
             y += LINE_SPACING;
-        }
-    }
-
-    public static void markSkillUpdated(SkillType type) {
-        SkillBar bar = skillBars.get(type);
-        if (bar != null) {
-            bar.triggerPulse(0);
         }
     }
 
