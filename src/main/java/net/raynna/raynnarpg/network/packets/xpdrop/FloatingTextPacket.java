@@ -63,6 +63,10 @@ public record FloatingTextPacket(String message, Vec3 position, boolean screenSp
         return new FloatingTextPacket(message, entity.position(), false, false, skillType);
     }
 
+    public static FloatingTextPacket atEntity(String message, Vec3 vec, @Nullable SkillType skillType) {
+        return new FloatingTextPacket(message, vec, false, false, skillType);
+    }
+
     public static FloatingTextPacket atPlayer(String message, ServerPlayer player, @Nullable SkillType skillType) {
         return new FloatingTextPacket(message, player.position(), false, false, skillType);
     }

@@ -20,6 +20,7 @@ import net.raynna.raynnarpg.client.ui.SkillOverlay;
 import net.raynna.raynnarpg.recipe.ReversibleCraftingRegistry;
 import net.raynna.raynnarpg.server.commands.Commands;
 import net.raynna.raynnarpg.server.events.ServerBlockEvents;
+import net.raynna.raynnarpg.server.events.ServerNpcEvents;
 import net.raynna.raynnarpg.server.events.ServerPlayerEvents;
 
 import javax.annotation.Nullable;
@@ -37,6 +38,7 @@ class SideProxy implements IProxy {
         NeoForge.EVENT_BUS.addListener(Commands::registerAll);
         ServerPlayerEvents.register();
         ServerBlockEvents.register();
+        ServerNpcEvents.register();
     }
 
     private static void commonSetup(FMLCommonSetupEvent event) {

@@ -17,6 +17,11 @@ public class FloatingTextSender {
         player.connection.send(packet);
     }
 
+    public static void sendOnEntity(ServerPlayer player, String message, Vec3 vec, SkillType skill) {
+        FloatingTextPacket packet = FloatingTextPacket.atEntity(message, vec, skill);
+        player.connection.send(packet);
+    }
+
     public static void sendOnBlock(ServerPlayer player, String message, BlockPos blockPos, SkillType skill) {
         FloatingTextPacket packet = FloatingTextPacket.onBlock(message, blockPos, skill);
         player.connection.send(packet);
