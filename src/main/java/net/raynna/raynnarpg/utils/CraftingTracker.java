@@ -52,6 +52,7 @@ public class CraftingTracker {
                 player.sendSystemMessage(Component.literal("You gained "
                         + roundedXp + " experience for creating one " + tracker.getItemName() + "."));
             }
+            FloatingTextSender.sendCenteredText(player, "+"+roundedXp+"xp", type);
             craftingData.remove(player);
         }
     }

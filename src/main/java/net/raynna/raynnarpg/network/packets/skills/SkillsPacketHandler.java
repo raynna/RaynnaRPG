@@ -8,6 +8,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.raynna.raynnarpg.client.player.ClientSkills;
+import net.raynna.raynnarpg.client.ui.SkillOverlay;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.server.player.skills.Skills;
 

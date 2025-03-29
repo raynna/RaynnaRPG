@@ -20,6 +20,7 @@ import net.raynna.raynnarpg.config.tools.ToolEntry;
 import net.raynna.raynnarpg.config.mining.MiningConfig;
 import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
+import net.silentchaos512.gear.item.blueprint.BlueprintType;
 
 import static net.raynna.raynnarpg.RaynnaRPG.MOD_ID;
 
@@ -544,10 +545,21 @@ public class Config {
     }
 
     public static final class Client {
+
         static final ModConfigSpec SPEC;
+
+        public static final ModConfigSpec.EnumValue<XpDisplayMode> XP_TEXT_MODE;
+        public enum XpDisplayMode { XP, PERCENT, BOTH }
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+
+            XP_TEXT_MODE = builder
+                    .translation("Xp Display Mode: ")
+                    .comment("Skill Overlay Xp mode. Valid values are: BOTH, XP, and PERCENT")
+                    .comment("Default: BOTH")
+                    .defineEnum("xp_text_mode", XpDisplayMode.BOTH);
+
             SPEC = builder.build();
         }
     }

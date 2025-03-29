@@ -96,6 +96,17 @@ public class Utils {
         );
     }
 
+    public static String formatPercentage(double progress) {
+        double percent = progress * 100;
+        if (percent == (int) percent) {
+            return String.format("%d%%", (int) percent); // Whole numbers: 1%
+        } else if (Math.abs(percent * 10 - (int)(percent * 10)) < 0.0001) {
+            return String.format("%.1f%%", percent); // Single decimal: 1.1%
+        } else {
+            return String.format("%.2f%%", percent); // Two decimals: 1.01%
+        }
+    }
+
     /**
      * Formats an integer to include commas (e.g., 10000 -> 10,000)
      *
