@@ -31,6 +31,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.silentchaos512.gear.api.item.GearItem;
+import net.silentchaos512.gear.api.part.PartType;
+import net.silentchaos512.gear.api.traits.TraitInstance;
+import net.silentchaos512.gear.api.util.PartGearKey;
+import net.silentchaos512.gear.gear.material.MaterialInstance;
+import net.silentchaos512.gear.util.Const;
+import net.silentchaos512.gear.util.GearData;
+import net.silentchaos512.gear.util.TraitHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServerBlockEvents {
 
@@ -94,7 +105,7 @@ public class ServerBlockEvents {
                 return true;
             }
         }
-        return false;
+        return TraitHelper.hasTrait(tool, Const.Traits.SILKY);
     }
 
     private static void grantMiningExperience(ServerPlayer player, PlayerProgress progress,
