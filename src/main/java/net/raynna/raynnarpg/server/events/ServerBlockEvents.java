@@ -6,16 +6,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.raynna.raynnarpg.config.ConfigData;
 import net.raynna.raynnarpg.config.mining.MiningConfig;
@@ -23,25 +17,15 @@ import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
 import net.raynna.raynnarpg.network.packets.xpdrop.FloatingTextSender;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
-import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.silentchaos512.gear.api.item.GearItem;
-import net.silentchaos512.gear.api.part.PartType;
-import net.silentchaos512.gear.api.traits.TraitInstance;
-import net.silentchaos512.gear.api.util.PartGearKey;
-import net.silentchaos512.gear.gear.material.MaterialInstance;
 import net.silentchaos512.gear.util.Const;
-import net.silentchaos512.gear.util.GearData;
 import net.silentchaos512.gear.util.TraitHelper;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServerBlockEvents {
 
@@ -92,7 +76,7 @@ public class ServerBlockEvents {
     }
 
     private static boolean hasSilkTouch(ItemStack tool) {
-        ItemEnchantments enchantments = (ItemEnchantments) tool.getOrDefault(
+        ItemEnchantments enchantments = tool.getOrDefault(
                 DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
 
         HolderLookup.RegistryLookup<Enchantment> lookup = CommonHooks.resolveLookup(Registries.ENCHANTMENT);
