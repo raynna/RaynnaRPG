@@ -259,9 +259,9 @@ public class ClientTooltipEvent {
                 String name = enchant.description().getString();
                 index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
                 tooltip.add(index.get(), Component.literal(Colour.WHITE + " " + name + " " + level));
-
+                String fixed = name.replaceAll("^[^ ]+ ", "");
                 index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
-                tooltip.add(index.get(), Component.literal(Colour.GRAY + "    " + getEnchantmentDescription(name, level)));
+                tooltip.add(index.get(), Component.literal(Colour.GRAY + "    " + getEnchantmentDescription(fixed, level)));
             }
         } else {
             StringBuilder compactLine = new StringBuilder(Colour.LIGHT_PURPLE + "Enchantments: ");
@@ -287,7 +287,10 @@ public class ClientTooltipEvent {
     }
 
     private static String getEnchantmentDescription(String enchantName, int level) {
+        System.out.println("Enchant name: " + enchantName.toLowerCase());
         switch (enchantName.toLowerCase()) {
+            case "capturing":
+                return String.format("Reduces all damage by %d%% (4%% per level)", level * 4);
             case "protection":
                 return String.format("Reduces all damage by %d%% (4%% per level)", level * 4);
             case "fire protection":
@@ -319,7 +322,7 @@ public class ClientTooltipEvent {
             case "looting":
                 return String.format("+%d%% loot drops (33%% per level)", level * 33);
             case "sweeping edge":
-                return String.format("Adds %d%%-75%% sweeping damage (25%% per level)", 25 + (level - 1) * 25);
+                return String.format("Adds %d%% sweeping damage (25%% per level)", 25 + (level - 1) * 25);
             case "impaling":
                 return String.format("+%.1f damage vs aquatic mobs (2.5 per level)", level * 2.5);
             case "efficiency":
