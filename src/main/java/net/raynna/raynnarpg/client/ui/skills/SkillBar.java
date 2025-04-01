@@ -127,18 +127,20 @@ public class SkillBar {
         String mode = String.valueOf(Config.Client.XP_TEXT_MODE.get());
         double currentLevelXp = ClientSkills.getXpForLevel(skill.getLevel());
         double nextLevelXp = ClientSkills.getXpForLevel(skill.getLevel() + 1);
+        double currentXp = skill.getXp();
+        double totalXpNeeded = nextLevelXp;
         double xpNeeded = nextLevelXp - currentLevelXp;
         double xpInLevel = skill.getXp() - currentLevelXp;
         double progress = xpInLevel / xpNeeded;
         xpText = switch (mode) {
             case "PERCENT" -> isMaxLevel ? "Max Lvl" : Utils.formatPercentage(progress);
             case "BOTH" -> isMaxLevel ? "Max Lvl" : String.format("%.0f/%.0f (%s)",
-                    xpInLevel,
-                    xpNeeded,
+                    currentXp,
+                    totalXpNeeded,
                     Utils.formatPercentage(progress)
             );
             default -> isMaxLevel ? "Max Lvl" :
-                    String.format("%.0f / %.0f", xpInLevel, xpNeeded);
+                    String.format("%.0f / %.0f", currentXp, totalXpNeeded);
         };
 
         guiGraphics.pose().pushPose();
