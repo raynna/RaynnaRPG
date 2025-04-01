@@ -1,6 +1,7 @@
 package net.raynna.raynnarpg.utils;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.raynna.raynnarpg.RaynnaRPG;
@@ -18,7 +19,7 @@ public class Utils {
         boolean canShowMiss = CooldownManager.checkCooldown(player, "miss", 2000);
         if (canShowMiss) {
             Vec3 randomVec = Utils.randomizeBlockPos(pos, range);
-            FloatingText missText = FloatingText.createWorldSpace("Miss!", randomVec.x, randomVec.y, randomVec.z).withColor(Colour.RED.getTextColor());
+            FloatingText missText = FloatingText.createWorldSpace("Miss!", randomVec.x, randomVec.y, randomVec.z).withColor(Colour.Colours.RED.getTextColor());
             overlayManager.addText(missText);
         }
     }

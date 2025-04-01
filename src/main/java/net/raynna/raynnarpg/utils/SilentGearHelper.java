@@ -71,7 +71,7 @@ public class SilentGearHelper {
                 item.is(ItemTags.AXES)) {
             return true;
         }
-        return itemId.matches(".*(sword|_axe|katana|blade|dagger|scythe|halberd|mace|warhammer|bow|crossbow|staff|wand|spear|trident|knife|slingshot|sickle|hammer|mattock|excavator|paxel|saw).*");
+        return itemId.matches(".*(sword| axe|katana|blade|dagger|scythe|halberd|mace|warhammer|bow|crossbow|staff|wand|spear|trident|knife|slingshot|sickle|hammer|mattock|excavator|paxel|saw).*");
     }
 
     public static boolean isBow(ItemStack item) {

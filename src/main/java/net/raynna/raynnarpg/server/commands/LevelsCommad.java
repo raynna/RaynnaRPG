@@ -27,9 +27,9 @@ public class LevelsCommad {
     private static int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
-        MessageSender.send(player, "["+ MOD_NAME + "] Your current skills: ", Colour.RED);
+        MessageSender.send(player, "["+ MOD_NAME + "] Your current skills: ", Colour.Colours.RED);
         for (SkillType type : SkillType.values()) {
-            MessageSender.send(player, type.getName() + " - Level: " + progress.getSkills().getSkill(type).getLevel() + ", Xp: " + Utils.formatNumber(progress.getSkills().getSkill(type).getXp()), Colour.YELLOW);
+            MessageSender.send(player, type.getName() + " - Level: " + progress.getSkills().getSkill(type).getLevel() + ", Xp: " + Utils.formatNumber(progress.getSkills().getSkill(type).getXp()), Colour.Colours.YELLOW);
         }
         return 1;
     }

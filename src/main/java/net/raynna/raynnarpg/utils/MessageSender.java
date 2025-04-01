@@ -11,9 +11,9 @@ public class MessageSender {
         send(player, message, null);
     }
 
-    public static void send(ServerPlayer player, String message, Colour color) {
+    public static void send(ServerPlayer player, String message, Colour.Colours color) {
         if (color == null) {
-            color = Colour.WHITE;
+            color = Colour.Colours.WHITE;
         }
         player.sendSystemMessage(
                 Component.literal(message).setStyle(Style.EMPTY.withColor(color.getTextColor()))
@@ -24,9 +24,9 @@ public class MessageSender {
        sendAll(player, message, null);
     }
 
-    public static void sendAll(ServerPlayer player, String message, Colour color) {
+    public static void sendAll(ServerPlayer player, String message, Colour.Colours color) {
         if (color == null) {
-            color = Colour.WHITE;
+            color = Colour.Colours.WHITE;
         }
         MinecraftServer server = player.getServer();
         if (server == null) return;
@@ -40,9 +40,9 @@ public class MessageSender {
         sendAllButSelf(player, message, null);
     }
 
-    public static void sendAllButSelf(ServerPlayer player, String message, Colour color) {
+    public static void sendAllButSelf(ServerPlayer player, String message, Colour.Colours color) {
         if (color == null) {
-            color = Colour.WHITE;
+            color = Colour.Colours.WHITE;
         }
         MinecraftServer server = player.getServer();
         if (server == null) return;

@@ -49,11 +49,11 @@ public class SetLevelCommand {
         ServerPlayer player = context.getSource().getPlayerOrException();
         SkillType skill = SkillType.getSkillByName(skillName);
         if (skill == null) {
-            MessageSender.send(player, "That is not a valid skill.", Colour.RED);
+            MessageSender.send(player, "That is not a valid skill.", Colour.Colours.RED);
             return 0;
         }
         if (level < 1 || level > 50) {
-            MessageSender.send(player, "You must set your level between 1 and 50.", Colour.RED);
+            MessageSender.send(player, "You must set your level between 1 and 50.", Colour.Colours.RED);
             return 0;
         }
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
@@ -62,7 +62,7 @@ public class SetLevelCommand {
         if (level == 1)
             xp = 0;
         progress.getSkills().getSkill(skill).setXp(xp);
-        MessageSender.send(player, "You have set your level to " + level + " with experience: " + xp + ".", Colour.GREEN);
+        MessageSender.send(player, "You have set your level to " + level + " with experience: " + xp + ".", Colour.Colours.GREEN);
         SkillsPacketSender.send(player, progress.getSkills());
         return 1;
     }

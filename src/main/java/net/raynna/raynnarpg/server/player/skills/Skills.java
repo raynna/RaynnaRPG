@@ -119,15 +119,15 @@ public class Skills {
         String playerName = player.getName().getString();
 
         if (level > 1) {
-            MessageSender.send(player, "Congratulations! You leveled up " + level + " " + skillName + " levels. You are now level " + currentLevel + "!", Colour.GREEN);
+            MessageSender.send(player, "Congratulations! You leveled up " + level + " " + skillName + " levels. You are now level " + currentLevel + "!", Colour.Colours.GREEN);
         } else {
-            MessageSender.send(player, "Congratulations! You leveled up a " + skillName + " level. You are now level " + currentLevel + "!", Colour.GREEN);
+            MessageSender.send(player, "Congratulations! You leveled up a " + skillName + " level. You are now level " + currentLevel + "!", Colour.Colours.GREEN);
         }
         player.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0f, 1.0f);
         CustomToastPacketSender.send(player, "Level up!", "You have reached level " + currentLevel + " in " + skillName + "!");
         boolean reachedMax = isMaxLevel(skill.getType());
         if (reachedMax) {
-            MessageSender.send(player, "You've achieved the highest level possible in " + skillName + "!", Colour.GOLD);
+            MessageSender.send(player, "You've achieved the highest level possible in " + skillName + "!", Colour.Colours.GOLD);
         }
 
         MinecraftServer server = player.getServer();
@@ -139,9 +139,9 @@ public class Skills {
 
         String maxedMessage = playerName + " achieved the highest level possible in " + skillName + "!";
 
-        MessageSender.sendAllButSelf(player, levelUpMessage, Colour.YELLOW);
+        MessageSender.sendAllButSelf(player, levelUpMessage, Colour.Colours.YELLOW);
         if (reachedMax) {
-            MessageSender.sendAllButSelf(player, maxedMessage, Colour.GOLD);
+            MessageSender.sendAllButSelf(player, maxedMessage, Colour.Colours.GOLD);
         }
         if (player != null) {
             PlayerDataStorage.savePlayer(player);

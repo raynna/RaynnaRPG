@@ -1,9 +1,7 @@
 package net.raynna.raynnarpg.config;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
-import net.raynna.raynnarpg.utils.Utils;
 
-import java.util.Objects;
 
 public class ConfigRegister {
 

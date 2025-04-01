@@ -52,13 +52,13 @@ public class PlayerProgress {
             if (ModList.get().isLoaded("silentgear")) {
                 StarterItems.giveItems(player);
             }
-            MessageSender.send(player, "["+ MOD_NAME + "] Welcome to the server " + player.getName().toFlatList().getFirst().getString() + "!", Colour.GOLD);
+            MessageSender.send(player, "["+ MOD_NAME + "] Welcome to the server " + player.getName().toFlatList().getFirst().getString() + "!", Colour.Colours.GOLD);
         } else {
-            MessageSender.send(player, "["+ MOD_NAME + "] Welcome back " + player.getName().toFlatList().getFirst().getString() + "!", Colour.GOLD);
+            MessageSender.send(player, "["+ MOD_NAME + "] Welcome back " + player.getName().toFlatList().getFirst().getString() + "!", Colour.Colours.GOLD);
         }
-        MessageSender.send(player, "["+ MOD_NAME + "] Your current skills: ", Colour.RED);
+        MessageSender.send(player, "["+ MOD_NAME + "] Your current skills: ", Colour.Colours.RED);
         for (SkillType type : SkillType.values()) {
-            MessageSender.send(player, type.getName() + " - Level: " + skills.getSkill(type).getLevel() + ", Xp: " + Utils.formatNumber(skills.getSkill(type).getXp()), Colour.YELLOW);
+            MessageSender.send(player, type.getName() + " - Level: " + skills.getSkill(type).getLevel() + ", Xp: " + Utils.formatNumber(skills.getSkill(type).getXp()), Colour.Colours.YELLOW);
         }
         System.out.println("["+player.getName().getString()+"] Loaded Skills: " + skills.toNBT().toString());
         System.out.println("["+player.getName().getString()+"] Loaded Progress: " + progress.toNBT().toString());
