@@ -10,7 +10,6 @@ import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
@@ -121,10 +120,17 @@ public class ClientTooltipEvent {
         if (foodProps == null) {
             return;
         }
+        int index = Math.min(myToolTipIndex.getAndIncrement(), tooltip.size());
+
+
+        String saturdation = String.format("%.1f", foodProps.saturation());
+        String nutrition = String.format(String.valueOf(foodProps.nutrition()));
+        tooltip.add(index, Component.literal(Colour.HEART_ICON + nutrition + " " + Colour.SATURATION_ICON + saturdation));
 
         List<FoodProperties.PossibleEffect> effects = foodProps.effects();
         if (!effects.isEmpty()) {
-            tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.LIGHT_PURPLE + " Effects:"));
+            index = Math.min(myToolTipIndex.getAndIncrement(), tooltip.size());
+            tooltip.add(index, Component.literal(Colour.LIGHT_PURPLE + " Effects:"));
             for (FoodProperties.PossibleEffect effectPair : effects) {
                 MobEffectInstance effect = effectPair.effect();
                 float probability = effectPair.probability();
@@ -132,10 +138,14 @@ public class ClientTooltipEvent {
                 String duration = MobEffectUtil.formatDuration(effect, 1.0f, 20.0f).getString();
                 String amplifier = getAmplifierString(effect.getAmplifier());
 
-                tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.WHITE + " " + effectName + " " + amplifier));
-                tooltip.add(myToolTipIndex.getAndIncrement(),
+                index = Math.min(myToolTipIndex.getAndIncrement(), tooltip.size());
+                tooltip.add(index, Component.literal(Colour.WHITE + " " + effectName + " " + amplifier));
+
+                index = Math.min(myToolTipIndex.getAndIncrement(), tooltip.size());
+                tooltip.add(index,
                         Component.literal(Colour.GRAY + "    Duration: " + duration +
                                 (probability < 1.0F ? " (" + (int)(probability * 100) + "% chance)" : "")));
+
             }
         }
     }
@@ -179,17 +189,19 @@ public class ClientTooltipEvent {
 
         if (allTraits.isEmpty())
             return;
-
+        AtomicInteger index = new AtomicInteger(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
         if (context.isAltDown) {
             // Expanded view with descriptions
-            tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.GOLD + "Traits:"));
+            tooltip.add(index.get(), Component.literal(Colour.GOLD + "Traits:"));
 
             for (TraitInstance trait : allTraits) {
                 String name = trait.getTrait().getDisplayName(trait.getLevel()).getString();
                 String desc = trait.getTrait().getDescription(trait.getLevel()).getString();
+                index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
+                tooltip.add(index.get(), Component.literal(Colour.WHITE + " " + name));
 
-                tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.WHITE + " " + name));
-                tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.GRAY + "    " + desc));
+                index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
+                tooltip.add(index.get(), Component.literal(Colour.GRAY + "    " + desc));
             }
         } else {
             // Compact view - all on one line
@@ -205,8 +217,10 @@ public class ClientTooltipEvent {
                 compactLine.append(Colour.WHITE).append(name);
             }
 
-            tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(compactLine.toString()));
-            tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.YELLOW + "  Trait Details [Left Alt]"));
+            tooltip.add(index.get(), Component.literal(compactLine.toString()));
+
+            index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
+            tooltip.add(index.get(), Component.literal(Colour.YELLOW + "  Trait Details [Left Alt]"));
         }
     }
 
@@ -235,17 +249,19 @@ public class ClientTooltipEvent {
                 }
             }
         }
-
+        AtomicInteger index = new AtomicInteger(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
         if (context.isAltDown) {
-            tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.LIGHT_PURPLE + "Enchantments:"));
+            tooltip.add(index.get(), Component.literal(Colour.LIGHT_PURPLE + "Enchantments:"));
 
             for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
                 Enchantment enchant = entry.getKey().value();
                 int level = entry.getIntValue();
                 String name = enchant.description().getString();
+                index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
+                tooltip.add(index.get(), Component.literal(Colour.WHITE + " " + name + " " + level));
 
-                tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.WHITE + " " + name + " " + level));
-                tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.GRAY + "    " + getEnchantmentDescription(name, level)));
+                index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
+                tooltip.add(index.get(), Component.literal(Colour.GRAY + "    " + getEnchantmentDescription(name, level)));
             }
         } else {
             StringBuilder compactLine = new StringBuilder(Colour.LIGHT_PURPLE + "Enchantments: ");
@@ -263,8 +279,10 @@ public class ClientTooltipEvent {
                 first = false;
             }
 
-            tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(compactLine.toString()));
-            tooltip.add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.YELLOW + "  Enchant Details [Left Alt]"));
+            tooltip.add(index.get(), Component.literal(compactLine.toString()));
+
+            index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
+            tooltip.add(index.get(), Component.literal(Colour.YELLOW + "  Enchant Details [Left Alt]"));
         }
     }
 
@@ -337,9 +355,11 @@ public class ClientTooltipEvent {
     }
 
     private static void addRequirementsToTooltip(TooltipContext context, Map<String, String> requirements) {
-        context.event.getToolTip().add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.GOLD + "RaynnaRPG: "));
+        AtomicInteger index = new AtomicInteger(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
+        context.event.getToolTip().add(index.get(), Component.literal(Colour.GOLD + "RaynnaRPG: "));
         requirements.forEach((skill, text) -> {
-                    context.event.getToolTip().add(myToolTipIndex.getAndIncrement(), Component.literal(Colour.GRAY + skill + " " + text));
+                    index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
+                    context.event.getToolTip().add(index.get(), Component.literal(Colour.GRAY + skill + " " + text));
                 }
         );
     }
