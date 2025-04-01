@@ -191,7 +191,6 @@ public class ClientTooltipEvent {
             return;
         AtomicInteger index = new AtomicInteger(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
         if (context.isAltDown) {
-            // Expanded view with descriptions
             tooltip.add(index.get(), Component.literal(Colour.GOLD + "Traits:"));
 
             for (TraitInstance trait : allTraits) {
@@ -259,7 +258,9 @@ public class ClientTooltipEvent {
                 String name = enchant.description().getString();
                 index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
                 tooltip.add(index.get(), Component.literal(Colour.WHITE + " " + name + " " + level));
-                String fixed = name.replaceAll("^[^ ]+ ", "");
+                System.out.println("name before fix: " + name);
+                String fixed = name.replaceAll("^[^ ]+", "").trim();
+                System.out.println("name after fix: " + fixed);
                 index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
                 tooltip.add(index.get(), Component.literal(Colour.GRAY + "    " + getEnchantmentDescription(fixed, level)));
             }
