@@ -1,10 +1,12 @@
 package net.raynna.raynnarpg.server.events;
 
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.minecraft.network.protocol.game.ServerboundContainerButtonClickPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -15,14 +17,18 @@ import net.minecraft.world.food.FoodConstants;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ContainerScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.item.ItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.raynna.raynnarpg.config.*;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.crafting.CraftingConfig;
@@ -37,11 +43,14 @@ import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.*;
 import net.silentchaos512.gear.api.item.GearItem;
+import net.silentchaos512.gear.client.KeyTracker;
 
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.util.*;
 
 public class ServerPlayerEvents {
 
+    private static final int OUTPUT_SLOT = 2;
     private static final int FUEL_SLOT = 1;
     private static final int INPUT_SLOT = 0;
 
@@ -293,7 +302,6 @@ public class ServerPlayerEvents {
 
         ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
         if (data == null) return;
-
         if (progress.getSkills().getSkill(SkillType.SMELTING).getLevel() < data.getLevel()) {
             handleFailedSmelting(player, menu, event, data);
         } else {
@@ -302,23 +310,38 @@ public class ServerPlayerEvents {
     }
 
     private static void handleFailedSmelting(ServerPlayer player, AbstractFurnaceMenu menu, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
-        player.sendSystemMessage(Component.literal("You need smelting level " + data.getLevel() + " to create " + event.getSmelting().getHoverName().getString()));
+        player.sendSystemMessage(Component.literal("You need smelting level " + data.getLevel() + " to smelt " + event.getSmelting().getHoverName().getString()));
+        ItemStack outputCopy = event.getSmelting().copy();
+        event.getSmelting().setCount(0);
+        ItemStack rawMaterial = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw())), outputCopy.getCount());
         ItemStack input = menu.getSlot(INPUT_SLOT).getItem();
-        ItemStack rawMaterial = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw())), event.getSmelting().getCount());
-        System.out.println("smeltingfail: " + event.getSmelting().getHoverName().getString() + ", rawMat: " + rawMaterial.getHoverName().getString() + ", input: " + input.getHoverName().getString());
         if (input.isEmpty()) {
             menu.getSlot(INPUT_SLOT).set(rawMaterial);
-        } else if (!input.getDescriptionId().equals(rawMaterial.getDescriptionId())) {
+        } else if (!ItemStack.isSameItem(input, rawMaterial)) {
             player.getInventory().placeItemBackInInventory(rawMaterial);
-        } else if (input.getCount() + rawMaterial.getCount() > input.getMaxStackSize()) {
-            ItemStack overflow = input.copy();
-            overflow.setCount(rawMaterial.getCount());
-            player.getInventory().placeItemBackInInventory(overflow);
         } else {
-            input.grow(rawMaterial.getCount());
+            int maxStackSize = input.getMaxStackSize();
+            int totalCount = input.getCount() + rawMaterial.getCount();
+
+            if (totalCount > maxStackSize) {
+                int fitCount = maxStackSize - input.getCount();
+                input.grow(fitCount);
+
+                int overflowCount = rawMaterial.getCount() - fitCount;
+                if (overflowCount > 0) {
+                    ItemStack overflow = rawMaterial.copy();
+                    overflow.setCount(overflowCount);
+                    player.getInventory().placeItemBackInInventory(overflow);
+                }
+            } else {
+                input.grow(rawMaterial.getCount());
+            }
             menu.getSlot(INPUT_SLOT).set(input);
         }
-        event.getSmelting().setCount(0);
+        if (KeyTracker.isShiftDown()) {//prevent dupe when shiftclicking
+            System.out.println("Was holding shift, removing item " + outputCopy.getHoverName().getString() + " x " + outputCopy.getCount());
+            PlayerUtils.removeItemStack(player, outputCopy);
+        }
     }
 
     private static void grantSmeltingExperience(ServerPlayer player, PlayerProgress progress, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
