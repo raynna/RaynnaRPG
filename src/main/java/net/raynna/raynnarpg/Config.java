@@ -29,7 +29,7 @@ import static net.raynna.raynnarpg.RaynnaRPG.MOD_ID;
 @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class Config {
 
-    public static final int SERVER_VERSION = 5;
+    public static final int SERVER_VERSION = 1;
     public static final int CLIENT_VERSION = 1;
 
     public static final class Server {
@@ -524,7 +524,7 @@ public class Config {
 
                 // Misc
                 List<MiningEntry> ores = new ArrayList<>();
-                ores.add(new MiningEntry("minecraft:coal_ore", 46, "minecraft:coal_ores"));
+                ores.add(new MiningEntry("minecraft:coal_ore", 3, "minecraft:coal_ores"));
                 ores.add(new MiningEntry("minecraft:redstone_ore", 13, "minecraft:redstone_ores"));
                 ores.add(new MiningEntry("minecraft:nether_quartz_ore", 18, "c:ores/quartz"));
                 MiningConfig.registerMultipleConfigs(builder, "mining_misc_ores", "Misc", ores);
