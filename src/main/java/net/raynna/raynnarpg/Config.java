@@ -29,7 +29,7 @@ import static net.raynna.raynnarpg.RaynnaRPG.MOD_ID;
 @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class Config {
 
-    public static final int SERVER_VERSION = 3;
+    public static final int SERVER_VERSION = 5;
     public static final int CLIENT_VERSION = 1;
 
     public static final class Server {
@@ -714,6 +714,9 @@ public class Config {
 
                 Config.Server.SERVER_CONFIG_VERSION.set(SERVER_VERSION);
                 Config.Server.SPEC = builder.build();
+                config.getSpec().validateSpec(config);
+                assert config.getLoadedConfig() != null;
+                config.getLoadedConfig().save();
                 System.out.println("Config rebuilt due to version change.");
             }
             System.out.println("Reloaded on server");

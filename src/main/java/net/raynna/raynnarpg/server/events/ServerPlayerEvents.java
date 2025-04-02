@@ -310,12 +310,10 @@ public class ServerPlayerEvents {
     }
 
     private static void handleFailedSmelting(ServerPlayer player, AbstractFurnaceMenu menu, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
-        event.getSmelting().setCount(0);
         player.sendSystemMessage(Component.literal("You need smelting level " + data.getLevel() + " to create " + event.getSmelting().getHoverName().getString()));
-
         ItemStack input = menu.getSlot(INPUT_SLOT).getItem();
         ItemStack rawMaterial = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw())), event.getSmelting().getCount());
-
+        System.out.println("smeltingfail: " + event.getSmelting().getHoverName().getString() + ", rawMat: " + rawMaterial.getHoverName().getString() + ", input: " + input.getHoverName().getString());
         if (input.isEmpty()) {
             menu.getSlot(INPUT_SLOT).set(rawMaterial);
         } else if (!input.getDescriptionId().equals(rawMaterial.getDescriptionId())) {
@@ -328,6 +326,7 @@ public class ServerPlayerEvents {
             input.grow(rawMaterial.getCount());
             menu.getSlot(INPUT_SLOT).set(input);
         }
+        event.getSmelting().setCount(0);
     }
 
     private static void grantSmeltingExperience(ServerPlayer player, PlayerProgress progress, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
