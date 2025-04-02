@@ -7,6 +7,8 @@ import net.minecraft.world.phys.Vec3;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.ui.OverlayManager;
 import net.raynna.raynnarpg.client.ui.floating_text.FloatingText;
+import net.raynna.raynnarpg.network.packets.xpdrop.FloatingTextSender;
+import net.raynna.raynnarpg.server.player.skills.SkillType;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -37,6 +39,12 @@ public class Utils {
         }
 
         return key;
+    }
+
+    public static boolean isXpCapped(int playerLevel, int levelReq) {
+        int levelCap = 20;
+        double difference = playerLevel - levelReq;
+        return difference >= levelCap;
     }
 
     public static String extractItemId(String key) {

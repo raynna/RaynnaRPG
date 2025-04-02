@@ -23,6 +23,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.raynna.raynnarpg.utils.Colour;
+import net.raynna.raynnarpg.utils.Utils;
 import net.silentchaos512.gear.util.Const;
 import net.silentchaos512.gear.util.TraitHelper;
 
@@ -94,10 +96,14 @@ public class ServerBlockEvents {
 
     private static void grantMiningExperience(ServerPlayer player, PlayerProgress progress,
                                               ConfigData miningData, BlockPos pos) {
-        SkillType miningType = SkillType.MINING;
         double xp = miningData.getXp();
-
-        progress.getSkills().addXp(miningType, xp);
+        int miningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
+        int levelReq = miningData.getLevel();
+        if (Utils.isXpCapped(miningLevel, levelReq)) {
+            FloatingTextSender.sendOnBlock(player, Colour.RED + "Xp Capped", pos, SkillType.MINING);
+            return;
+        }
+        progress.getSkills().addXp(SkillType.MINING, xp);
         FloatingTextSender.sendOnBlock(player, "+" + xp + "xp", pos, SkillType.MINING);
     }
 

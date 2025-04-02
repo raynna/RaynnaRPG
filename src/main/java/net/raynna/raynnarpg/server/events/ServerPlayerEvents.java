@@ -329,7 +329,13 @@ public class ServerPlayerEvents {
 
     private static void grantSmeltingExperience(ServerPlayer player, PlayerProgress progress, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
         double xp = Math.round(data.getXp() * event.getSmelting().getCount() * 100) / 100.0;
-        CraftingTracker.accumulateCraftingData(player, event.getSmelting().getHoverName().getString(), event.getSmelting().getCount(), xp, SkillType.SMELTING, () -> progress.getSkills().addXp(SkillType.SMELTING, xp));
+        CraftingTracker.accumulateCraftingData(player, event.getSmelting().getHoverName().getString(), event.getSmelting().getCount(), xp, SkillType.SMELTING, () -> {
+            if (Utils.isXpCapped(progress.getSkills().getSkill(SkillType.SMELTING).getLevel(), data.getLevel())) {
+                MessageSender.send(player, "You are to high of a level to gain experience from " + event.getSmelting().getHoverName().getString());
+                return;
+            }
+            progress.getSkills().addXp(SkillType.SMELTING, xp);
+        });
     }
 
     private static void handleCraftingEvent(ServerPlayer player, CraftingContainer container, PlayerEvent.ItemCraftedEvent event) {
@@ -366,7 +372,7 @@ public class ServerPlayerEvents {
                 result.blocked = true;
                 break;
             }
-
+            result.levelReq = data.getLevel();
             result.totalExperience += data.getXp();
         }
         return result;
@@ -390,7 +396,14 @@ public class ServerPlayerEvents {
 
     private static void grantCraftingExperience(ServerPlayer player, PlayerProgress progress, ItemStack craftedItem, CraftingResult result) {
         double xp = Math.round(result.totalExperience * 100) / 100.0;
-        CraftingTracker.accumulateCraftingData(player, craftedItem.getHoverName().getString(), craftedItem.getCount(), xp, SkillType.CRAFTING, () -> progress.getSkills().addXp(SkillType.CRAFTING, xp));
+        CraftingTracker.accumulateCraftingData(player, craftedItem.getHoverName().getString(), craftedItem.getCount(), xp, SkillType.CRAFTING, () -> {
+           if (Utils.isXpCapped(progress.getSkills().getSkill(SkillType.CRAFTING).getLevel(), result.levelReq)) {
+               MessageSender.send(player, "You are to high of a level to gain experience from " + craftedItem.getHoverName().getString() + ".");
+               return;
+           }
+            progress.getSkills().addXp(SkillType.CRAFTING, xp);
+
+        });
     }
 
     private static class CraftingResult {
@@ -399,6 +412,7 @@ public class ServerPlayerEvents {
         int totalSlotsUsed = 0;
         Set<String> uniqueMaterials = new HashSet<>();
         double totalExperience = 0.0;
+        int levelReq = 0;
     }
 
     public static void register() {

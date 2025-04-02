@@ -15,6 +15,7 @@ import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataStorage;
 import net.raynna.raynnarpg.utils.Colour;
 import net.raynna.raynnarpg.utils.MessageSender;
+import net.raynna.raynnarpg.utils.Utils;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -90,15 +91,12 @@ public class Skills {
     }
 
     public static double getXpForMaterial(int level, SkillType type) {
-        double baseXp = 1;
-        if (type == SkillType.MINING) baseXp = 3;
-        if (type == SkillType.SMELTING) baseXp = 4;
-        if (type == SkillType.CRAFTING) baseXp = 3;
-
-        double END_GAME_MULTIPLIER = 0.15;
-        double EARLY_GAME_MULTIPLIER = 1.20;
-
-        double xp = baseXp * (1 + END_GAME_MULTIPLIER * Math.pow(level, EARLY_GAME_MULTIPLIER));
+        double baseXp = switch (type) {
+            case MINING, CRAFTING -> 3;
+            case SMELTING -> 4;
+            default -> 1;
+        };
+        double xp = baseXp * (1 + 0.45 * (level - 1) + 0.0135 * Math.pow(level - 1, 2));
         return Math.round(xp * 100.0) / 100.0;
     }
 

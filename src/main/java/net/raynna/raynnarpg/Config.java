@@ -108,9 +108,9 @@ public class Config {
                     silentgear_weapons.add(new CombatEntry("tier:diamond", 30, false));
                     silentgear_weapons.add(new CombatEntry("tier:dimerald", 32, false));
                     silentgear_weapons.add(new CombatEntry("tier:netherite", 40, false));
-                    silentgear_weapons.add(new CombatEntry("tier:crimson_iron", 43, false));
-                    silentgear_weapons.add(new CombatEntry("tier:crimson_steel", 46, false));
-                    silentgear_weapons.add(new CombatEntry("tier:azure_silver", 48, false));
+                    silentgear_weapons.add(new CombatEntry("tier:crimson_iron", 36, false));
+                    silentgear_weapons.add(new CombatEntry("tier:crimson_steel", 45, false));
+                    silentgear_weapons.add(new CombatEntry("tier:azure_silver", 47, false));
                     silentgear_weapons.add(new CombatEntry("tier:azure_electrum", 49, false));
                     silentgear_weapons.add(new CombatEntry("tier:tyrian_steel", 50, false));
                     CombatConfig.registerMultipleConfigs(builder, "silentgear_weapons", "Silentgear Weapons", silentgear_weapons);
@@ -129,9 +129,9 @@ public class Config {
                     silentgear_armours.add(new CombatEntry("tier:diamond", 30));
                     silentgear_armours.add(new CombatEntry("tier:dimerald", 32));
                     silentgear_armours.add(new CombatEntry("tier:netherite", 40));
-                    silentgear_armours.add(new CombatEntry("tier:crimson_iron", 43));
-                    silentgear_armours.add(new CombatEntry("tier:crimson_steel", 46));
-                    silentgear_armours.add(new CombatEntry("tier:azure_silver", 48));
+                    silentgear_armours.add(new CombatEntry("tier:crimson_iron", 36));
+                    silentgear_armours.add(new CombatEntry("tier:crimson_steel", 45));
+                    silentgear_armours.add(new CombatEntry("tier:azure_silver", 47));
                     silentgear_armours.add(new CombatEntry("tier:azure_electrum", 49));
                     silentgear_armours.add(new CombatEntry("tier:tyrian_steel", 50));
                     CombatConfig.registerMultipleConfigs(builder, "silentgear_armours", "Silentgear Armours", silentgear_armours);
@@ -222,8 +222,8 @@ public class Config {
                 metals.add(new SmeltingEntry("minecraft:diamond", 30, "minecraft:diamond_ore"));
                 metals.add(new SmeltingEntry("minecraft:netherite_scrap", 40, "minecraft:ancient_debris"));
                 if (ModList.get().isLoaded("silentgear")) {
-                    metals.add(new SmeltingEntry("silentgear:crimson_iron_ingot", 43, "silentgear:raw_crimson_iron"));
-                    metals.add(new SmeltingEntry("silentgear:azure_silver_ingot", 48, "silentgear:raw_azure_silver"));
+                    metals.add(new SmeltingEntry("silentgear:crimson_iron_ingot", 36, "silentgear:raw_crimson_iron"));
+                    metals.add(new SmeltingEntry("silentgear:azure_silver_ingot", 47, "silentgear:raw_azure_silver"));
                 }
                 SmeltingConfig.registerMultipleConfigs(builder, "smelting_metals", "Metals", metals);
 
@@ -286,9 +286,9 @@ public class Config {
                 List<CraftingEntry> silentgear = new ArrayList<>();
                 if (hasSilentGear) {
                     silentgear.add(new CraftingEntry("silentgear:blaze_gold", 25, "c:ingots/blaze_gold"));
-                    silentgear.add(new CraftingEntry("silentgear:crimson_iron", 43, "c:ingots/crimson_iron"));
-                    silentgear.add(new CraftingEntry("silentgear:crimson_steel_ingot", 46, "c:ingots/crimson_steel"));
-                    silentgear.add(new CraftingEntry("silentgear:azure_silver_ingot", 48, "c:ingots/azure_silver"));
+                    silentgear.add(new CraftingEntry("silentgear:crimson_iron", 36, "c:ingots/crimson_iron"));
+                    silentgear.add(new CraftingEntry("silentgear:crimson_steel_ingot", 45, "c:ingots/crimson_steel"));
+                    silentgear.add(new CraftingEntry("silentgear:azure_silver_ingot", 47, "c:ingots/azure_silver"));
                     silentgear.add(new CraftingEntry("silentgear:azure_electrum_ingot", 49, "c:ingots/azure_electrum"));
                     silentgear.add(new CraftingEntry("silentgear:tyrian_steel_ingot", 50, "c:ingots/tyrian_steel"));
                     CraftingConfig.registerMultipleConfigs(builder, "crafting_silentgear", "Silent Gear", silentgear);
@@ -376,9 +376,9 @@ public class Config {
                     silentgear_tools.add(new ToolEntry("tier:diamond", 30));
                     silentgear_tools.add(new ToolEntry("tier:dimerald", 32));
                     silentgear_tools.add(new ToolEntry("tier:netherite", 40));
-                    silentgear_tools.add(new ToolEntry("tier:crimson_iron", 43));
-                    silentgear_tools.add(new ToolEntry("tier:crimson_steel", 46));
-                    silentgear_tools.add(new ToolEntry("tier:azure_silver", 48));
+                    silentgear_tools.add(new ToolEntry("tier:crimson_iron", 36));
+                    silentgear_tools.add(new ToolEntry("tier:crimson_steel", 45));
+                    silentgear_tools.add(new ToolEntry("tier:azure_silver", 47));
                     silentgear_tools.add(new ToolEntry("tier:azure_electrum", 49));
                     silentgear_tools.add(new ToolEntry("tier:tyrian_steel", 50));
                     ToolConfig.registerMultipleConfigs(builder, "silentgear_tools", "Silentgear Tools", silentgear_tools);
@@ -453,8 +453,8 @@ public class Config {
                 if (hasSilentGear) {
                     List<MiningEntry> mining_silentgear = new ArrayList<>();
                     mining_silentgear.add(new MiningEntry("silentgear:bort_ore", 15, "c:ores/bort"));
-                    mining_silentgear.add(new MiningEntry("silentgear:crimson_iron_ore", 43, "c:ores/crimson_iron"));
-                    mining_silentgear.add(new MiningEntry("silentgear:azure_silver_ore", 48, "c:ores/azure_silver"));
+                    mining_silentgear.add(new MiningEntry("silentgear:crimson_iron_ore", 36, "c:ores/crimson_iron"));
+                    mining_silentgear.add(new MiningEntry("silentgear:azure_silver_ore", 47, "c:ores/azure_silver"));
                     MiningConfig.registerMultipleConfigs(builder, "mining_silentgear", "Silentgear", mining_silentgear);
                 }
 
