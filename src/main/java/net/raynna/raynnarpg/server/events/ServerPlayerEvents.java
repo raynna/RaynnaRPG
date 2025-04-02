@@ -338,7 +338,8 @@ public class ServerPlayerEvents {
             }
             menu.getSlot(INPUT_SLOT).set(input);
         }
-        if (player.getPersistentData().getBoolean("isShifting")) {//prevent dupe when shiftclicking
+        boolean shifting = player.getPersistentData().getBoolean("isShifting");
+        if (shifting) {//prevent dupe when shiftclicking
             PlayerUtils.removeItemStack(player, outputCopy);
         }
     }
