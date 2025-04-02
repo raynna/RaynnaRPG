@@ -4,7 +4,7 @@ public class Skill {
 
     private final SkillType type;
 
-    private int level, previousLevel = 1;
+    private int level = 1, previousLevel = 1;
     private double xp, previousXp = 0;
 
 

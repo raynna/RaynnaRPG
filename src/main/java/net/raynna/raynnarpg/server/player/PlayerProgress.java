@@ -42,7 +42,13 @@ public class PlayerProgress {
             this.skills = new Skills();
         }
         skills.setPlayer(player);
+        for (SkillType skill : SkillType.values()) {
+            if (skills.getSkill(skill).getLevel() < 1) {
+                skills.getSkill(skill).setLevel(1);
+                MessageSender.send(player,Colour.RED + "Your " + skill.getName() + " level has been set to lvl 1, due to being 0.");
+            }
 
+        }
         if (progress == null) {
             this.progress = new Progress();
         }

@@ -291,7 +291,7 @@ public class ClientTooltipEvent {
         System.out.println("Enchant name: " + enchantName.toLowerCase());
         switch (enchantName.toLowerCase()) {
             case "capturing":
-                return String.format("Reduces all damage by %d%% (4%% per level)", level * 4);
+                return "Each level gives you a higher chance capture a monster egg.";
             case "protection":
                 return String.format("Reduces all damage by %d%% (4%% per level)", level * 4);
             case "fire protection":
