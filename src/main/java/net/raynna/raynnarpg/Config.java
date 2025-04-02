@@ -22,17 +22,23 @@ import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.silentchaos512.gear.item.blueprint.BlueprintType;
 
+import static net.neoforged.fml.loading.FMLConfig.updateConfig;
 import static net.raynna.raynnarpg.RaynnaRPG.MOD_ID;
 
 @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class Config {
 
+    public static final int CONFIG_VERSION = 1;
+
     public static final class Server {
 
         public static ModConfigSpec SPEC;
+        public static final ModConfigSpec.IntValue CONFIG_VERSION_KEY;
+
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+            CONFIG_VERSION_KEY = builder.comment("DO NOT CHANGE. Used for tracking config updates.").defineInRange("config_version", CONFIG_VERSION, 1, Integer.MAX_VALUE);
             registerCombatConfigs(builder);
             registerToolConfigs(builder);
             registerCraftingConfigs(builder);
@@ -676,6 +682,21 @@ public class Config {
     static void onReload(final ModConfigEvent.Reloading event) {
         ModConfig config = event.getConfig();
         if (config.getSpec() == Config.Server.SPEC) {
+            int storedVersion = Config.Server.CONFIG_VERSION_KEY.get();
+            if (storedVersion < CONFIG_VERSION) {
+                ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+
+                // Register all config sections again
+                Config.Server.registerCombatConfigs(builder);
+                Config.Server.registerSmeltingConfigs(builder);
+                Config.Server.registerCraftingConfigs(builder);
+                Config.Server.registerToolConfigs(builder);
+                Config.Server.registerMiningConfigs(builder);
+
+                Config.Server.CONFIG_VERSION_KEY.set(CONFIG_VERSION);
+                Config.Server.SPEC = builder.build();
+                System.out.println("Config rebuilt due to version change.");
+            }
             System.out.println("Reloaded on server");
         }
         if (config.getSpec() == Config.Client.SPEC) {
