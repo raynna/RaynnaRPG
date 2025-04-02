@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Skills {
 
-    private final static int MAX_LEVEL = 50;
+    public final static int MAX_LEVEL = 50;
     private final static double MAX_XP = 283854;//to avoid people getting more xp than max lvl, might want to increase if added some type of highscore
 
     private final Map<SkillType, Skill> skills = new EnumMap<>(SkillType.class);
@@ -73,12 +73,12 @@ public class Skills {
     }
 
     public int getLevelForXp(double xp) {
-        for (int level = 1; level <= 50; level++) {
+        for (int level = 1; level <= MAX_LEVEL; level++) {
             if (getXpForLevel(level) > xp) {
                 return level - 1;
             }
         }
-        return 50;
+        return MAX_LEVEL;
     }
 
     public static double getXpForLevel(int level) {

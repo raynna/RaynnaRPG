@@ -51,12 +51,12 @@ public class ClientSkills {
     }
 
     public int getLevelForXp(double xp) {
-        for (int level = 1; level <= 50; level++) {
+        for (int level = 1; level <= Skills.MAX_LEVEL; level++) {
             if (getXpForLevel(level) > xp) {
                 return level - 1;
             }
         }
-        return 50;
+        return Skills.MAX_LEVEL;
     }
 
     public static double getXpForLevel(int level) {

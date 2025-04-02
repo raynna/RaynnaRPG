@@ -11,6 +11,7 @@ import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
+import net.raynna.raynnarpg.server.player.skills.Skills;
 import net.raynna.raynnarpg.utils.Utils;
 
 @OnlyIn(Dist.CLIENT)
@@ -58,7 +59,7 @@ public class SkillBar {
     private void drawSkillText(GuiGraphics guiGraphics, Minecraft mc, int x, int y, Skill skill) {
         guiGraphics.drawString(
                 mc.font,
-                Component.literal(type.getName() + " Lv. " + skill.getLevel()),
+                Component.literal(type.getName() + " Lv. " + skill.getLevel() + "/" + Skills.MAX_LEVEL),
                 x, y,
                 0xFFFFFF
         );
@@ -121,7 +122,7 @@ public class SkillBar {
 
     private void drawXpText(GuiGraphics guiGraphics, int x, int y, Skill skill) {
         Font font = Minecraft.getInstance().font;
-        boolean isMaxLevel = skill.getLevel() == 50;
+        boolean isMaxLevel = skill.getLevel() == Skills.MAX_LEVEL;
 
         String xpText;
         String mode = String.valueOf(Config.Client.XP_TEXT_MODE.get());

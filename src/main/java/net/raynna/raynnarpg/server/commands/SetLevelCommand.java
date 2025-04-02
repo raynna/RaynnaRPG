@@ -30,9 +30,9 @@ public class SetLevelCommand {
                             }
                             return builder.buildFuture();
                         })
-                        .then(Commands.argument("level", IntegerArgumentType.integer(1, 50))
+                        .then(Commands.argument("level", IntegerArgumentType.integer(1, Skills.MAX_LEVEL))
                                 .suggests((context, builder) -> {
-                                    builder.suggest("1-50");
+                                    builder.suggest("1-" + Skills.MAX_LEVEL);
                                     return builder.buildFuture();
                                 })
                                 .executes(context -> run(
@@ -52,8 +52,8 @@ public class SetLevelCommand {
             MessageSender.send(player, "That is not a valid skill.", Colour.Colours.RED);
             return 0;
         }
-        if (level < 1 || level > 50) {
-            MessageSender.send(player, "You must set your level between 1 and 50.", Colour.Colours.RED);
+        if (level < 1 || level > Skills.MAX_LEVEL) {
+            MessageSender.send(player, "You must set your level between 1 and " + Skills.MAX_LEVEL + ".", Colour.Colours.RED);
             return 0;
         }
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
