@@ -1,5 +1,9 @@
 package net.raynna.raynnarpg;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import net.neoforged.bus.api.SubscribeEvent;
@@ -25,7 +29,7 @@ import static net.raynna.raynnarpg.RaynnaRPG.MOD_ID;
 @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class Config {
 
-    public static final int SERVER_VERSION = 1;
+    public static final int SERVER_VERSION = 3;
     public static final int CLIENT_VERSION = 1;
 
     public static final class Server {
@@ -35,7 +39,7 @@ public class Config {
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
-            SERVER_CONFIG_VERSION = builder.comment("DO NOT CHANGE. Used for tracking config updates.").defineInRange("config_version", SERVER_VERSION, 1, Integer.MAX_VALUE);
+            SERVER_CONFIG_VERSION = builder.translation("Server Config Version: ").comment("DO NOT CHANGE. Used for tracking config updates.").defineInRange("config_version", SERVER_VERSION, 1, Integer.MAX_VALUE);
             registerCombatConfigs(builder);
             registerToolConfigs(builder);
             registerCraftingConfigs(builder);
@@ -239,6 +243,10 @@ public class Config {
                 materials.add(new SmeltingEntry("minecraft:bricks", 3, "minecraft:clay_ball"));
                 materials.add(new SmeltingEntry("minecraft:stone", 5, "minecraft:cobblestone"));
                 materials.add(new SmeltingEntry("minecraft:smooth_stone", 8, "minecraft:stone"));
+                materials.add(new SmeltingEntry("minecraft:redstone", 13, "minecraft:redstone_ore"));
+                materials.add(new SmeltingEntry("minecraft:redstone", 13, "minecraft:deepslate_redstone_ore"));
+                materials.add(new SmeltingEntry("minecraft:lapis_lazuli", 16, "minecraft:lapis_ore"));
+                materials.add(new SmeltingEntry("minecraft:lapis_lazuli", 16, "minecraft:deepslate_lapis_ore"));
                 materials.add(new SmeltingEntry("minecraft:quartz", 18, "minecraft:nether_quartz_ore"));
                 SmeltingConfig.registerMultipleConfigs(builder, "smelting_general", "General", materials);
 
@@ -316,6 +324,7 @@ public class Config {
                 gems.add(new CraftingEntry("blaze_rod", 20, "c:rods/blaze"));
                 gems.add(new CraftingEntry("blaze_powder", 20));
                 gems.add(new CraftingEntry("minecraft:diamond", 30, "c:gems/diamond"));
+                gems.add(new CraftingEntry("minecraft:emerald", 32, "c:gems/emerald"));
                 CraftingConfig.registerMultipleConfigs(builder, "crafting_gem_materials", "Gems", gems);
 
                 List<CraftingEntry> silentgear = new ArrayList<>();
@@ -515,7 +524,7 @@ public class Config {
 
                 // Misc
                 List<MiningEntry> ores = new ArrayList<>();
-                ores.add(new MiningEntry("minecraft:coal_ore", 3, "minecraft:coal_ores"));
+                ores.add(new MiningEntry("minecraft:coal_ore", 46, "minecraft:coal_ores"));
                 ores.add(new MiningEntry("minecraft:redstone_ore", 13, "minecraft:redstone_ores"));
                 ores.add(new MiningEntry("minecraft:nether_quartz_ore", 18, "c:ores/quartz"));
                 MiningConfig.registerMultipleConfigs(builder, "mining_misc_ores", "Misc", ores);
@@ -667,7 +676,7 @@ public class Config {
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
-            CLIENT_CONFIG_VERSION = builder.comment("DO NOT CHANGE. Used for tracking config updates.").defineInRange("config_version", CLIENT_VERSION, 1, Integer.MAX_VALUE);
+            CLIENT_CONFIG_VERSION = builder.translation("Client Config Version: ").comment("DO NOT CHANGE. Used for tracking config updates.").defineInRange("config_version", CLIENT_VERSION, 1, Integer.MAX_VALUE);
 
             XP_TEXT_MODE = builder
                     .translation("Xp Display Mode: ")
@@ -680,13 +689,22 @@ public class Config {
     }
 
     @SubscribeEvent
-    static void onReload(final ModConfigEvent.Reloading event) {
+    static void onReload(final ModConfigEvent.Loading event) {
         ModConfig config = event.getConfig();
         if (config.getSpec() == Config.Server.SPEC) {
             int storedVersion = Config.Server.SERVER_CONFIG_VERSION.get();
             if (storedVersion < SERVER_VERSION) {
                 ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+                Path configFilePath = Paths.get("config", MOD_ID + "-common.toml");
 
+                if (Files.exists(configFilePath)) {
+                    try {
+                        Files.delete(configFilePath);
+                        System.out.println("Old config file deleted due to version change.");
+                    } catch (IOException e) {
+                        System.err.println("Failed to delete old config file: " + e.getMessage());
+                    }
+                }
                 // Register all config sections again
                 Config.Server.registerCombatConfigs(builder);
                 Config.Server.registerSmeltingConfigs(builder);
