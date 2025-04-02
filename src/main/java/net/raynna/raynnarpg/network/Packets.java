@@ -4,6 +4,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.raynna.raynnarpg.network.packets.keypress.ShiftClickPacket;
+import net.raynna.raynnarpg.network.packets.keypress.ShiftClickPacketHandler;
 import net.raynna.raynnarpg.network.packets.message.MessagePacket;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketHandler;
 import net.raynna.raynnarpg.network.packets.skills.SkillsPacket;
@@ -33,7 +35,7 @@ public class Packets {
 
 
     private static void registerServerPackets(PayloadRegistrar registrar) {
-
+        registrar.playToServer(ShiftClickPacket.TYPE, ShiftClickPacket.CODEC, new ShiftClickPacketHandler());
     }
 
 }

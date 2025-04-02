@@ -2,15 +2,10 @@ package net.raynna.raynnarpg.client.events;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.raynna.raynnarpg.Global;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.minecraft.client.Minecraft;
@@ -20,21 +15,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.raynna.raynnarpg.client.ui.OverlayManager;
-import net.raynna.raynnarpg.client.ui.floating_text.FloatingText;
 import net.raynna.raynnarpg.config.ConfigData;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.mining.MiningConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
-import net.raynna.raynnarpg.utils.Colour;
 import net.raynna.raynnarpg.utils.SilentGearHelper;
 import net.raynna.raynnarpg.utils.Utils;
 import net.silentchaos512.gear.api.item.GearItem;
-import net.silentchaos512.gear.core.component.GearPropertiesData;
-import net.silentchaos512.gear.util.GearData;
-
-import java.util.*;
 
 @EventBusSubscriber(modid = RaynnaRPG.MOD_ID, value = Dist.CLIENT)
 public class ClientBlockEvents {

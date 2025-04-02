@@ -246,7 +246,6 @@ public class Config {
                 materials.add(new SmeltingEntry("minecraft:redstone", 13, "minecraft:redstone_ore"));
                 materials.add(new SmeltingEntry("minecraft:redstone", 13, "minecraft:deepslate_redstone_ore"));
                 materials.add(new SmeltingEntry("minecraft:lapis_lazuli", 16, "minecraft:lapis_ore"));
-                materials.add(new SmeltingEntry("minecraft:lapis_lazuli", 16, "minecraft:deepslate_lapis_ore"));
                 materials.add(new SmeltingEntry("minecraft:quartz", 18, "minecraft:nether_quartz_ore"));
                 SmeltingConfig.registerMultipleConfigs(builder, "smelting_general", "General", materials);
 

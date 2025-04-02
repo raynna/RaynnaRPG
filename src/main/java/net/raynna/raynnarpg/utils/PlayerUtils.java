@@ -17,7 +17,6 @@ public class PlayerUtils {
 
     public static void removeItemStack(ServerPlayer player, ItemStack toRemove) {
         int count = toRemove.getCount();
-        System.out.println("Attempting to remove " + count + " items");
 
         for (int i = 0; i < player.getInventory().getContainerSize() && count > 0; i++) {
             ItemStack stack = player.getInventory().getItem(i);
@@ -25,7 +24,6 @@ public class PlayerUtils {
                 int removeAmount = Math.min(count, stack.getCount());
                 stack.shrink(removeAmount);
                 count -= removeAmount;
-                System.out.println("Removed " + removeAmount + " from slot " + i);
 
                 if (stack.isEmpty()) {
                     player.getInventory().setItem(i, ItemStack.EMPTY);
