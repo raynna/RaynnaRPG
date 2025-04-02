@@ -5,7 +5,6 @@ import java.util.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -20,25 +19,23 @@ import net.raynna.raynnarpg.config.tools.ToolEntry;
 import net.raynna.raynnarpg.config.mining.MiningConfig;
 import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
-import net.silentchaos512.gear.item.blueprint.BlueprintType;
 
-import static net.neoforged.fml.loading.FMLConfig.updateConfig;
 import static net.raynna.raynnarpg.RaynnaRPG.MOD_ID;
 
 @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class Config {
 
-    public static final int CONFIG_VERSION = 1;
+    public static final int SERVER_VERSION = 1;
+    public static final int CLIENT_VERSION = 1;
 
     public static final class Server {
 
         public static ModConfigSpec SPEC;
-        public static final ModConfigSpec.IntValue CONFIG_VERSION_KEY;
-
+        public static final ModConfigSpec.IntValue SERVER_CONFIG_VERSION;
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
-            CONFIG_VERSION_KEY = builder.comment("DO NOT CHANGE. Used for tracking config updates.").defineInRange("config_version", CONFIG_VERSION, 1, Integer.MAX_VALUE);
+            SERVER_CONFIG_VERSION = builder.comment("DO NOT CHANGE. Used for tracking config updates.").defineInRange("config_version", SERVER_VERSION, 1, Integer.MAX_VALUE);
             registerCombatConfigs(builder);
             registerToolConfigs(builder);
             registerCraftingConfigs(builder);
@@ -660,13 +657,17 @@ public class Config {
 
     public static final class Client {
 
-        static final ModConfigSpec SPEC;
+        static ModConfigSpec SPEC;
 
-        public static final ModConfigSpec.EnumValue<XpDisplayMode> XP_TEXT_MODE;
-        public enum XpDisplayMode { XP, PERCENT, BOTH }
+        public static final ModConfigSpec.IntValue CLIENT_CONFIG_VERSION;
+
+        public static ModConfigSpec.EnumValue<XpDisplayMode> XP_TEXT_MODE;
+
+        public enum XpDisplayMode {XP, PERCENT, BOTH}
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+            CLIENT_CONFIG_VERSION = builder.comment("DO NOT CHANGE. Used for tracking config updates.").defineInRange("config_version", CLIENT_VERSION, 1, Integer.MAX_VALUE);
 
             XP_TEXT_MODE = builder
                     .translation("Xp Display Mode: ")
@@ -682,8 +683,8 @@ public class Config {
     static void onReload(final ModConfigEvent.Reloading event) {
         ModConfig config = event.getConfig();
         if (config.getSpec() == Config.Server.SPEC) {
-            int storedVersion = Config.Server.CONFIG_VERSION_KEY.get();
-            if (storedVersion < CONFIG_VERSION) {
+            int storedVersion = Config.Server.SERVER_CONFIG_VERSION.get();
+            if (storedVersion < SERVER_VERSION) {
                 ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
                 // Register all config sections again
@@ -693,13 +694,24 @@ public class Config {
                 Config.Server.registerToolConfigs(builder);
                 Config.Server.registerMiningConfigs(builder);
 
-                Config.Server.CONFIG_VERSION_KEY.set(CONFIG_VERSION);
+                Config.Server.SERVER_CONFIG_VERSION.set(SERVER_VERSION);
                 Config.Server.SPEC = builder.build();
                 System.out.println("Config rebuilt due to version change.");
             }
             System.out.println("Reloaded on server");
         }
         if (config.getSpec() == Config.Client.SPEC) {
+            int storedVersion = Client.CLIENT_CONFIG_VERSION.get();
+            if (storedVersion < CLIENT_VERSION) {
+                ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+                Config.Client.XP_TEXT_MODE = builder
+                        .translation("Xp Display Mode: ")
+                        .comment("Skill Overlay Xp mode. Valid values are: BOTH, XP, and PERCENT")
+                        .comment("Default: BOTH")
+                        .defineEnum("xp_text_mode", Client.XpDisplayMode.BOTH);
+                Client.CLIENT_CONFIG_VERSION.set(CLIENT_VERSION);
+                Config.Client.SPEC = builder.build();
+            }
             System.out.println("Reloaded on client");
         }
     }
