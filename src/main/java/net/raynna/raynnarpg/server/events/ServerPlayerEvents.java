@@ -6,15 +6,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.datafix.fixes.FurnaceRecipeFix;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodConstants;
 import net.minecraft.world.food.FoodProperties;
@@ -25,12 +20,9 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import net.raynna.raynnarpg.config.*;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.crafting.CraftingConfig;
@@ -45,7 +37,6 @@ import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.*;
 import net.silentchaos512.gear.api.item.GearItem;
-import org.spongepowered.asm.mixin.transformer.meta.MixinInner;
 
 import java.util.*;
 
@@ -229,9 +220,10 @@ public class ServerPlayerEvents {
 
     @SubscribeEvent
     public static void onFurnace(PlayerEvent.ItemSmeltedEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player && event.getEntity().containerMenu instanceof AbstractFurnaceMenu furnaceMenu) {
-            handleSmeltingEvent(player, furnaceMenu, event);
-        }
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (!(event.getEntity().containerMenu instanceof AbstractFurnaceMenu menu)) return;
+
+        handleSmeltingEvent(player, menu, event);
     }
 
     @SubscribeEvent
@@ -399,10 +391,10 @@ public class ServerPlayerEvents {
     private static void grantCraftingExperience(ServerPlayer player, PlayerProgress progress, ItemStack craftedItem, CraftingResult result) {
         double xp = Math.round(result.totalExperience * 100) / 100.0;
         CraftingTracker.accumulateCraftingData(player, craftedItem.getHoverName().getString(), craftedItem.getCount(), xp, SkillType.CRAFTING, () -> {
-           if (Utils.isXpCapped(progress.getSkills().getSkill(SkillType.CRAFTING).getLevel(), result.levelReq)) {
-               MessageSender.send(player, "You are to high of a level to gain experience from " + craftedItem.getHoverName().getString() + ".");
-               return;
-           }
+            if (Utils.isXpCapped(progress.getSkills().getSkill(SkillType.CRAFTING).getLevel(), result.levelReq)) {
+                MessageSender.send(player, "You are to high of a level to gain experience from " + craftedItem.getHoverName().getString() + ".");
+                return;
+            }
             progress.getSkills().addXp(SkillType.CRAFTING, xp);
 
         });
