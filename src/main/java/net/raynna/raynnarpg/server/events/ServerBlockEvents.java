@@ -78,19 +78,15 @@ public class ServerBlockEvents {
     }
 
     private static boolean hasSilkTouch(ItemStack tool) {
-        ItemEnchantments enchantments = tool.getOrDefault(
-                DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-
-        HolderLookup.RegistryLookup<Enchantment> lookup = CommonHooks.resolveLookup(Registries.ENCHANTMENT);
-        if (lookup != null) {
-            enchantments = tool.getAllEnchantments(lookup);
-        }
-
-        for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
-            if (entry.getKey().is(Enchantments.SILK_TOUCH)) {
-                return true;
+        ItemEnchantments enchantments = tool.get(DataComponents.ENCHANTMENTS);
+        if (enchantments != null) {
+            for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
+                if (entry.getKey().is(Enchantments.SILK_TOUCH)) {
+                    return true;
+                }
             }
         }
+
         return TraitHelper.hasTrait(tool, Const.Traits.SILKY);
     }
 
