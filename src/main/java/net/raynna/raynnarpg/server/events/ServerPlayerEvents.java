@@ -384,6 +384,10 @@ public class ServerPlayerEvents {
             ConfigData data = CraftingConfig.getCraftingData(material);
             if (data == null) continue;
 
+            if (Utils.isXpCapped(progress.getSkills().getSkill(SkillType.CRAFTING).getLevel(), data.getLevel())) {
+                MessageSender.send(player, "You are to high of a level to gain experience from " + material.getHoverName().getString() + ".");
+                continue;
+            }
             if (playerLevel < data.getLevel()) {
                 handleInvalidCraftingMaterial(player, container, material, data.getLevel(), progress.getSkills().getSkill(SkillType.CRAFTING));
                 result.blocked = true;
@@ -414,10 +418,6 @@ public class ServerPlayerEvents {
     private static void grantCraftingExperience(ServerPlayer player, PlayerProgress progress, ItemStack craftedItem, CraftingResult result) {
         double xp = Math.round(result.totalExperience * 100) / 100.0;
         CraftingTracker.accumulateCraftingData(player, craftedItem.getHoverName().getString(), craftedItem.getCount(), xp, SkillType.CRAFTING, () -> {
-            if (Utils.isXpCapped(progress.getSkills().getSkill(SkillType.CRAFTING).getLevel(), result.levelReq)) {
-                MessageSender.send(player, "You are to high of a level to gain experience from " + craftedItem.getHoverName().getString() + ".");
-                return;
-            }
             progress.getSkills().addXp(SkillType.CRAFTING, xp);
 
         });
