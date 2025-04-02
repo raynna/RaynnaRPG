@@ -21,10 +21,8 @@ public class SkillOverlay {
     }
 
     private static void initializeSkillBars() {
-        System.out.println("Initializing skill bars for all SkillTypes");
         for (SkillType type : SkillType.values()) {
             skillBars.put(type, new SkillBar(type));
-            System.out.println("Created SkillBar for: " + type.getName());
         }
     }
 

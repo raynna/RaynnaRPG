@@ -309,6 +309,9 @@ public class Config {
                 gems.add(new CraftingEntry("silentgear:bort", 15, "c:gems/bort"));
                 gems.add(new CraftingEntry("minecraft:quartz", 18, 20.0, "c:gems/quartz"));
                 gems.add(new CraftingEntry("quartz", 18));
+                gems.add(new CraftingEntry("iron_rod", 15, "c:rods/iron"));
+                gems.add(new CraftingEntry("blaze_rod", 20, "c:rods/blaze"));
+                gems.add(new CraftingEntry("blaze_powder", 20));
                 gems.add(new CraftingEntry("minecraft:diamond", 30, "c:gems/diamond"));
                 CraftingConfig.registerMultipleConfigs(builder, "crafting_gem_materials", "Gems", gems);
 

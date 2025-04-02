@@ -258,11 +258,9 @@ public class ClientTooltipEvent {
                 String name = enchant.description().getString();
                 index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
                 tooltip.add(index.get(), Component.literal(Colour.WHITE + " " + name + " " + level));
-                System.out.println("name before fix: " + name);
                 if (!name.matches("^[a-zA-Z0-9].*")) {
                     name = name.replaceAll("^[^ ]+", "").trim();
                 }
-                System.out.println("name after fix: " + name);
                 index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
                 tooltip.add(index.get(), Component.literal(Colour.GRAY + "    " + getEnchantmentDescription(name, level)));
             }
@@ -290,7 +288,6 @@ public class ClientTooltipEvent {
     }
 
     private static String getEnchantmentDescription(String enchantName, int level) {
-        System.out.println("Enchant name: " + enchantName.toLowerCase());
         switch (enchantName.toLowerCase()) {
             case "capturing":
                 return "Each level gives you a higher chance capture a monster egg.";
