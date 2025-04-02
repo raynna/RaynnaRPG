@@ -259,10 +259,12 @@ public class ClientTooltipEvent {
                 index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
                 tooltip.add(index.get(), Component.literal(Colour.WHITE + " " + name + " " + level));
                 System.out.println("name before fix: " + name);
-                String fixed = name.replaceAll("^[^ ]+", "").trim();
-                System.out.println("name after fix: " + fixed);
+                if (!name.matches("^[a-zA-Z0-9].*")) {
+                    name = name.replaceAll("^[^ ]+", "").trim();
+                }
+                System.out.println("name after fix: " + name);
                 index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
-                tooltip.add(index.get(), Component.literal(Colour.GRAY + "    " + getEnchantmentDescription(fixed, level)));
+                tooltip.add(index.get(), Component.literal(Colour.GRAY + "    " + getEnchantmentDescription(name, level)));
             }
         } else {
             StringBuilder compactLine = new StringBuilder(Colour.LIGHT_PURPLE + "Enchantments: ");
