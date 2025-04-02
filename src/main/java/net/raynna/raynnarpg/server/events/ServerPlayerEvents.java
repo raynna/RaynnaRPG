@@ -338,7 +338,7 @@ public class ServerPlayerEvents {
             }
             menu.getSlot(INPUT_SLOT).set(input);
         }
-        if (KeyTracker.isShiftDown()) {//prevent dupe when shiftclicking
+        if (player.isShiftKeyDown()) {//prevent dupe when shiftclicking
             System.out.println("Was holding shift, removing item " + outputCopy.getHoverName().getString() + " x " + outputCopy.getCount());
             PlayerUtils.removeItemStack(player, outputCopy);
         }
