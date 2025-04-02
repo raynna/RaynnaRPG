@@ -49,8 +49,7 @@ public class Skills {
     public void addXp(SkillType type, double xp) {
         Skill skill = getSkill(type);
         if (skill != null) {
-            if (skill.getXp() >= MAX_XP)
-                return;
+            if (skill.getXp() >= MAX_XP) return;
             int oldLevel = skill.getLevel();
             if (skill.getXp() + xp > MAX_XP) {
                 skill.setXp(MAX_XP);
@@ -92,6 +91,20 @@ public class Skills {
 
     public static double getXpForMaterial(int level, SkillType type) {
         double baseXp = 1;
+        if (type == SkillType.MINING) baseXp = 3;
+        if (type == SkillType.SMELTING) baseXp = 4;
+        if (type == SkillType.CRAFTING) baseXp = 3;
+
+        double END_GAME_MULTIPLIER = 0.15;
+        double EARLY_GAME_MULTIPLIER = 1.20;
+
+        double xp = baseXp * (1 + END_GAME_MULTIPLIER * Math.pow(level, EARLY_GAME_MULTIPLIER));
+        return Math.round(xp * 100.0) / 100.0;
+    }
+
+    //OLD
+    /*public static double getXpForMaterial(int level, SkillType type) {
+        double baseXp = 1;
         if (type == SkillType.MINING)
             baseXp = 3;
         if (type == SkillType.SMELTING)
@@ -102,7 +115,7 @@ public class Skills {
         double xp = baseXp * Math.pow(xpIncreaseFactor, level - 1);
 
         return Math.round(xp * 100.0) / 100.0;
-    }
+    }*/
 
     public Skill getSkill(SkillType type) {
         return skills.get(type);
@@ -133,9 +146,7 @@ public class Skills {
         MinecraftServer server = player.getServer();
         if (server == null) return;
 
-        String levelUpMessage = (level > 1)
-                ? playerName + " has leveled up " + level + " " + skillName + " levels. " + playerName + " is now level " + currentLevel + "!"
-                : playerName + " has leveled up a " + skillName + " level. " + playerName + " is now level " + currentLevel + "!";
+        String levelUpMessage = (level > 1) ? playerName + " has leveled up " + level + " " + skillName + " levels. " + playerName + " is now level " + currentLevel + "!" : playerName + " has leveled up a " + skillName + " level. " + playerName + " is now level " + currentLevel + "!";
 
         String maxedMessage = playerName + " achieved the highest level possible in " + skillName + "!";
 
