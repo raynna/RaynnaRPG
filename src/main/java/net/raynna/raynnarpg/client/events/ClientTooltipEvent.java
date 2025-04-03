@@ -33,6 +33,7 @@ import net.silentchaos512.gear.api.part.PartType;
 import net.silentchaos512.gear.api.traits.TraitInstance;
 import net.silentchaos512.gear.api.util.PartGearKey;
 import net.silentchaos512.gear.gear.material.MaterialInstance;
+import net.silentchaos512.gear.gear.part.PartInstance;
 import net.silentchaos512.gear.setup.gear.GearProperties;
 import net.silentchaos512.gear.util.GearData;
 import org.lwjgl.glfw.GLFW;
@@ -144,7 +145,7 @@ public class ClientTooltipEvent {
                 index = Math.min(myToolTipIndex.getAndIncrement(), tooltip.size());
                 tooltip.add(index,
                         Component.literal(Colour.GRAY + "    Duration: " + duration +
-                                (probability < 1.0F ? " (" + (int)(probability * 100) + "% chance)" : "")));
+                                (probability < 1.0F ? " (" + (int) (probability * 100) + "% chance)" : "")));
 
             }
         }
@@ -174,7 +175,15 @@ public class ClientTooltipEvent {
             List<TraitInstance> gearTraits = GearData.getProperties(stack).getTraits();
             allTraits.addAll(gearTraits);
         }
-
+        try {
+            PartInstance part = PartInstance.from(stack);
+            if (part != null) {
+                Collection<TraitInstance> traits = part.getTraits(PartGearKey.ofAll(part.getType()));
+                allTraits.addAll(traits);
+            }
+        } catch (Exception e) {
+            RaynnaRPG.LOGGER.error("Error getting part traits", e);
+        }
         try {
             MaterialInstance material = MaterialInstance.from(stack);
             if (material != null) {
