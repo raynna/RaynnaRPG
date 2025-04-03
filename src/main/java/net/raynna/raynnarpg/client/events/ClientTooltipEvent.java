@@ -319,11 +319,11 @@ public class ClientTooltipEvent {
             case "flame":
                 return "Arrows set targets on fire.";
             case "capturing":
-                return "Each level gives you a higher chance capture a monster egg.";
+                return String.format("Gives a chance of %s for any mob killed to drop their spawn egg (0.5 per level)", level * 0.5);
             case "breach":
                 return String.format("Negate the effectiveness of enemy armour by %d%% (15%% per level)", level * 15);
             case "density":
-                return String.format("Increases the damage %s per level for each block fallen (0.5 per level)", level * 0.5);
+                return String.format("Increases the damage by %s for each block fallen (0.5 per level)", level * 0.5);
             case "protection":
                 return String.format("Reduces all damage by %d%% (4%% per level)", level * 4);
             case "fire protection":
