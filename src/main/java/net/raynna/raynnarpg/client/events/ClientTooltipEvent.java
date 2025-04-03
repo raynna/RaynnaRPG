@@ -35,6 +35,7 @@ import net.silentchaos512.gear.api.util.PartGearKey;
 import net.silentchaos512.gear.gear.material.MaterialInstance;
 import net.silentchaos512.gear.gear.part.PartInstance;
 import net.silentchaos512.gear.setup.gear.GearProperties;
+import net.silentchaos512.gear.setup.gear.PartTypes;
 import net.silentchaos512.gear.util.GearData;
 import org.lwjgl.glfw.GLFW;
 
@@ -169,60 +170,74 @@ public class ClientTooltipEvent {
         if (!SilentGearHelper.isSilentGearLoaded()) {
             return;
         }
-        List<TraitInstance> allTraits = new ArrayList<>();
 
+        // Map to store traits categorized by part type
+        Map<PartType, List<TraitInstance>> partTraitMap = new HashMap<>();
         if (stack.getItem() instanceof GearItem) {
             List<TraitInstance> gearTraits = GearData.getProperties(stack).getTraits();
-            allTraits.addAll(gearTraits);
+            partTraitMap.computeIfAbsent(PartTypes.MAIN.get(), k -> gearTraits);
         }
+
         try {
             PartInstance part = PartInstance.from(stack);
             if (part != null) {
                 Collection<TraitInstance> traits = part.getTraits(PartGearKey.ofAll(part.getType()));
-                allTraits.addAll(traits);
+                partTraitMap.computeIfAbsent(part.getType(), k -> new ArrayList<>()).addAll(traits);
             }
         } catch (Exception e) {
             RaynnaRPG.LOGGER.error("Error getting part traits", e);
         }
+
         try {
             MaterialInstance material = MaterialInstance.from(stack);
             if (material != null) {
                 for (PartType partType : material.getPartTypes()) {
                     List<TraitInstance> matTraits = (List<TraitInstance>) material.getTraits(PartGearKey.ofAll(partType));
-                    allTraits.addAll(matTraits);
+                    partTraitMap.computeIfAbsent(partType, k -> new ArrayList<>()).addAll(matTraits);
                 }
             }
         } catch (Exception e) {
             RaynnaRPG.LOGGER.error("Error getting material traits", e);
         }
 
-        if (allTraits.isEmpty())
+        if (partTraitMap.isEmpty())
             return;
+
         AtomicInteger index = new AtomicInteger(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
+
         if (context.isAltDown) {
+            // Detailed View (Holding Alt)
             tooltip.add(index.get(), Component.literal(Colour.GOLD + "Traits:"));
+            for (Map.Entry<PartType, List<TraitInstance>> entry : partTraitMap.entrySet()) {
+                PartType partType = entry.getKey();
+                for (TraitInstance trait : entry.getValue()) {
+                    String name = trait.getTrait().getDisplayName(trait.getLevel()).getString();
+                    String desc = trait.getTrait().getDescription(trait.getLevel()).getString();
+                    String part = (stack.getItem() instanceof GearItem) ? "" : " (" + partType.getDisplayName().getString() + ")";
 
-            for (TraitInstance trait : allTraits) {
-                String name = trait.getTrait().getDisplayName(trait.getLevel()).getString();
-                String desc = trait.getTrait().getDescription(trait.getLevel()).getString();
-                index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
-                tooltip.add(index.get(), Component.literal(Colour.WHITE + " " + name));
+                    index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
+                    tooltip.add(index.get(), Component.literal(Colour.WHITE + " " + name + part));
 
-                index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
-                tooltip.add(index.get(), Component.literal(Colour.GRAY + "    " + desc));
+                    index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
+                    tooltip.add(index.get(), Component.literal(Colour.GRAY + "    " + desc));
+                }
             }
         } else {
-            // Compact view - all on one line
+            // Compact View (Default)
             StringBuilder compactLine = new StringBuilder(Colour.GOLD + "Traits: ");
-
             boolean first = true;
-            for (TraitInstance trait : allTraits) {
-                if (!first) {
-                    compactLine.append(Colour.GRAY + ", ");
+
+            for (Map.Entry<PartType, List<TraitInstance>> entry : partTraitMap.entrySet()) {
+                PartType partType = entry.getKey();
+                for (TraitInstance trait : entry.getValue()) {
+                    if (!first) {
+                        compactLine.append(Colour.GRAY + ", ");
+                    }
+                    first = false;
+                    String name = trait.getTrait().getDisplayName(trait.getLevel()).getString();
+                    String part = (stack.getItem() instanceof GearItem) ? "" : " (" + partType.getDisplayName().getString() + ")";
+                    compactLine.append(Colour.WHITE).append(name).append(part);
                 }
-                first = false;
-                String name = trait.getTrait().getDisplayName(trait.getLevel()).getString();
-                compactLine.append(Colour.WHITE).append(name);
             }
 
             tooltip.add(index.get(), Component.literal(compactLine.toString()));
@@ -231,6 +246,7 @@ public class ClientTooltipEvent {
             tooltip.add(index.get(), Component.literal(Colour.YELLOW + "  Trait Details [Left Alt]"));
         }
     }
+
 
     private static void handleEnchantTooltips(TooltipContext context) {
         ItemStack stack = context.stack;

@@ -11,6 +11,7 @@ import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class OverlayManager {
+
     private final List<FloatingText> floatingTexts = new ArrayList<>();
 
     public void addText(FloatingText text) {
