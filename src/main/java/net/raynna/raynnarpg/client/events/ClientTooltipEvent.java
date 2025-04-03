@@ -314,8 +314,16 @@ public class ClientTooltipEvent {
 
     private static String getEnchantmentDescription(String enchantName, int level) {
         switch (enchantName.toLowerCase()) {
+            case "aqua affinity":
+                return "Increases the rate of underwater mining speed.";
+            case "flame":
+                return "Arrows set targets on fire.";
             case "capturing":
                 return "Each level gives you a higher chance capture a monster egg.";
+            case "breach":
+                return String.format("Negate the effectiveness of enemy armour by %d%% (15%% per level)", level * 15);
+            case "density":
+                return String.format("Increases the damage %s per level for each block fallen (0.5 per level)", level * 0.5);
             case "protection":
                 return String.format("Reduces all damage by %d%% (4%% per level)", level * 4);
             case "fire protection":
@@ -326,6 +334,8 @@ public class ClientTooltipEvent {
                 return String.format("Reduces explosion damage by %d%% (8%% per level)", level * 8);
             case "projectile protection":
                 return String.format("Reduces projectile damage by %d%% (8%% per level)", level * 8);
+            case "frost walker":
+                    return "Water walked on turns into frosted ice and prevents player from taking damage from magma blocks.";
             case "thorns":
                 return String.format("%d%% chance to damage attackers (15%% per level)", level * 15);
             case "depth strider":
@@ -371,12 +381,15 @@ public class ClientTooltipEvent {
             case "infinity":
                 return "100% chance to not consume arrows";
             case "channeling":
-                return level == 1 ? "Summons lightning during storms" : "Max level is I";
+                return level == 1 ? "Channels a bolt of lightning on hit enemy during storms" : "Max level is I";
             case "riptide":
                 return String.format("Launches player %d blocks (scales with level)", level * 3);
             case "curse of binding":
+                return "Item cannot be removed from armour slots, unless the cause is death or breaking.";
             case "curse of vanishing":
-                return "Effect is always active (100%)";
+                return "Item will be destroy upon death";
+            case "silk touch":
+                return "Mined blocks will drop as blocks instead of breaking into other items/blocks";
             default:
                 return "Active (level " + level + ")";
         }
