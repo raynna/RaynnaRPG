@@ -96,7 +96,7 @@ public class ServerPlayerEvents {
     }
 
     @SubscribeEvent
-    public static void onBowdraw(LivingEntityUseItemEvent.Start event) {
+    public static void onBowdraw(LivingEntityUseItemEvent.Tick event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
         if (progress == null) return;
@@ -105,8 +105,6 @@ public class ServerPlayerEvents {
             int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
             if (!canUseWeapon(player, mainHand, combatLevel)) {
                 player.releaseUsingItem();
-                player.connection.send(new ClientboundSetEntityDataPacket(player.getId(),
-                        player.getEntityData().getNonDefaultValues()));
                 player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 0.5f, 0.5f);
                 event.setCanceled(true);
             }
