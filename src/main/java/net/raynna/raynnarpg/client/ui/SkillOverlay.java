@@ -37,13 +37,7 @@ public class SkillOverlay {
         int overlayWidth = 110; // approx, adjust as needed
         int overlayHeight = skillBars.size() * LINE_SPACING;
 
-        int[] pos = GuiUtils.getPosition(
-                Config.Client.GUI_POSITION.get(),
-                mc.getWindow().getGuiScaledWidth(),
-                mc.getWindow().getGuiScaledHeight(),
-                overlayWidth,
-                overlayHeight
-        );
+        int[] pos = GuiUtils.getPosition(Config.Client.GUI_POSITION.get(), mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), overlayWidth, overlayHeight);
 
         int x = pos[0];
         int y = pos[1];
@@ -67,19 +61,19 @@ public class SkillOverlay {
 
             switch (position) {
                 case TOP_LEFT -> {
-                    x = 10;
-                    y = 10;
+                    x = Config.Client.X_PADDING.get();
+                    y = Config.Client.Y_PADDING.get();
                 }
                 case TOP_CENTER -> {
                     x = (screenWidth - overlayWidth) / 2;
-                    y = 10;
+                    y = Config.Client.Y_PADDING.get();
                 }
                 case TOP_RIGHT -> {
-                    x = screenWidth - overlayWidth - 10;
-                    y = 10;
+                    x = screenWidth - overlayWidth - Config.Client.X_PADDING.get();
+                    y = Config.Client.Y_PADDING.get();
                 }
                 case CENTER_LEFT -> {
-                    x = 10;
+                    x = Config.Client.X_PADDING.get();
                     y = (screenHeight - overlayHeight) / 2;
                 }
                 case CENTER -> {
@@ -87,20 +81,20 @@ public class SkillOverlay {
                     y = (screenHeight - overlayHeight) / 2;
                 }
                 case CENTER_RIGHT -> {
-                    x = screenWidth - overlayWidth - 10;
+                    x = screenWidth - overlayWidth - Config.Client.X_PADDING.get();
                     y = (screenHeight - overlayHeight) / 2;
                 }
                 case BOTTOM_LEFT -> {
-                    x = 10;
-                    y = screenHeight - overlayHeight - 10;
+                    x = Config.Client.X_PADDING.get();
+                    y = screenHeight - overlayHeight - Config.Client.Y_PADDING.get();
                 }
                 case BOTTOM_CENTER -> {
                     x = (screenWidth - overlayWidth) / 2;
-                    y = screenHeight - overlayHeight - 30;
+                    y = screenHeight - overlayHeight - Config.Client.Y_PADDING.get();
                 }
                 case BOTTOM_RIGHT -> {
-                    x = screenWidth - overlayWidth - 10;
-                    y = screenHeight - overlayHeight - 10;
+                    x = screenWidth - overlayWidth - Config.Client.X_PADDING.get();
+                    y = screenHeight - overlayHeight - Config.Client.Y_PADDING.get();
                 }
             }
 

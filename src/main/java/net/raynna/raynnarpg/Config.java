@@ -684,6 +684,8 @@ public class Config {
             BOTTOM_CENTER,
             BOTTOM_RIGHT
         }
+        public static final ModConfigSpec.IntValue X_PADDING;
+        public static final ModConfigSpec.IntValue Y_PADDING;
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -698,6 +700,9 @@ public class Config {
                     .translation("Overlay Position:")
                     .comment("Where on the screen should the overlay display?")
                     .defineEnum("gui_position", GuiPosition.CENTER_LEFT);
+            X_PADDING = builder.translation("Overlay X Adjustments: ").comment("Fine adjust the X position for the overlay").comment("Default: 10").defineInRange("x_adjustment", 10, 1, Integer.MAX_VALUE);
+            Y_PADDING = builder.translation("Overlay Y Adjustments: ").comment("Fine adjust the Y position for the overlay").comment("Default: 10").defineInRange("y_adjustment", 10, 1, Integer.MAX_VALUE);
+
             SPEC = builder.build();
         }
     }
