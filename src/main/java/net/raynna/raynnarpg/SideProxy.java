@@ -15,7 +15,6 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.raynna.raynnarpg.client.events.ClientBlockEvents;
 import net.raynna.raynnarpg.client.events.ClientGuiEvents;
-import net.raynna.raynnarpg.client.events.ClientKeyEvents;
 import net.raynna.raynnarpg.client.events.ClientTooltipEvent;
 import net.raynna.raynnarpg.recipe.ReversibleCraftingRegistry;
 import net.raynna.raynnarpg.server.commands.Commands;

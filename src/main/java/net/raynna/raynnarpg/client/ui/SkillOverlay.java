@@ -59,42 +59,45 @@ public class SkillOverlay {
         public static int[] getPosition(Config.Client.GuiPosition position, int screenWidth, int screenHeight, int overlayWidth, int overlayHeight) {
             int x = 0, y = 0;
 
+            int xPadding = Config.Client.X_PADDING.get();
+            int yPadding = Config.Client.Y_PADDING.get();
+
             switch (position) {
                 case TOP_LEFT -> {
-                    x = Config.Client.X_PADDING.get();
-                    y = Config.Client.Y_PADDING.get();
+                    x = xPadding;
+                    y = yPadding;
                 }
                 case TOP_CENTER -> {
-                    x = (screenWidth - overlayWidth) / 2;
-                    y = Config.Client.Y_PADDING.get();
+                    x = (screenWidth - overlayWidth) / 2 + xPadding;
+                    y = yPadding;
                 }
                 case TOP_RIGHT -> {
-                    x = screenWidth - overlayWidth - Config.Client.X_PADDING.get();
-                    y = Config.Client.Y_PADDING.get();
+                    x = screenWidth - overlayWidth - xPadding;
+                    y = yPadding;
                 }
                 case CENTER_LEFT -> {
-                    x = Config.Client.X_PADDING.get();
-                    y = (screenHeight - overlayHeight) / 2;
+                    x = xPadding;
+                    y = (screenHeight - overlayHeight) / 2 + yPadding;
                 }
                 case CENTER -> {
-                    x = (screenWidth - overlayWidth) / 2;
-                    y = (screenHeight - overlayHeight) / 2;
+                    x = (screenWidth - overlayWidth) / 2 + xPadding;
+                    y = (screenHeight - overlayHeight) / 2 + yPadding;
                 }
                 case CENTER_RIGHT -> {
-                    x = screenWidth - overlayWidth - Config.Client.X_PADDING.get();
-                    y = (screenHeight - overlayHeight) / 2;
+                    x = screenWidth - overlayWidth - xPadding;
+                    y = (screenHeight - overlayHeight) / 2 + yPadding;
                 }
                 case BOTTOM_LEFT -> {
-                    x = Config.Client.X_PADDING.get();
-                    y = screenHeight - overlayHeight - Config.Client.Y_PADDING.get();
+                    x = xPadding;
+                    y = screenHeight - overlayHeight - yPadding;
                 }
                 case BOTTOM_CENTER -> {
-                    x = (screenWidth - overlayWidth) / 2;
-                    y = screenHeight - overlayHeight - Config.Client.Y_PADDING.get();
+                    x = (screenWidth - overlayWidth) / 2 + xPadding;
+                    y = screenHeight - overlayHeight - yPadding;
                 }
                 case BOTTOM_RIGHT -> {
-                    x = screenWidth - overlayWidth - Config.Client.X_PADDING.get();
-                    y = screenHeight - overlayHeight - Config.Client.Y_PADDING.get();
+                    x = screenWidth - overlayWidth - xPadding;
+                    y = screenHeight - overlayHeight - yPadding;
                 }
             }
 
