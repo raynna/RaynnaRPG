@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.client.ui.skills.SkillBar;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import org.lwjgl.glfw.GLFW;
@@ -33,12 +34,19 @@ public class SkillOverlay {
         if (GLFW.glfwGetKey(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS) {
             return;
         }
+        int overlayWidth = 110; // approx, adjust as needed
+        int overlayHeight = skillBars.size() * LINE_SPACING;
 
-        int screenWidth = mc.getWindow().getGuiScaledWidth();
-        int screenHeight = mc.getWindow().getGuiScaledHeight();
+        int[] pos = GuiUtils.getPosition(
+                Config.Client.GUI_POSITION.get(),
+                mc.getWindow().getGuiScaledWidth(),
+                mc.getWindow().getGuiScaledHeight(),
+                overlayWidth,
+                overlayHeight
+        );
 
-        int x = 10;
-        int y = screenHeight / 4;
+        int x = pos[0];
+        int y = pos[1];
 
         for (SkillBar bar : skillBars.values()) {
             bar.render(graphics, x, y);
@@ -50,6 +58,53 @@ public class SkillOverlay {
         SkillBar bar = skillBars.get(type);
         if (bar != null) {
             bar.addXpGain(amount);
+        }
+    }
+
+    public static class GuiUtils {
+        public static int[] getPosition(Config.Client.GuiPosition position, int screenWidth, int screenHeight, int overlayWidth, int overlayHeight) {
+            int x = 0, y = 0;
+
+            switch (position) {
+                case TOP_LEFT -> {
+                    x = 10;
+                    y = 10;
+                }
+                case TOP_CENTER -> {
+                    x = (screenWidth - overlayWidth) / 2;
+                    y = 10;
+                }
+                case TOP_RIGHT -> {
+                    x = screenWidth - overlayWidth - 10;
+                    y = 10;
+                }
+                case CENTER_LEFT -> {
+                    x = 10;
+                    y = (screenHeight - overlayHeight) / 2;
+                }
+                case CENTER -> {
+                    x = (screenWidth - overlayWidth) / 2;
+                    y = (screenHeight - overlayHeight) / 2;
+                }
+                case CENTER_RIGHT -> {
+                    x = screenWidth - overlayWidth - 10;
+                    y = (screenHeight - overlayHeight) / 2;
+                }
+                case BOTTOM_LEFT -> {
+                    x = 10;
+                    y = screenHeight - overlayHeight - 10;
+                }
+                case BOTTOM_CENTER -> {
+                    x = (screenWidth - overlayWidth) / 2;
+                    y = screenHeight - overlayHeight - 30;
+                }
+                case BOTTOM_RIGHT -> {
+                    x = screenWidth - overlayWidth - 10;
+                    y = screenHeight - overlayHeight - 10;
+                }
+            }
+
+            return new int[]{x, y};
         }
     }
 

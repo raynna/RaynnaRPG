@@ -670,8 +670,20 @@ public class Config {
         public static final ModConfigSpec.IntValue CLIENT_CONFIG_VERSION;
 
         public static ModConfigSpec.EnumValue<XpDisplayMode> XP_TEXT_MODE;
-
         public enum XpDisplayMode {XP, PERCENT, BOTH}
+
+        public static ModConfigSpec.EnumValue<GuiPosition> GUI_POSITION;
+        public enum GuiPosition {
+            TOP_LEFT,
+            TOP_CENTER,
+            TOP_RIGHT,
+            CENTER_LEFT,
+            CENTER,
+            CENTER_RIGHT,
+            BOTTOM_LEFT,
+            BOTTOM_CENTER,
+            BOTTOM_RIGHT
+        }
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -682,7 +694,10 @@ public class Config {
                     .comment("Skill Overlay Xp mode. Valid values are: BOTH, XP, and PERCENT")
                     .comment("Default: BOTH")
                     .defineEnum("xp_text_mode", XpDisplayMode.BOTH);
-
+            GUI_POSITION = builder
+                    .translation("Overlay Position:")
+                    .comment("Where on the screen should the overlay display?")
+                    .defineEnum("gui_position", GuiPosition.CENTER_LEFT);
             SPEC = builder.build();
         }
     }
