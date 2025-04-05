@@ -1,30 +1,24 @@
 package net.raynna.raynnarpg.server.player.skills;
 
-import ca.weblite.objc.Message;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.raynna.raynnarpg.network.packets.skills.SkillsPacketSender;
 import net.raynna.raynnarpg.network.packets.toasts.CustomToastPacketSender;
-import net.raynna.raynnarpg.server.player.PlayerProgress;
-import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataStorage;
 import net.raynna.raynnarpg.utils.Colour;
 import net.raynna.raynnarpg.utils.MessageSender;
-import net.raynna.raynnarpg.utils.Utils;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Skills {
 
     public final static int MAX_LEVEL = 50;
-    private final static double MAX_XP = 302437;//to avoid people getting more xp than max lvl, might want to increase if added some type of highscore
+    private final static double MAX_XP = 303000;//to avoid people getting more xp than max lvl, might want to increase if added some type of highscore
 
     private final Map<SkillType, Skill> skills = new EnumMap<>(SkillType.class);
     private ServerPlayer player;
@@ -50,11 +44,13 @@ public class Skills {
     public void addXp(SkillType type, double xp) {
         Skill skill = getSkill(type);
         if (skill != null) {
-            if (skill.getXp() >= MAX_XP) return;
-            int oldLevel = skill.getLevel();
-            if (skill.getXp() + xp > MAX_XP) {
+            if (skill.getXp() >= MAX_XP) {
                 skill.setXp(MAX_XP);
                 return;
+            }
+            int oldLevel = skill.getLevel();
+            if (skill.getXp() + xp >= MAX_XP) {
+                skill.setXp(MAX_XP);
             }
             skill.setPreviousXp(skill.getXp());
             skill.addXp(xp);
@@ -68,7 +64,6 @@ public class Skills {
             }
             SkillsPacketSender.send(player, this);
             //System.out.println("[Server] Skill: " + skill.getType().getName() + " XP: " + skill.getXp() + " Next Level XP: " + Skills.getXpForLevel(skill.getLevel() + 1));
-
         }
     }
 
