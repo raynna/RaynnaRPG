@@ -693,15 +693,16 @@ public class Config {
 
             XP_TEXT_MODE = builder
                     .translation("Xp Display Mode: ")
-                    .comment("Skill Overlay Xp mode. Valid values are: BOTH, XP, and PERCENT")
+                    .comment("Skill Overlay Xp mode")
                     .comment("Default: BOTH")
                     .defineEnum("xp_text_mode", XpDisplayMode.BOTH);
             GUI_POSITION = builder
-                    .translation("Overlay Position:")
-                    .comment("Where on the screen should the overlay display?")
+                    .translation("Skill Overlay Position:")
+                    .comment("Location for skill overlay")
+                    .comment("Default: CENTER_LEFT")
                     .defineEnum("gui_position", GuiPosition.CENTER_LEFT);
-            X_PADDING = builder.translation("Overlay X Adjustments: ").comment("Fine adjust the X position for the overlay").comment("Default: 10").defineInRange("x_adjustment", 10, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            Y_PADDING = builder.translation("Overlay Y Adjustments: ").comment("Fine adjust the Y position for the overlay").comment("Default: 10").defineInRange("y_adjustment", 10, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            X_PADDING = builder.translation("Overlay X Adjustments: ").comment("Fine adjust the X position for the overlay").defineInRange("x_adjustment", 10, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            Y_PADDING = builder.translation("Overlay Y Adjustments: ").comment("Fine adjust the Y position for the overlay").defineInRange("y_adjustment", 10, Integer.MIN_VALUE, Integer.MAX_VALUE);
 
             SPEC = builder.build();
         }
