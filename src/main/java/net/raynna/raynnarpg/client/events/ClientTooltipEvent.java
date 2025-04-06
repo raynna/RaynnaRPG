@@ -14,6 +14,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
@@ -69,7 +70,9 @@ public class ClientTooltipEvent {
             addRequirementsToTooltip(context, requirements);
         }
         handleEnchantTooltips(context);
-        handleTraitTooltips(context);
+        if (ModList.get().isLoaded("silentgear")) {
+            handleTraitTooltips(context);
+        }
         handleFoodEffectsTooltips(context);
         handleDebugTooltips(context);
     }
