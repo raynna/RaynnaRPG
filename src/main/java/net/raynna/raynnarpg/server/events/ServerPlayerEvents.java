@@ -269,6 +269,7 @@ public class ServerPlayerEvents {
         if (left.isEmpty() || !right.is(Items.BOOK) || !left.isEnchanted()) {
             return;
         }
+
         ItemEnchantments originalEnchants = left.getTagEnchantments();
         if (originalEnchants.isEmpty()) {
             return;

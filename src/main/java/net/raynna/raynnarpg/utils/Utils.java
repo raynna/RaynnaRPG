@@ -1,20 +1,71 @@
 package net.raynna.raynnarpg.utils;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.fml.ModList;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.ui.OverlayManager;
 import net.raynna.raynnarpg.client.ui.floating_text.FloatingText;
-import net.raynna.raynnarpg.network.packets.xpdrop.FloatingTextSender;
-import net.raynna.raynnarpg.server.player.skills.SkillType;
+import net.silentchaos512.gear.gear.trait.Trait;
+import net.silentchaos512.gear.util.Const;
+import net.silentchaos512.gear.util.TraitHelper;
 
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Random;
 
 public class Utils {
+
+    public static boolean hasSilkTouch(ItemStack tool) {
+        ItemEnchantments enchantments = tool.get(DataComponents.ENCHANTMENTS);
+        if (enchantments != null) {
+            for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
+                if (entry.getKey().is(Enchantments.SILK_TOUCH)) {
+                    return true;
+                }
+            }
+        }
+        if (ModList.get().isLoaded("silentgear")) {
+            return TraitHelper.hasTrait(tool, Const.Traits.SILKY);
+        }
+        return false;
+    }
+
+    public static boolean hasEnchantmentOrTrait(ItemStack tool, ResourceKey<Enchantment> enchantment, Trait trait) {
+        ItemEnchantments enchantments = tool.get(DataComponents.ENCHANTMENTS);
+        if (enchantments != null) {
+            for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
+                if (entry.getKey().is(enchantment)) {
+                    return true;
+                }
+            }
+        }
+        if (ModList.get().isLoaded("silentgear")) {
+            return trait != null && TraitHelper.hasTrait(tool, trait);
+        }
+        return false;
+    }
+
+    public static boolean hasEnchantment(ItemStack tool,  ResourceKey<Enchantment> enchantment) {
+        ItemEnchantments enchantments = tool.get(DataComponents.ENCHANTMENTS);
+        if (enchantments != null) {
+            for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
+                if (entry.getKey().is(enchantment)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public static void checkMiningMiss(Player player, BlockPos pos, float range) {
         OverlayManager overlayManager = RaynnaRPG.getOverlayManager();

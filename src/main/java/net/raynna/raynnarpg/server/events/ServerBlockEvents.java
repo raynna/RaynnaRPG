@@ -53,7 +53,7 @@ public class ServerBlockEvents {
         if (!checkMiningLevel(player, progress, event, blockState, miningData)) {
             return;
         }
-        if (hasSilkTouch(player.getMainHandItem())) {
+        if (Utils.hasSilkTouch(player.getMainHandItem())) {
             MessagePacketSender.send(player, "No XP gained because you used Silk Touch.");
             return;
         }
@@ -86,7 +86,6 @@ public class ServerBlockEvents {
                 }
             }
         }
-
         return TraitHelper.hasTrait(tool, Const.Traits.SILKY);
     }
 
