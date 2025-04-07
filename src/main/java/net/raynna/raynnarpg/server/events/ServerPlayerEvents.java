@@ -2,17 +2,12 @@ package net.raynna.raynnarpg.server.events;
 
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
-import net.minecraft.network.protocol.game.ServerboundContainerButtonClickPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -26,19 +21,15 @@ import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.*;
-import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.ContainerScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
-import net.neoforged.neoforge.event.entity.item.ItemEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.AnvilRepairEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.raynna.raynnarpg.config.*;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.crafting.CraftingConfig;
@@ -53,9 +44,7 @@ import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.*;
 import net.silentchaos512.gear.api.item.GearItem;
-import net.silentchaos512.gear.client.KeyTracker;
 
-import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.util.*;
 
 public class ServerPlayerEvents {
@@ -245,7 +234,6 @@ public class ServerPlayerEvents {
 
     @SubscribeEvent
     public static void onAnvilTake(AnvilRepairEvent event) {
-        System.out.println("RepairEvent");
         if (event.getEntity().getPersistentData().contains("enchant_removed")) {
             CompoundTag newItemTag = event.getEntity().getPersistentData().getCompound("enchant_removed");
             event.getEntity().getPersistentData().remove("enchant_removed");
@@ -265,7 +253,9 @@ public class ServerPlayerEvents {
     public static void onAnvil(AnvilUpdateEvent event) {
         ItemStack left = event.getLeft();
         ItemStack right = event.getRight();
-
+        if (event.getPlayer().getPersistentData().contains("enchant_removed")) {
+            event.getPlayer().getPersistentData().remove("enchant_removed");
+        }
         if (left.isEmpty() || !right.is(Items.BOOK) || !left.isEnchanted()) {
             return;
         }
