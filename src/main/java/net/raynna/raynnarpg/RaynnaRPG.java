@@ -2,6 +2,7 @@ package net.raynna.raynnarpg;
 
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.minecraft.util.RandomSource;
 import net.raynna.raynnarpg.client.ui.OverlayManager;

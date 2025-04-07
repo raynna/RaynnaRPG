@@ -30,6 +30,7 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.*;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.crafting.CraftingConfig;
@@ -100,7 +101,7 @@ public class ServerPlayerEvents {
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
         if (progress == null) return;
         ItemStack mainHand = player.getMainHandItem();
-        if (SilentGearHelper.isBow(mainHand)) {
+        if (ItemUtils.isBow(mainHand)) {
             int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
             if (!canUseWeapon(player, mainHand, combatLevel)) {
                 player.releaseUsingItem();
@@ -196,8 +197,8 @@ public class ServerPlayerEvents {
     private static boolean canEquipItem(ServerPlayer player, ItemStack item, EquipmentSlot slot, PlayerProgress progress) {
         int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
         boolean isArmor = isArmorSlot(slot);
-        if (SilentGearHelper.isSilentGearLoaded() && item.getItem() instanceof GearItem) {
-            if (!SilentGearHelper.checkCombatLevel(player, item, combatLevel, isArmor)) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(item)) {
+            if (!ItemUtils.checkCombatLevel(player, item, combatLevel, isArmor)) {
                 return false;
             }
         }
@@ -318,8 +319,8 @@ public class ServerPlayerEvents {
     private static boolean canUseWeapon(ServerPlayer player, ItemStack weapon, int combatLevel) {
         if (weapon.isEmpty()) return true;
 
-        if (SilentGearHelper.isSilentGearLoaded() && weapon.getItem() instanceof GearItem && SilentGearHelper.isWeapon(weapon)) {
-            if (!SilentGearHelper.checkCombatLevel(player, weapon, combatLevel, false)) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(weapon) && ItemUtils.isWeapon(weapon)) {
+            if (!ItemUtils.checkCombatLevel(player, weapon, combatLevel, false)) {
                 return false;
             }
         }
@@ -333,8 +334,8 @@ public class ServerPlayerEvents {
     }
 
     private static boolean validateToolUse(ServerPlayer player, ItemStack tool, int miningLevel) {
-        if (SilentGearHelper.isSilentGearLoaded() && tool.getItem() instanceof GearItem && SilentGearHelper.isTool(tool)) {
-            if (!SilentGearHelper.checkMiningLevel(player, tool, miningLevel)) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(tool) && ItemUtils.isTool(tool)) {
+            if (!ItemUtils.checkMiningLevel(player, tool, miningLevel)) {
                 return false;
             }
         }

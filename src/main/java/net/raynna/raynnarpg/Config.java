@@ -12,6 +12,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.*;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.combat.CombatEntry;
@@ -49,7 +50,7 @@ public class Config {
         }
 
         public static void registerCombatConfigs(ModConfigSpec.Builder builder) {
-            boolean hasSilentGear = ModList.get().isLoaded("silentgear");
+            boolean hasSilentGear = SilentGearCompat.IS_LOADED;
             boolean hasSilentGems = ModList.get().isLoaded("silentgems");
             boolean hasIceAndFire = ModList.get().isLoaded("iceandfire");
             ConfigRegister.registerCategory(builder, "combat_config", "Combat", "Settings for Combat", () -> {

@@ -2,10 +2,10 @@ package net.raynna.raynnarpg.config.combat;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.ConfigData;
-import net.raynna.raynnarpg.utils.SilentGearHelper;
+import net.raynna.raynnarpg.utils.ItemUtils;
 import net.raynna.raynnarpg.utils.Utils;
 import net.silentchaos512.gear.api.item.GearItem;
 import net.silentchaos512.gear.setup.gear.GearProperties;
@@ -62,11 +62,11 @@ public class CombatConfig {
 
     public static ConfigData getData(ItemStack stack, boolean armour) {
         String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-        if (!SilentGearHelper.isWeapon(stack) && !SilentGearHelper.isArmor(stack)) {
+        if (!ItemUtils.isWeapon(stack) && !ItemUtils.isArmor(stack)) {
             return null;
         }
-        if (SilentGearHelper.isSilentGearLoaded() && stack.getItem() instanceof GearItem) {
-            String tier = SilentGearHelper.getGearProperty(stack, GearProperties.HARVEST_TIER.get());
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(stack)) {
+            String tier = ItemUtils.getGearProperty(stack, GearProperties.HARVEST_TIER.get());
             return getSilentGearData(tier, armour);
         }
 

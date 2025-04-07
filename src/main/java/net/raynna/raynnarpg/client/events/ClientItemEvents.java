@@ -8,7 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
@@ -22,18 +21,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
+import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.*;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.crafting.CraftingConfig;
@@ -42,9 +35,7 @@ import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.Colour;
-import net.raynna.raynnarpg.utils.RegistryUtils;
-import net.raynna.raynnarpg.utils.SilentGearHelper;
-import net.raynna.raynnarpg.utils.Utils;
+import net.raynna.raynnarpg.utils.ItemUtils;
 import net.silentchaos512.gear.SilentGear;
 import net.silentchaos512.gear.api.item.GearItem;
 import net.silentchaos512.gear.api.part.PartList;
@@ -176,8 +167,8 @@ public class ClientItemEvents {
                             String.format("%.1f", attackDamage) + comparison));
         }
 
-        if (SilentGearHelper.isSilentGearLoaded() && context.stack.getItem() instanceof GearItem && context.event.getEntity() != null) {
-            if (SilentGearHelper.isWeapon(context.stack)) {
+    if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(context.stack) && context.event.getEntity() != null) {
+            if (ItemUtils.isWeapon(context.stack)) {
                 double attackRange = getAttackRange(context.event.getEntity());
                 if (attackRange > 0.0) {
                     context.event.getToolTip().add(index.getAndIncrement(),
@@ -191,7 +182,7 @@ public class ClientItemEvents {
     private static double getItemAttackDamage(ItemStack stack) {
         if (stack.isEmpty()) return 0;
 
-        if (SilentGearHelper.isSilentGearLoaded() && stack.getItem() instanceof GearItem) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(stack)) {
             return GearHelper.getAttackDamageModifier(stack);
         } else {
             return getAttributeValue(stack, Attributes.ATTACK_DAMAGE.getKey());
@@ -201,7 +192,7 @@ public class ClientItemEvents {
     private static double getItemAttackReach(TooltipContext context) {
         if (context.stack.isEmpty()) return 0;
 
-        if (SilentGearHelper.isSilentGearLoaded() && context.stack.getItem() instanceof GearItem) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(context.stack)) {
             return context.event.getEntity() != null ? getAttackRange(context.event.getEntity()) : 0.0;
         } else {
             return getAttributeValue(context.stack, Attributes.ENTITY_INTERACTION_RANGE.getKey());
@@ -268,7 +259,7 @@ public class ClientItemEvents {
     private static void checkTraits(TooltipContext context, Map<String, String> descriptions) {
         ItemStack stack = context.stack;
 
-        if (SilentGearHelper.isSilentGearLoaded() && stack.getItem() instanceof GearItem) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(stack)) {
             List<TraitInstance> traits = GearData.getProperties(stack).getTraits();
             if (!traits.isEmpty()) {
                 StringBuilder traitsLine = new StringBuilder(Colour.GOLD + "  Traits: ");
@@ -393,8 +384,8 @@ public class ClientItemEvents {
     }
 
     private static void checkToolRequirements(TooltipContext context, Map<String, String> requirements) {
-        if (SilentGearHelper.isSilentGearLoaded() && context.stack.getItem() instanceof GearItem && SilentGearHelper.isPickaxe(context.stack)) {
-            String harvestTier = SilentGearHelper.getGearProperty(context.stack, GearProperties.HARVEST_TIER.get());
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(context.stack) && ItemUtils.isPickaxe(context.stack)) {
+            String harvestTier = ItemUtils.getGearProperty(context.stack, GearProperties.HARVEST_TIER.get());
             ConfigData data = ToolConfig.getSilentGearData(harvestTier);
             if (data != null) {
                 int level = context.skills.getSkillLevel(SkillType.MINING);
@@ -410,7 +401,7 @@ public class ClientItemEvents {
     }
 
     private static void checkArmourRequirement(TooltipContext context, Map<String, String> requirements) {
-        if (SilentGearHelper.isSilentGearLoaded() && context.stack.getItem() instanceof GearItem && SilentGearHelper.isArmor(context.stack)) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(context.stack) && ItemUtils.isArmor(context.stack)) {
             ConfigData data = CombatConfig.getData(context.stack, true);
             if (data != null) {
                 int level = context.skills.getSkillLevel(SkillType.COMBAT);
@@ -426,7 +417,7 @@ public class ClientItemEvents {
     }
 
     private static void checkWeaponRequirements(TooltipContext context, Map<String, String> requirements) {
-        if (SilentGearHelper.isSilentGearLoaded() && context.stack.getItem() instanceof GearItem && SilentGearHelper.isWeapon(context.stack)) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(context.stack) && ItemUtils.isWeapon(context.stack)) {
             ConfigData data = CombatConfig.getData(context.stack, false);
             if (data != null) {
                 int level = context.skills.getSkillLevel(SkillType.COMBAT);
@@ -590,7 +581,7 @@ public class ClientItemEvents {
         ItemStack stack = context.stack;
         List<Component> tooltip = context.event.getToolTip();
 
-        if (SilentGearHelper.isSilentGearLoaded() && stack.getItem() instanceof GearItem gearItem) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(stack)) {
             boolean shift = context.isShiftDown;
             GearTooltipFlag flag = GearTooltipFlag.withModifierKeys(shift, true, false);
 

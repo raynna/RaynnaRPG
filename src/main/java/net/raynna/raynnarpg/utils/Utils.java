@@ -15,6 +15,7 @@ import net.neoforged.fml.ModList;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.ui.OverlayManager;
 import net.raynna.raynnarpg.client.ui.floating_text.FloatingText;
+import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.silentchaos512.gear.gear.trait.Trait;
 import net.silentchaos512.gear.util.Const;
 import net.silentchaos512.gear.util.TraitHelper;
@@ -34,7 +35,7 @@ public class Utils {
                 }
             }
         }
-        if (ModList.get().isLoaded("silentgear")) {
+        if (SilentGearCompat.IS_LOADED) {
             return TraitHelper.hasTrait(tool, Const.Traits.SILKY);
         }
         return false;
@@ -49,7 +50,7 @@ public class Utils {
                 }
             }
         }
-        if (ModList.get().isLoaded("silentgear")) {
+        if (SilentGearCompat.IS_LOADED) {
             return trait != null && TraitHelper.hasTrait(tool, trait);
         }
         return false;

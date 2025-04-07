@@ -6,30 +6,23 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModList;
+import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.ConfigData;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
+import net.silentchaos512.gear.SilentGear;
 import net.silentchaos512.gear.api.item.GearItem;
 import net.silentchaos512.gear.api.property.GearProperty;
 import net.silentchaos512.gear.core.component.GearPropertiesData;
-import net.silentchaos512.gear.setup.SgTags;
 import net.silentchaos512.gear.setup.gear.GearProperties;
 import net.silentchaos512.gear.util.GearData;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SilentGearHelper {
-
-    /**
-     * Checks if SilentGear is loaded
-     */
-    public static boolean isSilentGearLoaded() {
-        return ModList.get().isLoaded("silentgear");
-    }
+public class ItemUtils {
 
     /**
      * Gets all properties from a SilentGear item as a map of strings
@@ -148,7 +141,7 @@ public class SilentGearHelper {
      * Checks if the player has the required mining level for a SilentGear tool
      */
     public static boolean checkMiningLevel(Player player, ItemStack tool, int miningLevel) {
-        if (!(tool.getItem() instanceof GearItem)) {
+        if (!(SilentGearCompat.isGearItem(tool))) {
             return true;
         }
         if (!tool.getItem().getDescriptionId().contains("pickaxe") &&
@@ -157,7 +150,7 @@ public class SilentGearHelper {
         }
 
         String toolName = tool.getItem().getName(tool).getString();
-        String harvestTier = SilentGearHelper.getGearProperty(tool, GearProperties.HARVEST_TIER.get());
+        String harvestTier = ItemUtils.getGearProperty(tool, GearProperties.HARVEST_TIER.get());
         ConfigData data = ToolConfig.getSilentGearData(harvestTier);
 
         if (data != null && miningLevel < data.getLevel()) {

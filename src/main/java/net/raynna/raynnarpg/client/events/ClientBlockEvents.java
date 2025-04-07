@@ -15,12 +15,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.ConfigData;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.mining.MiningConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
-import net.raynna.raynnarpg.utils.SilentGearHelper;
+import net.raynna.raynnarpg.utils.ItemUtils;
 import net.raynna.raynnarpg.utils.Utils;
 import net.silentchaos512.gear.api.item.GearItem;
 
@@ -67,8 +68,8 @@ public class ClientBlockEvents {
     private static boolean canUseWeapon(Player player, ItemStack weapon, int combatLevel) {
         if (weapon.isEmpty()) return true;
 
-        if (SilentGearHelper.isSilentGearLoaded() && weapon.getItem() instanceof GearItem && SilentGearHelper.isWeapon(weapon)) {
-            if (!SilentGearHelper.checkCombatLevel(player, weapon, combatLevel, false)) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(weapon) && ItemUtils.isWeapon(weapon)) {
+            if (!ItemUtils.checkCombatLevel(player, weapon, combatLevel, false)) {
                 return false;
             }
         }
@@ -93,8 +94,8 @@ public class ClientBlockEvents {
             return false;
         }
 
-        if (SilentGearHelper.isSilentGearLoaded() && mainHand.getItem() instanceof GearItem && SilentGearHelper.isPickaxe(mainHand)) {
-            if (!SilentGearHelper.checkMiningLevel(mc.player, mainHand, miningLevel)) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(mainHand) && ItemUtils.isPickaxe(mainHand)) {
+            if (!ItemUtils.checkMiningLevel(mc.player, mainHand, miningLevel)) {
                 handleFailedRequirement(mc, event, blockPos, null);
                 return true;
             }

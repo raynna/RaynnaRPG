@@ -20,6 +20,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.player.ClientSkills;
+import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
+import net.raynna.raynnarpg.compat.silentgear.SilentGearTypeHelper;
 import net.raynna.raynnarpg.config.ConfigData;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.crafting.CraftingConfig;
@@ -28,16 +30,9 @@ import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.Colour;
-import net.raynna.raynnarpg.utils.SilentGearHelper;
+import net.raynna.raynnarpg.utils.ItemUtils;
 import net.silentchaos512.gear.api.item.GearItem;
-import net.silentchaos512.gear.api.part.PartType;
-import net.silentchaos512.gear.api.traits.TraitInstance;
-import net.silentchaos512.gear.api.util.PartGearKey;
-import net.silentchaos512.gear.gear.material.MaterialInstance;
-import net.silentchaos512.gear.gear.part.PartInstance;
 import net.silentchaos512.gear.setup.gear.GearProperties;
-import net.silentchaos512.gear.setup.gear.PartTypes;
-import net.silentchaos512.gear.util.GearData;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
@@ -45,7 +40,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @EventBusSubscriber(modid = RaynnaRPG.MOD_ID, value = Dist.CLIENT)
 public class ClientTooltipEvent {
-
 
     private static AtomicInteger myToolTipIndex;
 
@@ -70,14 +64,14 @@ public class ClientTooltipEvent {
             addRequirementsToTooltip(context, requirements);
         }
         handleEnchantTooltips(context);
-        if (ModList.get().isLoaded("silentgear")) {
-            handleTraitTooltips(context);
+        if (SilentGearCompat.IS_LOADED) {
+            SilentGearTypeHelper.handleTraitTooltips(context, myToolTipIndex);
         }
         handleFoodEffectsTooltips(context);
         handleDebugTooltips(context);
     }
 
-    private static class TooltipContext {
+    public static class TooltipContext {
         public final ItemTooltipEvent event;
         public final ItemStack stack;
         public final ClientSkills skills;
@@ -166,7 +160,7 @@ public class ClientTooltipEvent {
         };
     }
 
-    private static void handleTraitTooltips(TooltipContext context) {
+    /*private static void handleTraitTooltips(TooltipContext context) {
         ItemStack stack = context.stack;
         List<Component> tooltip = context.event.getToolTip();
 
@@ -248,7 +242,7 @@ public class ClientTooltipEvent {
             index.set(Math.min(myToolTipIndex.getAndIncrement(), context.event.getToolTip().size()));
             tooltip.add(index.get(), Component.literal(Colour.YELLOW + "  Trait Details [Left Alt]"));
         }
-    }
+    }*/
 
 
     private static void handleEnchantTooltips(TooltipContext context) {
@@ -433,8 +427,8 @@ public class ClientTooltipEvent {
     }
 
     private static void checkToolRequirements(TooltipContext context, Map<String, String> requirements) {
-        if (SilentGearHelper.isSilentGearLoaded() && context.stack.getItem() instanceof GearItem && SilentGearHelper.isPickaxe(context.stack)) {
-            String harvestTier = SilentGearHelper.getGearProperty(context.stack, GearProperties.HARVEST_TIER.get());
+    if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(context.stack) && ItemUtils.isPickaxe(context.stack)) {
+            String harvestTier = ItemUtils.getGearProperty(context.stack, GearProperties.HARVEST_TIER.get());
             ConfigData data = ToolConfig.getSilentGearData(harvestTier);
             if (data != null) {
                 int level = context.skills.getSkillLevel(SkillType.MINING);
@@ -450,7 +444,7 @@ public class ClientTooltipEvent {
     }
 
     private static void checkArmourRequirement(TooltipContext context, Map<String, String> requirements) {
-        if (SilentGearHelper.isSilentGearLoaded() && context.stack.getItem() instanceof GearItem && SilentGearHelper.isArmor(context.stack)) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(context.stack) && ItemUtils.isArmor(context.stack)) {
             ConfigData data = CombatConfig.getData(context.stack, true);
             if (data != null) {
                 int level = context.skills.getSkillLevel(SkillType.COMBAT);
@@ -466,7 +460,7 @@ public class ClientTooltipEvent {
     }
 
     private static void checkWeaponRequirements(TooltipContext context, Map<String, String> requirements) {
-        if (SilentGearHelper.isSilentGearLoaded() && context.stack.getItem() instanceof GearItem && SilentGearHelper.isWeapon(context.stack)) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(context.stack) && ItemUtils.isWeapon(context.stack)) {
             ConfigData data = CombatConfig.getData(context.stack, false);
             if (data != null) {
                 int level = context.skills.getSkillLevel(SkillType.COMBAT);
