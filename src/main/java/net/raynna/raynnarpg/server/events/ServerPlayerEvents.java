@@ -432,7 +432,7 @@ public class ServerPlayerEvents {
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
         if (progress == null) return;
 
-        CraftingResult result = checkCraftingMaterials(player, container, progress);
+        CraftingResult result = checkCraftingMaterials(player, event, container, progress);
         if (result.blocked) {
             event.getCrafting().setCount(0);
         } else if (shouldGrantExperience(event.getCrafting(), result)) {
@@ -440,7 +440,7 @@ public class ServerPlayerEvents {
         }
     }
 
-    private static CraftingResult checkCraftingMaterials(ServerPlayer player, CraftingContainer container, PlayerProgress progress) {
+    private static CraftingResult checkCraftingMaterials(ServerPlayer player, PlayerEvent.ItemCraftedEvent event, CraftingContainer container, PlayerProgress progress) {
         CraftingResult result = new CraftingResult();
         int playerLevel = progress.getSkills().getSkill(SkillType.CRAFTING).getLevel();
 
@@ -462,7 +462,7 @@ public class ServerPlayerEvents {
                 continue;
             }
             if (playerLevel < data.getLevel()) {
-                handleInvalidCraftingMaterial(player, container, material, data.getLevel(), progress.getSkills().getSkill(SkillType.CRAFTING));
+                handleInvalidCraftingMaterial(player, event, container, material, data.getLevel(), progress.getSkills().getSkill(SkillType.CRAFTING));
                 result.blocked = true;
                 break;
             }
@@ -472,7 +472,7 @@ public class ServerPlayerEvents {
         return result;
     }
 
-    private static void handleInvalidCraftingMaterial(ServerPlayer player, CraftingContainer container, ItemStack material, int requiredLevel, Skill skill) {
+    private static void handleInvalidCraftingMaterial(ServerPlayer player, PlayerEvent.ItemCraftedEvent event, CraftingContainer container, ItemStack material, int requiredLevel, Skill skill) {
         MessageSender.send(player, "You need " + skill.getType().getName() + " level " + requiredLevel + " to use " + material.getHoverName().getString() + " in crafting.");
 
         for (int i = 0; i < container.getContainerSize(); i++) {
@@ -481,6 +481,10 @@ public class ServerPlayerEvents {
                 player.getInventory().placeItemBackInInventory(stack);
                 container.setItem(i, ItemStack.EMPTY);
             }
+        }
+        boolean shifting = player.getPersistentData().getBoolean("isShifting");
+        if (shifting) {//prevent dupe when shiftclicking
+            PlayerUtils.removeItemStack(player, event.getCrafting().copy());
         }
     }
 
