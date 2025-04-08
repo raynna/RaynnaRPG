@@ -246,7 +246,6 @@ public class ServerPlayerEvents {
             Optional<ItemStack> optionalItem = ItemStack.parse(provider, newItemTag);
             optionalItem.ifPresent(item -> {
                 event.getEntity().getInventory().placeItemBackInInventory(item);
-                System.out.println(item.getHoverName().getString());
             });
         }
     }

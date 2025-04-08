@@ -60,7 +60,6 @@ public class Skills {
                 return;
             }
             int oldLevel = skill.getLevel();
-            System.out.println("Xp gain: " + xp);
             if (((int) skill.getXp() + xp) >= MAX_XP) {
                 skill.setXp(MAX_XP);
             }
@@ -90,7 +89,6 @@ public class Skills {
                 return;
             }
             int oldLevel = skill.getLevel();
-            System.out.println("Xp gain: " + xp);
             if (((int) skill.getXp() + xp) >= MAX_XP) {
                 skill.setXp(MAX_XP);
             }
