@@ -64,7 +64,7 @@ public class ServerNpcEvents {
             xp *= (float) xpRate;
         }
         float effectiveDamage = Math.min(damageDealt, maxHealth);
-        return (float) (xp);
+        return xp;
     }
 
     private static float getBaseXPForEntity(LivingEntity entity) {
