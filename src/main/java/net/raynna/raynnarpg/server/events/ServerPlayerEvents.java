@@ -30,6 +30,7 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.*;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
@@ -420,12 +421,17 @@ public class ServerPlayerEvents {
 
     private static void grantSmeltingExperience(ServerPlayer player, PlayerProgress progress, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
         double xp = Math.round(data.getXp() * event.getSmelting().getCount() * 100) / 100.0;
-        CraftingTracker.accumulateCraftingData(player, event.getSmelting().getHoverName().getString(), event.getSmelting().getCount(), xp, SkillType.SMELTING, () -> {
+        double xpRate = Config.Server.XP_RATE.get();
+        if (xpRate != 1.0) {
+            xp *= xpRate;
+        }
+        double finalXp = xp;
+        CraftingTracker.accumulateCraftingData(player, event.getSmelting().getHoverName().getString(), event.getSmelting().getCount(), finalXp, SkillType.SMELTING, () -> {
             if (Utils.isXpCapped(progress.getSkills().getSkill(SkillType.SMELTING).getLevel(), data.getLevel())) {
                 MessageSender.send(player, "You are to high of a level to gain experience from " + event.getSmelting().getHoverName().getString());
                 return;
             }
-            progress.getSkills().addXp(SkillType.SMELTING, xp);
+            progress.getSkills().addXpNoBonus(SkillType.SMELTING, finalXp);
         });
     }
 
@@ -495,8 +501,13 @@ public class ServerPlayerEvents {
 
     private static void grantCraftingExperience(ServerPlayer player, PlayerProgress progress, ItemStack craftedItem, CraftingResult result) {
         double xp = Math.round(result.totalExperience * 100) / 100.0;
-        CraftingTracker.accumulateCraftingData(player, craftedItem.getHoverName().getString(), craftedItem.getCount(), xp, SkillType.CRAFTING, () -> {
-            progress.getSkills().addXp(SkillType.CRAFTING, xp);
+        double xpRate = Config.Server.XP_RATE.get();
+        if (xpRate != 1.0) {
+            xp *= xpRate;
+        }
+        double finalXp = xp;
+        CraftingTracker.accumulateCraftingData(player, craftedItem.getHoverName().getString(), craftedItem.getCount(), finalXp, SkillType.CRAFTING, () -> {
+            progress.getSkills().addXpNoBonus(SkillType.CRAFTING, finalXp);
 
         });
     }

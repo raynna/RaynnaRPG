@@ -12,10 +12,12 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModList;
+import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.RaynnaRPG;
 import net.raynna.raynnarpg.client.ui.OverlayManager;
 import net.raynna.raynnarpg.client.ui.floating_text.FloatingText;
 import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
+import net.raynna.raynnarpg.server.player.skills.Skills;
 import net.silentchaos512.gear.gear.trait.Trait;
 import net.silentchaos512.gear.util.Const;
 import net.silentchaos512.gear.util.TraitHelper;
@@ -94,7 +96,7 @@ public class Utils {
     }
 
     public static boolean isXpCapped(int playerLevel, int levelReq) {
-        int levelCap = 20;
+        int levelCap = Config.Server.LEVEL_CAP.get();
         double difference = playerLevel - levelReq;
         return difference >= levelCap;
     }
@@ -157,14 +159,20 @@ public class Utils {
         );
     }
 
-    public static String formatPercentage(double progress) {
+    public static String formatPercentage(double progress, boolean isMaxLevel) {
         double percent = progress * 100;
+        if (isMaxLevel) {
+            int maxXp = (int) Skills.MAX_XP;
+            int currentXpInt = (int) progress;
+            percent = (double) currentXpInt / maxXp * 100;
+        }
+
         if (percent == (int) percent) {
-            return String.format("%d%%", (int) percent); // Whole numbers: 1%
+            return String.format("%d%%", (int) percent);
         } else if (Math.abs(percent * 10 - (int)(percent * 10)) < 0.0001) {
-            return String.format("%.1f%%", percent); // Single decimal: 1.1%
+            return String.format("%.1f%%", percent);
         } else {
-            return String.format("%.2f%%", percent); // Two decimals: 1.01%
+            return String.format("%.2f%%", percent);
         }
     }
 

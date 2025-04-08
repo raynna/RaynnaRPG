@@ -24,6 +24,7 @@ import net.raynna.raynnarpg.config.tools.ToolEntry;
 import net.raynna.raynnarpg.config.mining.MiningConfig;
 import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
+import net.raynna.raynnarpg.server.player.skills.Skills;
 
 import static net.raynna.raynnarpg.RaynnaRPG.MOD_ID;
 
@@ -38,15 +39,69 @@ public class Config {
         public static ModConfigSpec SPEC;
         public static final ModConfigSpec.IntValue SERVER_CONFIG_VERSION;
 
+
+        /*        public static final ModConfigSpec.IntValue CLIENT_CONFIG_VERSION;
+
+        public static ModConfigSpec.EnumValue<XpDisplayMode> XP_TEXT_MODE;
+        public enum XpDisplayMode {XP, PERCENT, BOTH}
+
+        public static ModConfigSpec.EnumValue<GuiPosition> GUI_POSITION;
+        public enum GuiPosition {
+            TOP_LEFT,
+            TOP_CENTER,
+            TOP_RIGHT,
+            CENTER_LEFT,
+            CENTER,
+            CENTER_RIGHT,
+            BOTTOM_LEFT,
+            BOTTOM_CENTER,
+            BOTTOM_RIGHT
+        }
+        public static final ModConfigSpec.IntValue X_PADDING;
+        public static final ModConfigSpec.IntValue Y_PADDING;
+
+        static {
+            ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+            CLIENT_CONFIG_VERSION = builder.translation("Client Config Version: ").comment("DO NOT CHANGE. Used for tracking config updates.").defineInRange("config_version", CLIENT_VERSION, 1, Integer.MAX_VALUE);
+
+            XP_TEXT_MODE = builder
+                    .translation("Xp Display Mode: ")
+                    .comment("Skill Overlay Xp mode")
+                    .comment("Default: BOTH")
+                    .defineEnum("xp_text_mode", XpDisplayMode.BOTH);
+            GUI_POSITION = builder
+                    .translation("Skill Overlay Position:")
+                    .comment("Location for skill overlay")
+                    .comment("Default: CENTER_LEFT")
+                    .defineEnum("gui_position", GuiPosition.CENTER_LEFT);
+            X_PADDING = builder.translation("Overlay X Adjustments: ").comment("Fine adjust the X position for the overlay").defineInRange("x_adjustment", 10, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            Y_PADDING = builder.translation("Overlay Y Adjustments: ").comment("Fine adjust the Y position for the overlay").defineInRange("y_adjustment", 10, Integer.MIN_VALUE, Integer.MAX_VALUE);
+
+            SPEC = builder.build();
+        }*/
+        public static ModConfigSpec.DoubleValue XP_RATE;
+        public static ModConfigSpec.IntValue MAX_LEVEL;
+        public static ModConfigSpec.IntValue MAX_XP;
+        public static ModConfigSpec.IntValue LEVEL_CAP;
+
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
             SERVER_CONFIG_VERSION = builder.translation("Server Config Version: ").comment("DO NOT CHANGE. Used for tracking config updates.").defineInRange("config_version", SERVER_VERSION, 1, Integer.MAX_VALUE);
+            registerServerConfigs(builder);
             registerCombatConfigs(builder);
             registerToolConfigs(builder);
             registerCraftingConfigs(builder);
             registerMiningConfigs(builder);
             registerSmeltingConfigs(builder);
             SPEC = builder.build();
+        }
+        public static void registerServerConfigs(ModConfigSpec.Builder builder) {
+            ConfigRegister.registerCategory(builder, "server_settings", "Server Settings", "Settings for Server", () -> {
+                XP_RATE = builder.translation("Server Xp Rate: ").comment("Fine adjust the xp rate of server.").defineInRange("xp_rate", 1.0, Double.MIN_VALUE, Double.MAX_VALUE);
+                MAX_LEVEL = builder.translation("Skill Max Level: ").comment("Fine adjust the max level of each skill in server.").defineInRange("max_level", 50, 1, Integer.MAX_VALUE);
+                MAX_XP = builder.translation("Skill Max Xp: ").comment("Fine adjust the max xp of each skill in server.").defineInRange("max_xp", 303000, 1, 100000000);
+                LEVEL_CAP = builder.translation("Skill Level Cap: ").comment("Fine adjust the level cap of each skill in server.").comment("For example, if you are level 40, and diamond ore is level 20, and you have level cap of 20, you will not gain xp, changing this to level cap 10, will make so you gain xp until level 30, as an example.").defineInRange("level_cap", 20, 1, Integer.MAX_VALUE);
+            });
         }
 
         public static void registerCombatConfigs(ModConfigSpec.Builder builder) {
@@ -709,8 +764,21 @@ public class Config {
         }
     }
 
+
     @SubscribeEvent
-    static void onReload(final ModConfigEvent.Loading event) {
+    static void onReload(final ModConfigEvent.Reloading event) {
+        ModConfig config = event.getConfig();
+        if (config.getSpec() == Server.SPEC) {
+            int maxLevel = Server.MAX_LEVEL.get();
+            double maxXp = Server.MAX_XP.get();
+            Skills.setMaxLevel(maxLevel);
+            Skills.setMaxXp((int) maxXp);
+            System.out.println("Server Configs reloaded!");
+        }
+    }
+
+    @SubscribeEvent
+    static void onLoad(final ModConfigEvent.Loading event) {
         ModConfig config = event.getConfig();
         if (config.getSpec() == Config.Server.SPEC) {
             int storedVersion = Config.Server.SERVER_CONFIG_VERSION.get();
@@ -740,7 +808,7 @@ public class Config {
                 config.getLoadedConfig().save();
                 System.out.println("Config rebuilt due to version change.");
             }
-            System.out.println("Reloaded on server");
+            System.out.println("Loaded on server");
         }
         if (config.getSpec() == Config.Client.SPEC) {
             int storedVersion = Client.CLIENT_CONFIG_VERSION.get();
@@ -754,7 +822,7 @@ public class Config {
                 Client.CLIENT_CONFIG_VERSION.set(CLIENT_VERSION);
                 Config.Client.SPEC = builder.build();
             }
-            System.out.println("Reloaded on client");
+            System.out.println("Loaded on client");
         }
     }
 }

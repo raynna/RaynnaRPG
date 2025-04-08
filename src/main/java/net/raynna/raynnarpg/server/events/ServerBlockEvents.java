@@ -3,14 +3,12 @@ package net.raynna.raynnarpg.server.events;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-import net.neoforged.neoforge.common.CommonHooks;
+import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.config.ConfigData;
 import net.raynna.raynnarpg.config.mining.MiningConfig;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
@@ -92,13 +90,17 @@ public class ServerBlockEvents {
     private static void grantMiningExperience(ServerPlayer player, PlayerProgress progress,
                                               ConfigData miningData, BlockPos pos) {
         double xp = miningData.getXp();
+        double xpRate = Config.Server.XP_RATE.get();
+        if (xpRate != 1.0) {
+            xp *= xpRate;
+        }
         int miningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
         int levelReq = miningData.getLevel();
         if (Utils.isXpCapped(miningLevel, levelReq)) {
             FloatingTextSender.sendOnBlock(player, Colour.RED + "Xp Capped", pos, SkillType.MINING);
             return;
         }
-        progress.getSkills().addXp(SkillType.MINING, xp);
+        progress.getSkills().addXpNoBonus(SkillType.MINING, xp);
         FloatingTextSender.sendOnBlock(player, "+" + xp + "xp", pos, SkillType.MINING);
     }
 

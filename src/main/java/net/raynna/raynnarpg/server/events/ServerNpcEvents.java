@@ -7,6 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.network.packets.xpdrop.FloatingTextSender;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
@@ -43,7 +44,7 @@ public class ServerNpcEvents {
             float xp = calculateCombatXP(damageDealt, maxHealth, entity);
             PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
             if (progress != null) {
-                progress.getSkills().addXp(SkillType.COMBAT, xp);
+                progress.getSkills().addXpNoBonus(SkillType.COMBAT, xp);
                 Vec3 vec = new Vec3(entity.getX(), entity.getY(), entity.getZ());
                 FloatingTextSender.sendOnEntity(player,
                         String.format("+%.1fxp", xp),
@@ -58,8 +59,12 @@ public class ServerNpcEvents {
 
     private static float calculateCombatXP(float damageDealt, float maxHealth, LivingEntity entity) {
         float xp = damageDealt * getBaseXPForEntity(entity);
+        double xpRate = Config.Server.XP_RATE.get();
+        if (xpRate != 1.0) {
+            xp *= (float) xpRate;
+        }
         float effectiveDamage = Math.min(damageDealt, maxHealth);
-        return xp;
+        return (float) (xp);
     }
 
     private static float getBaseXPForEntity(LivingEntity entity) {

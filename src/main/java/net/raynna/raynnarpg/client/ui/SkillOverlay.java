@@ -34,7 +34,7 @@ public class SkillOverlay {
         if (GLFW.glfwGetKey(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS) {
             return;
         }
-        int overlayWidth = 110; // approx, adjust as needed
+        int overlayWidth = 110;
         int overlayHeight = skillBars.size() * LINE_SPACING;
 
         int[] pos = GuiUtils.getPosition(Config.Client.GUI_POSITION.get(), mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), overlayWidth, overlayHeight);

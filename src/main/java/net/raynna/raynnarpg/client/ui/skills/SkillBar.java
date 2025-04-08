@@ -6,12 +6,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.config.ModConfig;
 import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.client.player.ClientSkills;
 import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.server.player.skills.Skills;
+import net.raynna.raynnarpg.utils.Colour;
 import net.raynna.raynnarpg.utils.Utils;
 
 @OnlyIn(Dist.CLIENT)
@@ -24,9 +24,9 @@ public class SkillBar {
 
     private static final int BASE_BAR_COLOR = 0xFF00AA00;
     private static final int BACKGROUND_COLOR = 0xFF444444;
+    private static final int MAX_LEVEL_COLOR = 0xFFFFB500;
 
     private final SkillType type;
-    private static long XP_GAIN_TIMER = -1;
     private XpGainMessage currentXpGainMessage;
 
     public SkillBar(SkillType type) {
@@ -52,14 +52,17 @@ public class SkillBar {
             currentXpGainMessage.amount += amount;
             currentXpGainMessage.startTime = currentTime;
         }
-
-        XP_GAIN_TIMER = XP_GAIN_DURATION_MS;
     }
 
     private void drawSkillText(GuiGraphics guiGraphics, Minecraft mc, int x, int y, Skill skill) {
+        boolean isMaxLevel = skill.getLevel() == Skills.MAX_LEVEL;
+        StringBuilder builder = new StringBuilder();
+        builder.append(" Lv. ");
+        if (isMaxLevel) builder.append(Colour.GOLD);
+        builder.append(skill.getLevel()).append("/").append(Skills.MAX_LEVEL);
         guiGraphics.drawString(
                 mc.font,
-                Component.literal(type.getName() + " Lv. " + skill.getLevel() + "/" + Skills.MAX_LEVEL),
+                Component.literal(type.getName() + builder),
                 x, y,
                 0xFFFFFF
         );
@@ -73,13 +76,19 @@ public class SkillBar {
         double nextLevelXp = ClientSkills.getXpForLevel(currentLevel + 1);
         double xpNeededForLevel = nextLevelXp - currentLevelXp;
 
-        double progress = Math.min((currentXp - currentLevelXp) / xpNeededForLevel, 1.0);
+        double progress;
+        int barColor;
+        if (currentLevel == Skills.MAX_LEVEL) {
+            barColor = MAX_LEVEL_COLOR;
+            int xpInInt = (int) currentXp;
+            progress = Math.min((double) xpInInt / Skills.MAX_XP, 1.0);
+        } else {
+            barColor = BASE_BAR_COLOR;
+            progress = Math.min((currentXp - currentLevelXp) / xpNeededForLevel, 1.0);
+        }
         int barWidth = (int) (XP_BAR_WIDTH * progress);
-
         guiGraphics.fill(x, y, x + XP_BAR_WIDTH, y + XP_BAR_HEIGHT, BACKGROUND_COLOR);
-
-        guiGraphics.fill(x, y, x + barWidth, y + XP_BAR_HEIGHT, BASE_BAR_COLOR);
-
+        guiGraphics.fill(x, y, x + barWidth, y + XP_BAR_HEIGHT, barColor);
         drawXpText(guiGraphics, x, y - 1, skill);
     }
 
@@ -93,7 +102,6 @@ public class SkillBar {
 
         if (age >= 0.9f) {
             currentXpGainMessage = null;
-            XP_GAIN_TIMER = -1;
             return;
         }
 
@@ -122,25 +130,29 @@ public class SkillBar {
 
     private void drawXpText(GuiGraphics guiGraphics, int x, int y, Skill skill) {
         Font font = Minecraft.getInstance().font;
-        boolean isMaxLevel = skill.getLevel() == Skills.MAX_LEVEL;
+        boolean isMaxXp = (int) skill.getXp() >= Skills.MAX_XP;
+        boolean isMaxLevel = skill.getLevel() >= Skills.MAX_LEVEL;
 
         String xpText;
         String mode = String.valueOf(Config.Client.XP_TEXT_MODE.get());
         double currentLevelXp = ClientSkills.getXpForLevel(skill.getLevel());
-        double nextLevelXp = ClientSkills.getXpForLevel(skill.getLevel() + 1);
+        double nextLevelXp = Skills.getXpForLevel(skill.getLevel() + 1);
         double currentXp = skill.getXp();
-        double totalXpNeeded = nextLevelXp;
+        double totalXpNeeded = (isMaxLevel ? Skills.MAX_XP : nextLevelXp);
         double xpNeeded = nextLevelXp - currentLevelXp;
         double xpInLevel = skill.getXp() - currentLevelXp;
         double progress = xpInLevel / xpNeeded;
+        if (skill.getLevel() >= Skills.MAX_LEVEL) {
+            progress = Math.min(currentXp / Skills.MAX_XP, 1.0);
+        }
         xpText = switch (mode) {
-            case "PERCENT" -> isMaxLevel ? "Max Lvl" : Utils.formatPercentage(progress);
-            case "BOTH" -> isMaxLevel ? "Max Lvl" : String.format("%.0f/%.0f (%s)",
+            case "PERCENT" -> isMaxXp ? Colour.FORMAT_BOLD + "Max Experience" : Utils.formatPercentage(progress, false);
+            case "BOTH" -> isMaxXp ? Colour.FORMAT_BOLD + "Max Experience" : String.format("%.0f/%.0f (%s)",
                     currentXp,
                     totalXpNeeded,
-                    Utils.formatPercentage(progress)
+                    Utils.formatPercentage(progress, false)
             );
-            default -> isMaxLevel ? "Max Lvl" :
+            default -> isMaxXp ? Colour.FORMAT_BOLD + "Max Experience" :
                     String.format("%.0f / %.0f", currentXp, totalXpNeeded);
         };
 
