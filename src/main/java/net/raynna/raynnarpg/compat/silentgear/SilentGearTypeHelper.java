@@ -119,7 +119,7 @@ public class SilentGearTypeHelper {
             }
         }
 
-        tooltip.add(index.getAndIncrement(), Component.literal(compactLine.toString()));
-        tooltip.add(index.getAndIncrement(), Component.literal(Colour.YELLOW + "  Trait Details [Left Alt]"));
+        tooltip.add(Math.min(index.getAndIncrement(), tooltip.size()), Component.literal(compactLine.toString()));
+        tooltip.add(Math.min(index.getAndIncrement(), tooltip.size()), Component.literal(Colour.YELLOW + "  Trait Details [Left Alt]"));
     }
 }
