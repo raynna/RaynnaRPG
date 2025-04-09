@@ -100,7 +100,7 @@ public class Config {
                 XP_RATE = builder.translation("Server Xp Rate: ").comment("Fine adjust the xp rate of server.").defineInRange("xp_rate", 1.0, Double.MIN_VALUE, Double.MAX_VALUE);
                 MAX_LEVEL = builder.translation("Skill Max Level: ").comment("Fine adjust the max level of each skill in server.").defineInRange("max_level", 50, 1, Integer.MAX_VALUE);
                 MAX_XP = builder.translation("Skill Max Xp: ").comment("Fine adjust the max xp of each skill in server.").defineInRange("max_xp", 303000, 1, 100000000);
-                LEVEL_CAP = builder.translation("Skill Level Cap: ").comment("Fine adjust the level cap of each skill in server.").comment("For example, if you are level 40, and diamond ore is level 20, and you have level cap of 20, you will not gain xp, changing this to level cap 10, will make so you gain xp until level 30, as an example.").defineInRange("level_cap", 20, 1, Integer.MAX_VALUE);
+                LEVEL_CAP = builder.translation("Level diff for Xp Cap: ").comment("Fine adjust the level difference for xp cap of each skill in server.").comment("0 for disabled.").comment("For example, if you are level 40, and diamond ore is level 20, and you have level cap of 20, you will not gain xp, changing this to level cap 10, will make so you gain xp until level 30, as an example.").defineInRange("level_cap", 20, 0, Integer.MAX_VALUE);
             });
         }
 

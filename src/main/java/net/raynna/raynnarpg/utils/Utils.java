@@ -97,6 +97,9 @@ public class Utils {
 
     public static boolean isXpCapped(int playerLevel, int levelReq) {
         int levelCap = Config.Server.LEVEL_CAP.get();
+        if (levelCap == 0) {
+            return false;
+        }
         double difference = playerLevel - levelReq;
         return difference >= levelCap;
     }
