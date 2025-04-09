@@ -127,8 +127,9 @@ public class Skills {
 
     public static double getXpForMaterial(int level, SkillType type) {
         double baseXp = switch (type) {
-            case MINING, CRAFTING -> 3;
-            case SMELTING -> 4;
+            case CRAFTING -> Config.Server.BASE_CRAFTING_XP.get();
+            case MINING -> Config.Server.BASE_MINING_XP.get();
+            case SMELTING -> Config.Server.BASE_SMELTING_XP.get();
             default -> 1;
         };
         double xp = baseXp * (1 + 0.45 * (level - 1) + 0.0135 * Math.pow(level - 1, 2));

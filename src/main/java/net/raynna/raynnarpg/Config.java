@@ -83,6 +83,10 @@ public class Config {
         public static ModConfigSpec.IntValue MAX_LEVEL;
         public static ModConfigSpec.IntValue MAX_XP;
         public static ModConfigSpec.IntValue LEVEL_CAP;
+        public static ModConfigSpec.DoubleValue BASE_COMBAT_XP;
+        public static ModConfigSpec.DoubleValue BASE_MINING_XP;
+        public static ModConfigSpec.DoubleValue BASE_SMELTING_XP;
+        public static ModConfigSpec.DoubleValue BASE_CRAFTING_XP;
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -101,6 +105,9 @@ public class Config {
                 MAX_LEVEL = builder.translation("Skill Max Level: ").comment("Fine adjust the max level of each skill in server.").defineInRange("max_level", 50, 1, Integer.MAX_VALUE);
                 MAX_XP = builder.translation("Skill Max Xp: ").comment("Fine adjust the max xp of each skill in server.").defineInRange("max_xp", 303000, 1, 100000000);
                 LEVEL_CAP = builder.translation("Level diff for Xp Cap: ").comment("Fine adjust the level difference for xp cap of each skill in server.").comment("0 for disabled.").comment("For example, if you are level 40, and diamond ore is level 20, and you have level cap of 20, you will not gain xp, changing this to level cap 10, will make so you gain xp until level 30, as an example.").defineInRange("level_cap", 0, 0, Integer.MAX_VALUE);
+                BASE_MINING_XP = builder.translation("Base Mining Xp: ").comment("Fine adjust the base xp for mining skill in server.").comment("This setting is to increase the starting xp for materials.").defineInRange("base_mining_xp", 3.0, 0.1, Double.MAX_VALUE);
+                BASE_SMELTING_XP = builder.translation("Base Smelting Xp: ").comment("Fine adjust the base xp for smelting skill in server.").comment("This setting is to increase the starting xp for materials.").defineInRange("base_smelting_xp", 3.0, 0.1, Double.MAX_VALUE);
+                BASE_CRAFTING_XP = builder.translation("Base Crafting Xp: ").comment("Fine adjust the base xp for crafting skill in server.").comment("This setting is to increase the starting xp for materials.").defineInRange("base_crafting_xp", 3.0, 0.1, Double.MAX_VALUE);
             });
         }
 
