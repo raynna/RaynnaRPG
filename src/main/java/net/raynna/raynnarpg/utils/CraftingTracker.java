@@ -37,7 +37,6 @@ public class CraftingTracker {
         int ping = player.connection.latency();
         int delay = Math.max(600, ping);
         scheduler.schedule(() -> {
-            System.out.println("send summary for: " + tracker.getTotalExperience());
             sendCraftingSummary(player, type);
             if (onFinish != null) {
                 onFinish.run();
@@ -100,12 +99,10 @@ public class CraftingTracker {
         ServerPlayerEvents.CraftingResult.Materials materialData = materials.computeIfAbsent(materialName,
                 key -> new ServerPlayerEvents.CraftingResult.Materials(key, 0, 0, false));
 
-        materialData.increaseCount(count); // Increment the count of this material
-        materialData.trackXp(xp); // Accumulate the XP for this material
+        materialData.increaseCount(count);
+        materialData.trackXp(xp);
         materialData.setCapped(capped);
 
-        // Debug output
-        System.out.println("Material: " + materialName + ", Count: " + materialData.getCount() + ", XP: " + materialData.getXp());
     }
 
     private CraftingTracker() {}

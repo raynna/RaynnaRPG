@@ -478,7 +478,6 @@ public class ServerPlayerEvents {
                 break;
             }
             materialData.trackXp(materialXp);
-            System.out.println(materialData.getName() + ", " + materialData.getCount() + ", " + materialData.getXp() + ", " + materialData.isCapped());
             result.materials.put(materialName, materialData);
             result.totalExperience += materialXp;
 
@@ -512,7 +511,6 @@ public class ServerPlayerEvents {
 
     private static void grantCraftingExperience(ServerPlayer player, PlayerProgress progress, ItemStack craftedItem, CraftingResult result) {
         double xp = Math.round(result.totalExperience * 100) / 100.0;
-        System.out.println("grantExp: " + xp);
         double xpRate = Config.Server.XP_RATE.get();
         if (xpRate != 1.0) {
             xp *= xpRate;

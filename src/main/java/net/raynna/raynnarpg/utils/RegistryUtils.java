@@ -40,7 +40,6 @@ public class RegistryUtils {
         }
 
         Block block = BuiltInRegistries.BLOCK.get(id);
-        System.out.println("Block from registry: " + block);
 
         if (block != Blocks.AIR) {
             return new ItemStack(block).getHoverName().getString();
