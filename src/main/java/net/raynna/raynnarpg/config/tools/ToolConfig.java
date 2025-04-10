@@ -71,4 +71,10 @@ public class ToolConfig {
         }
         return null;
     }
+
+    public static void refresh() {
+        for (String key : TOOLS.keySet()) {
+            getToolDataByKey(key);
+        }
+    }
 }

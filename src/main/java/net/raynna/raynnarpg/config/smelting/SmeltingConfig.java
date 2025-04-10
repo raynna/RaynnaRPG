@@ -35,9 +35,6 @@ public class SmeltingConfig {
         String name = Utils.capitalize(item).replace("_", " ");
         if (key.contains("tier"))
             key = key.split(":")[1];
-        if (xp == 0) {
-            xp = Skills.getXpForMaterial(level, SkillType.SMELTING);
-        }
         ModConfigSpec.ConfigValue<Integer> levelValue = builder.translation(name + " Level: ")
                 .comment("Config on smelting level requirement for " + name + ".")
                 .comment("Default: " + level)
@@ -62,7 +59,13 @@ public class SmeltingConfig {
         if (data == null) {
             data = findDataByRawVariant(itemId);
         }
-
+        if (data != null && !data.getRaw().isEmpty()) {
+            String rawItemId = data.getRaw();
+            ConfigData rawData = getSmeltingDataByKey(rawItemId);
+            if (rawData != null && rawData.getXp() > 0) {
+                data.setXp(rawData.getXp());
+            }
+        }
         return data;
     }
 
@@ -75,7 +78,9 @@ public class SmeltingConfig {
         int level = levelValue != null ? levelValue.get() : 0;
         double xp = xpValue != null ? xpValue.get() : 0;
         String raw = rawValue != null ? rawValue.get() : "";
-
+        if (xp == 0 && level > 0) {
+            xp = Skills.getXpForMaterial(level, SkillType.SMELTING);
+        }
         if (level != 0 || xp != 0 || !raw.isEmpty()) {
             return new ConfigData(level, xp, "none", raw);
         }
@@ -85,15 +90,24 @@ public class SmeltingConfig {
     private static ConfigData findDataByRawVariant(String rawItemId) {
         for (Map.Entry<String, ModConfigSpec.ConfigValue<String>> entry : SMELTING_RAW_MATERIAL.entrySet()) {
             if (rawItemId.equals(entry.getValue().get())) {
-                return new ConfigData(
-                        SMELTING_LEVEL.get(entry.getKey()).get(),
-                        SMELTING_XP.get(entry.getKey()).get(),
-                        "none",
-                        rawItemId
-                );
+
+                String mainItemId = entry.getKey();
+                ConfigData mainItemData = getSmeltingDataByKey(mainItemId);
+                if (mainItemData != null) {
+                    return new ConfigData(
+                            mainItemData.getLevel(),
+                            mainItemData.getXp(),
+                            mainItemData.getTags(),
+                            mainItemData.getRaw());
+                }
             }
         }
         return null;
     }
 
+    public static void refresh() {
+        for (String key : SMELTING_LEVEL.keySet()) {
+            getSmeltingDataByKey(key);
+        }
+    }
 }

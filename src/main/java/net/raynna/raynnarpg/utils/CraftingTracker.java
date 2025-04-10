@@ -1,14 +1,10 @@
 package net.raynna.raynnarpg.utils;
 
-import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.Vec3;
-import net.raynna.raynnarpg.RaynnaRPG;
-import net.raynna.raynnarpg.client.ui.OverlayManager;
+import net.minecraft.world.item.ItemStack;
 import net.raynna.raynnarpg.network.packets.xpdrop.FloatingTextSender;
-import net.raynna.raynnarpg.server.player.PlayerProgress;
-import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
+import net.raynna.raynnarpg.server.events.ServerPlayerEvents;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 
 import java.util.HashMap;
@@ -23,16 +19,25 @@ public class CraftingTracker {
 
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    public static void accumulateCraftingData(ServerPlayer player, String itemName, int amount, double experience, SkillType type, Runnable onFinish) {
+    public static void accumulateCraftingData(ServerPlayer player, ItemStack craftedItem, ServerPlayerEvents.CraftingResult result, double experience, SkillType type, Runnable onFinish) {
         CraftingTracker tracker = craftingData.computeIfAbsent(player, key -> new CraftingTracker());
 
-        tracker.setItemName(itemName);
-        tracker.addCraftedAmount(amount);
+        tracker.setItemName(craftedItem.getHoverName().getString());
+        tracker.addCraftedAmount(craftedItem.getCount());
         tracker.addExperience(experience);
         tracker.updateLastEventTime();
+        tracker.setResult(result);
+
+        for (Map.Entry<String, ServerPlayerEvents.CraftingResult.Materials> entry : result.materials.entrySet()) {
+            String materialName = entry.getKey();
+            ServerPlayerEvents.CraftingResult.Materials materialData = entry.getValue();
+            tracker.accumulateMaterialData(materialName, materialData.getCount(), materialData.getXp(), materialData.isCapped());
+        }
+
         int ping = player.connection.latency();
         int delay = Math.max(600, ping);
         scheduler.schedule(() -> {
+            System.out.println("send summary for: " + tracker.getTotalExperience());
             sendCraftingSummary(player, type);
             if (onFinish != null) {
                 onFinish.run();
@@ -43,15 +48,40 @@ public class CraftingTracker {
     private static void sendCraftingSummary(ServerPlayer player, SkillType type) {
         CraftingTracker tracker = craftingData.get(player);
         if (tracker != null && tracker.shouldSendMessage()) {
+            ServerPlayerEvents.CraftingResult result = tracker.getCraftingResult();
             double roundedXp = Math.round(tracker.getTotalExperience() * 100.0) / 100.0;
-            if (tracker.getCraftedAmount() > 1) {
-                player.sendSystemMessage(Component.literal("You gained "
-                        + roundedXp + " experience for creating "
-                        + tracker.getCraftedAmount() + " x " + tracker.getItemName() + "'s."));
-            } else {
-                player.sendSystemMessage(Component.literal("You gained "
-                        + roundedXp + " experience for creating one " + tracker.getItemName() + "."));
+            StringBuilder message = new StringBuilder();
+            if (result != null) {
+                message.append("XP Breakdown:\n");
+                for (Map.Entry<String, ServerPlayerEvents.CraftingResult.Materials> entry : tracker.materials.entrySet()) {
+                    String material = entry.getKey();
+                    String name = RegistryUtils.getDisplayName(material);
+                    double materialXp = entry.getValue().getXp();
+                    int count = entry.getValue().getCount();
+                    double xpPerMaterial = Math.round(materialXp / count * 100.0) / 100.0;
+                    double xpForAll = Math.round(materialXp * 100.0) / 100.0;
+                    boolean isCapped = entry.getValue().isCapped();
+                    if (isCapped) {
+                        message.append("You are too high level to gain XP from ").append(name);
+                        continue;
+                    }
+
+                    if (count > 1) {
+                        message.append(count).append(" x ");
+                    }
+                    message.append(name).append(": ").append(xpForAll).append(" XP");
+
+                    if (count > 1) {
+                        message.append(" (").append(xpPerMaterial).append(" each)");
+                    }
+                    message.append("\n");
+                }
             }
+
+            message.append("You gained ").append(roundedXp).append(" experience for crafting");
+            if (tracker.getCraftedAmount() > 1) message.append(tracker.getCraftedAmount()).append(" x "); else message.append(" One ");
+            message.append(tracker.getItemName());
+            player.sendSystemMessage(Component.literal(message.toString()));
             FloatingTextSender.sendCenteredText(player, "+"+roundedXp+"xp", type);
             craftingData.remove(player);
         }
@@ -62,8 +92,27 @@ public class CraftingTracker {
     private int craftedAmount = 0;
     private double totalExperience = 0;
     private long lastEventTime = System.currentTimeMillis();
+    private ServerPlayerEvents.CraftingResult result;
+
+    private final Map<String, ServerPlayerEvents.CraftingResult.Materials> materials = new HashMap<>();
+
+    public void accumulateMaterialData(String materialName, int count, double xp, boolean capped) {
+        ServerPlayerEvents.CraftingResult.Materials materialData = materials.computeIfAbsent(materialName,
+                key -> new ServerPlayerEvents.CraftingResult.Materials(key, 0, 0, false));
+
+        materialData.increaseCount(count); // Increment the count of this material
+        materialData.trackXp(xp); // Accumulate the XP for this material
+        materialData.setCapped(capped);
+
+        // Debug output
+        System.out.println("Material: " + materialName + ", Count: " + materialData.getCount() + ", XP: " + materialData.getXp());
+    }
 
     private CraftingTracker() {}
+
+    public void setResult(ServerPlayerEvents.CraftingResult result) {
+        this.result = result;
+    }
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
@@ -95,6 +144,10 @@ public class CraftingTracker {
 
     public double getTotalExperience() {
         return totalExperience;
+    }
+
+    public ServerPlayerEvents.CraftingResult getCraftingResult() {
+        return result;
     }
 
     @Override

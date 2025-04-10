@@ -44,18 +44,20 @@ public class SilentGearTypeHelper {
     }
 
     public static void computePartTraits(ItemStack stack) {
+        Map<PartType, List<TraitInstance>> tempPartTraitMap = new HashMap<>();
         PartInstance part = getPartInstance(stack);
         if (part != null) {
             Collection<TraitInstance> traits = part.getTraits(PartGearKey.ofAll(part.getType()));
-            partTraitMap.computeIfAbsent(part.getType(), k -> new ArrayList<>()).addAll(traits);
+            tempPartTraitMap.computeIfAbsent(part.getType(), k -> new ArrayList<>()).addAll(traits);
         }
         MaterialInstance material = getMaterialInstance(stack);
         if (material != null) {
             for (PartType partType : material.getPartTypes()) {
                 List<TraitInstance> matTraits = (List<TraitInstance>) material.getTraits(PartGearKey.ofAll(partType));
-                partTraitMap.computeIfAbsent(partType, k -> new ArrayList<>()).addAll(matTraits);
+                tempPartTraitMap.computeIfAbsent(partType, k -> new ArrayList<>()).addAll(matTraits);
             }
         }
+        partTraitMap.putAll(tempPartTraitMap);
     }
 
     public static List<TraitInstance> getTraits(ItemStack stack) {
@@ -69,28 +71,33 @@ public class SilentGearTypeHelper {
     public static void handleTraitTooltips(ClientTooltipEvent.TooltipContext context, AtomicInteger currentIndex) {
         ItemStack stack = context.stack;
         List<Component> tooltip = context.event.getToolTip();
+
         partTraitMap.clear();
         computePartTraits(stack);
 
         if (isGearItem(stack)) {
             List<TraitInstance> gearTraits = getTraits(stack);
-            partTraitMap.computeIfAbsent(PartTypes.MAIN.get(), k -> new ArrayList<>()).addAll(gearTraits);
+            if (gearTraits != null) {
+                partTraitMap.computeIfAbsent(PartTypes.MAIN.get(), k -> new ArrayList<>()).addAll(gearTraits);
+            }
         }
 
         if (partTraitMap.isEmpty()) {
             return;
         }
+        Map<PartType, List<TraitInstance>> partTraitMapCopy = new HashMap<>(partTraitMap);
+
         if (context.isAltDown) {
-            addDetailedTraitsTooltip(stack, tooltip, currentIndex);
+            addDetailedTraitsTooltip(stack, tooltip, currentIndex, partTraitMapCopy);
         } else {
-            addCompactTraitsTooltip(stack, tooltip, currentIndex);
+            addCompactTraitsTooltip(stack, tooltip, currentIndex, partTraitMapCopy);
         }
     }
 
-    private static void addDetailedTraitsTooltip(ItemStack stack, List<Component> tooltip, AtomicInteger index) {
+    private static void addDetailedTraitsTooltip(ItemStack stack, List<Component> tooltip, AtomicInteger index, Map<PartType, List<TraitInstance>> partTraitMapCopy) {
         tooltip.add(index.getAndIncrement(), Component.literal(Colour.GOLD + "Traits:"));
 
-        for (Map.Entry<PartType, List<TraitInstance>> entry : partTraitMap.entrySet()) {
+        for (Map.Entry<PartType, List<TraitInstance>> entry : partTraitMapCopy.entrySet()) {
             PartType partType = entry.getKey();
             for (TraitInstance trait : entry.getValue()) {
                 String name = trait.getTrait().getDisplayName(trait.getLevel()).getString();
@@ -102,11 +109,11 @@ public class SilentGearTypeHelper {
         }
     }
 
-    private static void addCompactTraitsTooltip(ItemStack stack, List<Component> tooltip, AtomicInteger index) {
+    private static void addCompactTraitsTooltip(ItemStack stack, List<Component> tooltip, AtomicInteger index, Map<PartType, List<TraitInstance>> partTraitMapCopy) {
         StringBuilder compactLine = new StringBuilder(Colour.GOLD + "Traits: ");
         boolean first = true;
 
-        for (Map.Entry<PartType, List<TraitInstance>> entry : partTraitMap.entrySet()) {
+        for (Map.Entry<PartType, List<TraitInstance>> entry : partTraitMapCopy.entrySet()) {
             PartType partType = entry.getKey();
             for (TraitInstance trait : entry.getValue()) {
                 if (!first) {

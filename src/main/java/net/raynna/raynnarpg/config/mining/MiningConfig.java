@@ -35,9 +35,6 @@ public class MiningConfig {
         String item = key.contains(":") ? key.split(":")[1] : key;
         String readableName = item.replace("_", " ");
         String keyTranslation = Utils.capitalize(readableName);
-        if (xp == 0) {
-            xp = Skills.getXpForMaterial(level, SkillType.MINING);
-        }
         ModConfigSpec.ConfigValue<Integer> levelValue = builder.translation(keyTranslation + " Level: ")
                 .comment("Config on mining level requirement for " + readableName + ".")
                 .comment("Default: " + level)
@@ -101,7 +98,6 @@ public class MiningConfig {
         return null;
     }
 
-
     private static ConfigData getMiningDataByKey(String key) {
         ModConfigSpec.ConfigValue<Integer> levelValue = MINING_LEVEL.get(key);
         ModConfigSpec.ConfigValue<Double> xpValue = MINING_XP.get(key);
@@ -111,10 +107,18 @@ public class MiningConfig {
         double xp = xpValue != null ? xpValue.get() : 0;
         List<String> tagsList = tagsValue != null ? tagsValue.get() : List.of();
         String tags = String.join(", ", tagsList);
-
+        if (xp == 0 && level > 0) {
+            xp = Skills.getXpForMaterial(level, SkillType.MINING);
+        }
         if (level != 0 || xp != 0 || !tagsList.isEmpty()) {
             return new ConfigData(level, xp, tags);
         }
         return null;
+    }
+
+    public static void refresh() {
+        for (String key : MINING_LEVEL.keySet()) {
+            getMiningDataByKey(key);
+        }
     }
 }

@@ -45,7 +45,6 @@ import net.raynna.raynnarpg.server.player.playerdata.PlayerDataStorage;
 import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.*;
-import net.silentchaos512.gear.api.item.GearItem;
 
 import java.util.*;
 
@@ -425,7 +424,7 @@ public class ServerPlayerEvents {
             xp *= xpRate;
         }
         double finalXp = xp;
-        CraftingTracker.accumulateCraftingData(player, event.getSmelting().getHoverName().getString(), event.getSmelting().getCount(), finalXp, SkillType.SMELTING, () -> {
+        CraftingTracker.accumulateCraftingData(player, event.getSmelting(), null, finalXp, SkillType.SMELTING, () -> {
             if (Utils.isXpCapped(progress.getSkills().getSkill(SkillType.SMELTING).getLevel(), data.getLevel())) {
                 MessageSender.send(player, "You are to high of a level to gain experience from " + event.getSmelting().getHoverName().getString());
                 return;
@@ -456,15 +455,21 @@ public class ServerPlayerEvents {
                 result.hasEmptySlots = true;
                 continue;
             }
-
             result.totalSlotsUsed++;
-            result.uniqueMaterials.add(material.getHoverName().getString());
+            String materialName = material.getItem().getDescriptionId();
+            result.uniqueMaterials.add(materialName);
 
+            CraftingResult.Materials materialData = result.materials.get(materialName);
+            if (materialData == null) {
+                materialData = new CraftingResult.Materials(materialName, 0, 0, false);
+            }
             ConfigData data = CraftingConfig.getCraftingData(material);
             if (data == null) continue;
-
+            materialData.increaseCount(1);
+            double materialXp = data.getXp();
             if (Utils.isXpCapped(progress.getSkills().getSkill(SkillType.CRAFTING).getLevel(), data.getLevel())) {
-                MessageSender.send(player, "You are to high of a level to gain experience from " + material.getHoverName().getString() + ".");
+                materialData.setCapped(true);
+                result.materials.put(materialName, materialData);
                 continue;
             }
             if (playerLevel < data.getLevel()) {
@@ -472,8 +477,12 @@ public class ServerPlayerEvents {
                 result.blocked = true;
                 break;
             }
+            materialData.trackXp(materialXp);
+            System.out.println(materialData.getName() + ", " + materialData.getCount() + ", " + materialData.getXp() + ", " + materialData.isCapped());
+            result.materials.put(materialName, materialData);
+            result.totalExperience += materialXp;
+
             result.levelReq = data.getLevel();
-            result.totalExperience += data.getXp();
         }
         return result;
     }
@@ -495,29 +504,82 @@ public class ServerPlayerEvents {
     }
 
     private static boolean shouldGrantExperience(ItemStack craftedItem, CraftingResult result) {
-        return !ReversibleCraftingRegistry.isReversible(craftedItem.getItem()) && (result.hasEmptySlots || result.uniqueMaterials.size() != 1 || result.totalSlotsUsed <= 4);
+        boolean isReversible = ReversibleCraftingRegistry.isReversible(craftedItem.getItem());
+        boolean hasMultipleUniqueMaterials = result.uniqueMaterials.size() > 1;
+        boolean invalidItem = isReversible && !hasMultipleUniqueMaterials;
+        return !invalidItem;
     }
 
     private static void grantCraftingExperience(ServerPlayer player, PlayerProgress progress, ItemStack craftedItem, CraftingResult result) {
         double xp = Math.round(result.totalExperience * 100) / 100.0;
+        System.out.println("grantExp: " + xp);
         double xpRate = Config.Server.XP_RATE.get();
         if (xpRate != 1.0) {
             xp *= xpRate;
         }
         double finalXp = xp;
-        CraftingTracker.accumulateCraftingData(player, craftedItem.getHoverName().getString(), craftedItem.getCount(), finalXp, SkillType.CRAFTING, () -> {
+        CraftingTracker.accumulateCraftingData(player, craftedItem, result, finalXp, SkillType.CRAFTING, () -> {
             progress.getSkills().addXpNoBonus(SkillType.CRAFTING, finalXp);
 
         });
     }
 
-    private static class CraftingResult {
-        boolean blocked = false;
-        boolean hasEmptySlots = false;
-        int totalSlotsUsed = 0;
-        Set<String> uniqueMaterials = new HashSet<>();
-        double totalExperience = 0.0;
-        int levelReq = 0;
+    public static class CraftingResult {
+        public boolean blocked = false;
+        public boolean hasEmptySlots = false;
+        public int totalSlotsUsed = 0;
+        public Set<String> uniqueMaterials = new HashSet<>();
+        public double totalExperience = 0.0;
+        public int levelReq = 0;
+        public Map<String, Materials> materials = new HashMap<>();
+
+        public static class Materials {
+
+            private String name;
+            private int count;
+            private double xp;
+            private boolean capped;
+
+
+            public Materials(String name, int count, double xp, boolean capped) {
+                this.name = name;
+                this.count = count;
+                this.xp = xp;
+                this.capped = capped;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public void trackXp(double amount) {
+                this.xp += amount;
+            }
+
+            public void increaseCount(int count) {
+                this.count += count;
+            }
+
+            public void setCapped(boolean capped) {
+                this.capped = capped;
+            }
+
+            public double getXp() {
+                return xp;
+            }
+
+            public boolean isCapped() {
+                return capped;
+            }
+
+            public int getCount() {
+                return count;
+            }
+
+            public String getName() {
+                return name;
+            }
+        }
     }
 
     public static void register() {

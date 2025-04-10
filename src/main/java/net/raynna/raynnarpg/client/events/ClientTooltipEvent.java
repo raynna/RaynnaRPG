@@ -491,7 +491,7 @@ public class ClientTooltipEvent {
     }
 
     private static String formatRequirement(int playerLevel, ConfigData data) {
-        return formatRequirement(playerLevel, 0, data);
+        return formatRequirement(playerLevel, data.getXp(), data);
     }
 
     private static void handleDebugTooltips(TooltipContext context) {

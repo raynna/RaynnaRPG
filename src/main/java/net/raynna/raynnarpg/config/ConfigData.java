@@ -2,7 +2,7 @@ package net.raynna.raynnarpg.config;
 
 public class ConfigData {
     public final int level;
-    public final double xp;
+    public double xp;
     public final String tags;
     public final String raw;
 
@@ -27,6 +27,10 @@ public class ConfigData {
 
     public double getXp() {
         return xp;
+    }
+
+    public void setXp(double xp) {
+        this.xp = xp;
     }
 
     public String getTags() {

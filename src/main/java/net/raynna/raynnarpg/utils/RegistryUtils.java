@@ -13,6 +13,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.silentchaos512.gear.setup.SgBlocks;
 import net.silentchaos512.gear.setup.SgRegistries;
 
+import java.util.Arrays;
+
 public class RegistryUtils {
 
     /**
@@ -21,15 +23,25 @@ public class RegistryUtils {
     public static String getDisplayName(String key) {
         if (key == null || key.isEmpty()) return "Unknown";
 
-        ResourceLocation id = ResourceLocation.tryParse(key);
-        if (id == null) return "Invalid Resource Location";
+        if (key.startsWith("item.") || key.startsWith("block.")) {
+            key = key.substring(key.indexOf('.') + 1);
+        }
 
+        String[] parts = key.split("\\.");
+        if (parts.length < 2) return "Invalid Resource Key";
+
+        String namespace = parts[0];
+        String path = String.join("_", Arrays.copyOfRange(parts, 1, parts.length));
+
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, path);
         Item item = BuiltInRegistries.ITEM.get(id);
         if (item != Items.AIR) {
             return new ItemStack(item).getHoverName().getString();
         }
 
         Block block = BuiltInRegistries.BLOCK.get(id);
+        System.out.println("Block from registry: " + block);
+
         if (block != Blocks.AIR) {
             return new ItemStack(block).getHoverName().getString();
         }

@@ -78,4 +78,22 @@ public class CombatConfig {
                 new ConfigData(levelValue.get(), 0) :
                 null;
     }
+
+    private static ConfigData getDataByKey(String key, boolean armour) {
+        ModConfigSpec.ConfigValue<Integer> levelValue = armour ?
+                GEARS.get(key) :
+                WEAPONS.get(key);
+        return levelValue != null ?
+                new ConfigData(levelValue.get(), 0) :
+                null;
+    }
+
+    public static void refresh() {
+        for (String key : GEARS.keySet()) {
+            ConfigData data = getDataByKey(key, true);
+        }
+        for (String key : WEAPONS.keySet()) {
+            ConfigData data = getDataByKey(key, false);
+        }
+    }
 }
