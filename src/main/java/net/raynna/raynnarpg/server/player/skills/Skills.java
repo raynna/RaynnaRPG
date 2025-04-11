@@ -19,8 +19,16 @@ import java.util.Map;
 
 public class Skills {
 
-    public static int MAX_LEVEL = 50;
-    public static int MAX_XP = 303000;//to avoid people getting more xp than max lvl, might want to increase if added some type of highscore
+    /**
+     * For config settings
+     */
+    public static double XP_RATE;
+    public static int MAX_LEVEL;
+    public static int MAX_XP;
+    public static int XP_LEVEL_CAP;
+    public static double BASE_CRAFTING_XP;
+    public static double BASE_MINING_XP;
+    public static double BASE_SMELTING_XP;
 
     private final Map<SkillType, Skill> skills = new EnumMap<>(SkillType.class);
     private ServerPlayer player;
@@ -29,8 +37,17 @@ public class Skills {
         for (SkillType type : SkillType.values()) {
             skills.put(type, new Skill(type));
         }
+        setXpRate(Config.Server.XP_RATE.get());
         setMaxLevel(Config.Server.MAX_LEVEL.get());
         setMaxXp(Config.Server.MAX_XP.get());
+        setXpLevelCap(Config.Server.LEVEL_CAP.get());
+        setBaseMiningXp(Config.Server.BASE_MINING_XP.get());
+        setBaseSmeltingXpXp(Config.Server.BASE_SMELTING_XP.get());
+        setBaseCraftingXp(Config.Server.BASE_CRAFTING_XP.get());
+    }
+
+    public static void setXpRate(double xpRate) {
+        XP_RATE = xpRate;
     }
 
     public static void setMaxLevel(int level) {
@@ -39,6 +56,22 @@ public class Skills {
 
     public static void setMaxXp(int xp) {
         MAX_XP = xp;
+    }
+
+    public static void setXpLevelCap(int levelCap) {
+        XP_LEVEL_CAP = levelCap;
+    }
+
+    public static void setBaseMiningXp(double xp) {
+        BASE_MINING_XP = xp;
+    }
+
+    public static void setBaseSmeltingXpXp(double xp) {
+        BASE_SMELTING_XP = xp;
+    }
+
+    public static void setBaseCraftingXp(double xp) {
+        BASE_CRAFTING_XP = xp;
     }
 
     public Map<SkillType, Skill> getSkills() {
@@ -127,9 +160,9 @@ public class Skills {
 
     public static double getXpForMaterial(int level, SkillType type) {
         double baseXp = switch (type) {
-            case CRAFTING -> Config.Server.BASE_CRAFTING_XP.get();
-            case MINING -> Config.Server.BASE_MINING_XP.get();
-            case SMELTING -> Config.Server.BASE_SMELTING_XP.get();
+            case CRAFTING -> BASE_CRAFTING_XP;
+            case MINING -> BASE_MINING_XP;
+            case SMELTING -> BASE_SMELTING_XP;
             default -> 1;
         };
         double xp = baseXp * (1 + 0.45 * (level - 1) + 0.0135 * Math.pow(level - 1, 2));

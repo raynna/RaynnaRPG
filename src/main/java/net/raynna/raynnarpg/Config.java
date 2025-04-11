@@ -6,11 +6,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.*;
@@ -723,32 +725,41 @@ public class Config {
         }
     }
 
-    static void reset(ModConfigSpec.Builder builder) {
-        Server.registerMiningConfigs(builder);
-    }
-
-
     @SubscribeEvent
     static void onReload(final ModConfigEvent.Reloading event) {
         ModConfig config = event.getConfig();
-        if (config.getSpec() == Server.SPEC) {
+        if (config.getSpec() == Server.SPEC || FMLEnvironment.dist == Dist.DEDICATED_SERVER) {
             MiningConfig.refresh();
             CraftingConfig.refresh();
             SmeltingConfig.refresh();
             ToolConfig.refresh();
             CombatConfig.refresh();
+            double xpRate = Server.XP_RATE.get();
             int maxLevel = Server.MAX_LEVEL.get();
-            double maxXp = Server.MAX_XP.get();
+            int maxXp = Server.MAX_XP.get();
+            int levelCap = Server.LEVEL_CAP.get();
+            double baseMiningXp = Server.BASE_MINING_XP.get();
+            double baseCraftingXp = Server.BASE_CRAFTING_XP.get();
+            double baseSmeltingXp = Server.BASE_SMELTING_XP.get();
+            Skills.setXpRate(xpRate);
+            Skills.setXpLevelCap(levelCap);
             Skills.setMaxLevel(maxLevel);
-            Skills.setMaxXp((int) maxXp);
+            Skills.setMaxXp(maxXp);
+            Skills.setBaseMiningXp(baseMiningXp);
+            Skills.setBaseSmeltingXpXp(baseSmeltingXp);
+            Skills.setBaseCraftingXp(baseCraftingXp);
             System.out.println("Server Configs reloaded!");
+        }
+
+        if (FMLEnvironment.dist == Dist.DEDICATED_SERVER) {
+            Config.Server.SPEC.save();
         }
     }
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent.Loading event) {
         ModConfig config = event.getConfig();
-        if (config.getSpec() == Config.Server.SPEC) {
+        if (config.getSpec() == Config.Server.SPEC ) {
             System.out.println("Loaded on server");
         }
         if (config.getSpec() == Config.Client.SPEC) {

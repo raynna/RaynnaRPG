@@ -13,5 +13,6 @@ public class Commands {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
         SetLevelCommand.register(dispatcher);
         LevelsCommad.register(dispatcher);
+        ReloadConfigCommand.register(dispatcher);
     }
 }

@@ -38,6 +38,7 @@ import net.raynna.raynnarpg.config.crafting.CraftingConfig;
 import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
+import net.raynna.raynnarpg.newconfig.RaynnaServerConfig;
 import net.raynna.raynnarpg.recipe.ReversibleCraftingRegistry;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
@@ -318,17 +319,17 @@ public class ServerPlayerEvents {
     private static boolean canUseWeapon(ServerPlayer player, ItemStack weapon, int combatLevel) {
         if (weapon.isEmpty()) return true;
 
-        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(weapon) && ItemUtils.isWeapon(weapon)) {
+        /*if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(weapon) && ItemUtils.isWeapon(weapon)) {
             if (!ItemUtils.checkCombatLevel(player, weapon, combatLevel, false)) {
                 return false;
             }
-        }
+        }*/
 
-        ConfigData data = CombatConfig.getData(weapon, false);
+        /*ConfigData data = net.raynna.raynnarpg.newconfig.combat.CombatConfig.getWeaponData(weapon);
         if (data != null && combatLevel < data.getLevel()) {
-            MessagePacketSender.send(player, "You need combat level " + data.getLevel() + " to use " + weapon.getHoverName().getString());
+            MessagePacketSender.send(player, "(Server) You need combat level " + data.getLevel() + " to use " + weapon.getHoverName().getString());
             return false;
-        }
+        }*/
         return true;
     }
 

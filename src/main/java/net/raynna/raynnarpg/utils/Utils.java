@@ -96,7 +96,7 @@ public class Utils {
     }
 
     public static boolean isXpCapped(int playerLevel, int levelReq) {
-        int levelCap = Config.Server.LEVEL_CAP.get();
+        int levelCap = Skills.XP_LEVEL_CAP;
         if (levelCap == 0) {
             return false;
         }
