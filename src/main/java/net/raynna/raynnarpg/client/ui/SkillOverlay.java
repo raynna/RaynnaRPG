@@ -31,9 +31,9 @@ public class SkillOverlay {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.options.hideGui) return;
 
-        if (GLFW.glfwGetKey(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS) {
+        /*if (GLFW.glfwGetKey(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS) {
             return;
-        }
+        }*/
         int overlayWidth = 110;
         int overlayHeight = skillBars.size() * LINE_SPACING;
 

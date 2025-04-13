@@ -342,7 +342,7 @@ public class ClientTooltipEvent {
             case "swift sneak":
                 return String.format("Increases sneak speed by %d%% (15%% per level)", level * 15);
             case "sharpness":
-                return String.format("+%.1f damage (1.25 per level)", level * 1.25);
+                return String.format("+%.1f damage (0.5 per level)", 1.0 + (level - 1) * 0.5);
             case "smite":
                 return String.format("+%.1f damage vs undead (2.5 per level)", level * 2.5);
             case "bane of arthropods":

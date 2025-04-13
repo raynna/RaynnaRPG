@@ -1,6 +1,5 @@
 package net.raynna.raynnarpg.client.events;
 
-import com.iafenvoy.jupiter.ServerConfigManager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
@@ -24,7 +23,6 @@ import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.ItemUtils;
 import net.raynna.raynnarpg.utils.Utils;
-import net.silentchaos512.gear.api.item.GearItem;
 
 @EventBusSubscriber(modid = RaynnaRPG.MOD_ID, value = Dist.CLIENT)
 public class ClientBlockEvents {

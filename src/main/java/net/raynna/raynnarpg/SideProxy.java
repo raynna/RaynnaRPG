@@ -1,11 +1,6 @@
 package net.raynna.raynnarpg;
 
-import com.iafenvoy.jupiter.ConfigManager;
-import com.iafenvoy.jupiter.ServerConfigManager;
-import com.iafenvoy.jupiter.network.ClientConfigNetwork;
-import com.iafenvoy.jupiter.network.ServerConfigNetwork;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
