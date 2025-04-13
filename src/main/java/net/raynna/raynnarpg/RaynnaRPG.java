@@ -1,25 +1,14 @@
 package net.raynna.raynnarpg;
 
-import com.iafenvoy.jupiter.ConfigManager;
-import com.iafenvoy.jupiter.ServerConfigManager;
-import com.iafenvoy.jupiter.network.ClientConfigNetwork;
-import com.iafenvoy.jupiter.network.ServerNetworkHelper;
-import com.iafenvoy.jupiter.render.screen.ConfigSelectScreen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.minecraft.util.RandomSource;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.raynna.raynnarpg.client.ui.OverlayManager;
-import net.raynna.raynnarpg.newconfig.RaynnaClientConfig;
-import net.raynna.raynnarpg.newconfig.RaynnaServerConfig;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -66,11 +55,6 @@ public class RaynnaRPG
                 ? new SideProxy.Client(modEventBus, modContainer)
                 : new SideProxy.Server(modEventBus, modContainer);
 
-
-        ConfigManager.getInstance().registerConfigHandler(RaynnaServerConfig.INSTANCE);
-        ServerConfigManager.registerServerConfig(RaynnaServerConfig.INSTANCE, ServerConfigManager.PermissionChecker.IS_OPERATOR);
-        ConfigManager.getInstance().registerConfigHandler(RaynnaClientConfig.INSTANCE);
-
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.Server.SPEC);
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.Client.SPEC);
         NeoForge.EVENT_BUS.register(this);
@@ -98,17 +82,6 @@ public class RaynnaRPG
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             LOGGER.info("[RaynnaRPG] Mod loaded on client]");
-            event.enqueueWork(() -> {
-                ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () ->
-                        (mc, parent) -> new ConfigSelectScreen<>(
-                                Component.translatable("config.raynna.common.title"),
-                                parent,
-                                RaynnaServerConfig.INSTANCE,
-                                RaynnaClientConfig.INSTANCE
-                        )
-                );
-            });
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
     }
 }

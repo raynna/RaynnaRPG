@@ -90,10 +90,10 @@ public class CombatConfig {
 
     public static void refresh() {
         for (String key : GEARS.keySet()) {
-            ConfigData data = getDataByKey(key, true);
+            getDataByKey(key, true);
         }
         for (String key : WEAPONS.keySet()) {
-            ConfigData data = getDataByKey(key, false);
+            getDataByKey(key, false);
         }
     }
 }

@@ -38,7 +38,6 @@ import net.raynna.raynnarpg.config.crafting.CraftingConfig;
 import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
-import net.raynna.raynnarpg.newconfig.RaynnaServerConfig;
 import net.raynna.raynnarpg.recipe.ReversibleCraftingRegistry;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;

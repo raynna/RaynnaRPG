@@ -18,10 +18,9 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.ConfigData;
+import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.mining.MiningConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
-import net.raynna.raynnarpg.newconfig.RaynnaServerConfig;
-import net.raynna.raynnarpg.newconfig.combat.CombatConfig;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.ItemUtils;
 import net.raynna.raynnarpg.utils.Utils;
@@ -70,15 +69,15 @@ public class ClientBlockEvents {
     private static boolean canUseWeapon(Player player, ItemStack weapon, int combatLevel) {
         if (weapon.isEmpty()) return true;
 
-        /*if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(weapon) && ItemUtils.isWeapon(weapon)) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(weapon) && ItemUtils.isWeapon(weapon)) {
             if (!ItemUtils.checkCombatLevel(player, weapon, combatLevel, false)) {
                 return false;
             }
-        }*/
-        ConfigData data = CombatConfig.getWeaponData(weapon);
+        }
+        ConfigData data = CombatConfig.getData(weapon, false);
         if (data != null && combatLevel < data.getLevel()) {
             player.displayClientMessage(
-                    Component.literal("(Client) You need a combat level of " + data.getLevel() +
+                    Component.literal("You need a combat level of " + data.getLevel() +
                             " to use " + weapon.getHoverName().getString()),
                     true
             );

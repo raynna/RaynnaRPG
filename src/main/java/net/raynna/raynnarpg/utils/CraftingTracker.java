@@ -28,10 +28,12 @@ public class CraftingTracker {
         tracker.updateLastEventTime();
         tracker.setResult(result);
 
-        for (Map.Entry<String, ServerPlayerEvents.CraftingResult.Materials> entry : result.materials.entrySet()) {
-            String materialName = entry.getKey();
-            ServerPlayerEvents.CraftingResult.Materials materialData = entry.getValue();
-            tracker.accumulateMaterialData(materialName, materialData.getCount(), materialData.getXp(), materialData.isCapped());
+        if (result != null && result.materials != null) {
+            for (Map.Entry<String, ServerPlayerEvents.CraftingResult.Materials> entry : result.materials.entrySet()) {
+                String materialName = entry.getKey();
+                ServerPlayerEvents.CraftingResult.Materials materialData = entry.getValue();
+                tracker.accumulateMaterialData(materialName, materialData.getCount(), materialData.getXp(), materialData.isCapped());
+            }
         }
 
         int ping = player.connection.latency();
@@ -47,8 +49,10 @@ public class CraftingTracker {
     private static void sendCraftingSummary(ServerPlayer player, SkillType type) {
         CraftingTracker tracker = craftingData.get(player);
         if (tracker != null && tracker.shouldSendMessage()) {
-            ServerPlayerEvents.CraftingResult result = tracker.getCraftingResult();
+
             double roundedXp = Math.round(tracker.getTotalExperience() * 100.0) / 100.0;
+
+            ServerPlayerEvents.CraftingResult result = tracker.getCraftingResult();
             StringBuilder message = new StringBuilder();
             if (result != null) {
                 message.append("XP Breakdown:\n");

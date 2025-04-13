@@ -21,8 +21,6 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.raynna.raynnarpg.client.events.ClientBlockEvents;
 import net.raynna.raynnarpg.client.events.ClientGuiEvents;
 import net.raynna.raynnarpg.client.events.ClientTooltipEvent;
-import net.raynna.raynnarpg.newconfig.RaynnaClientConfig;
-import net.raynna.raynnarpg.newconfig.RaynnaServerConfig;
 import net.raynna.raynnarpg.recipe.ReversibleCraftingRegistry;
 import net.raynna.raynnarpg.server.commands.Commands;
 import net.raynna.raynnarpg.server.events.ServerBlockEvents;
@@ -94,13 +92,6 @@ class SideProxy implements IProxy {
             ClientTooltipEvent.register();
             ClientGuiEvents.register();
             container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-            ClientConfigNetwork.init();
-            ClientConfigNetwork.startConfigSync(
-                    ResourceLocation.fromNamespaceAndPath(RaynnaRPG.MOD_ID, "common"),
-                    tag -> {
-                        RaynnaServerConfig.INSTANCE.deserializeNbt(tag);
-                    }
-            );
         }
 
         @Nullable
@@ -132,7 +123,6 @@ class SideProxy implements IProxy {
         Server(IEventBus modEventBus, ModContainer container) {
             super(modEventBus);
             modEventBus.addListener(this::serverSetup);
-            ServerConfigNetwork.init();
         }
 
         private void serverSetup(FMLDedicatedServerSetupEvent event) {
