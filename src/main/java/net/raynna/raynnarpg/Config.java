@@ -232,6 +232,7 @@ public class Config {
             boolean hasAllTheOres = ModList.get().isLoaded("alltheores");
             ConfigRegister.registerCategory(builder, "smelting_config", "Smelting", "Settings for Smelting", () -> {
                 List<SmeltingEntry> foods = new ArrayList<>();
+                foods.add(new SmeltingEntry("minecraft:dried_kelp", 1, "minecraft:kelp"));
                 foods.add(new SmeltingEntry("minecraft:cooked_salmon", 1, "minecraft:salmon"));
                 foods.add(new SmeltingEntry("minecraft:cooked_cod", 1, "minecraft:cod"));
                 foods.add(new SmeltingEntry("minecraft:baked_potato", 1, "minecraft:potato"));
@@ -306,6 +307,7 @@ public class Config {
                 //Wood
                 List<CraftingEntry> wood = new ArrayList<>();
                 wood.add(new CraftingEntry("minecraft:logs", 1, "minecraft:logs"));
+                wood.add(new CraftingEntry("minecraft:bamboo", 1, 0.50));
                 wood.add(new CraftingEntry("minecraft:planks", 1, 1.0, "minecraft:planks"));
                 wood.add(new CraftingEntry("minecraft:stick", 1, 0.25, "c:rods/wooden"));
                 CraftingConfig.registerMultipleConfigs(builder, "crafting_wood_materials", "Wood", wood);
@@ -330,8 +332,13 @@ public class Config {
                 //Coal/Misc?
                 List<CraftingEntry> misc = new ArrayList<>();
                 misc.add(new CraftingEntry("minecraft:wheat", 1, 1.0, "c:crops"));
+                misc.add(new CraftingEntry("minecraft:feather", 1, "c:feathers"));
                 misc.add(new CraftingEntry("minecraft:coal_block", 3, "minecraft:coals"));
+                misc.add(new CraftingEntry("minecraft:flint", 7));
                 misc.add(new CraftingEntry("minecraft:redstone", 13, "c:dusts/redstone"));
+                misc.add(new CraftingEntry("iron_rod", 15, "c:rods/iron"));
+                misc.add(new CraftingEntry("blaze_rod", 20, "c:rods/blaze"));
+                misc.add(new CraftingEntry("blaze_powder", 20));
                 CraftingConfig.registerMultipleConfigs(builder, "crafting_misc_materials", "Misc", misc);
 
                 //Gems
@@ -339,9 +346,6 @@ public class Config {
                 gems.add(new CraftingEntry("silentgear:bort", 15, "c:gems/bort"));
                 gems.add(new CraftingEntry("minecraft:quartz", 18, 20.0, "c:gems/quartz"));
                 gems.add(new CraftingEntry("quartz", 18));
-                gems.add(new CraftingEntry("iron_rod", 15, "c:rods/iron"));
-                gems.add(new CraftingEntry("blaze_rod", 20, "c:rods/blaze"));
-                gems.add(new CraftingEntry("blaze_powder", 20));
                 gems.add(new CraftingEntry("minecraft:diamond", 30, "c:gems/diamond"));
                 gems.add(new CraftingEntry("minecraft:emerald", 32, "c:gems/emerald"));
                 CraftingConfig.registerMultipleConfigs(builder, "crafting_gem_materials", "Gems", gems);
