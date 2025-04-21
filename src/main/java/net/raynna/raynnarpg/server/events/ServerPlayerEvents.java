@@ -390,34 +390,31 @@ public class ServerPlayerEvents {
         target.sendSystemMessage(Component.literal(feeder.getName().getString() + " has fed you."));
     }
 
-    private static ItemStack LAST_FURNACE_OUTPUT = null;
-
     private static void handleIronFurnaceEvent(ServerPlayer player, BlockIronFurnaceContainerBase menu, PlayerEvent.ItemSmeltedEvent event) {
         if (event.getEntity().getServer() == null) return;
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
         if (progress == null) {
             return;
         }
-        ItemStack item = event.getSmelting();
-        ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
+        AtomicReference<ItemStack> item = new AtomicReference<>(event.getSmelting());
+        AtomicReference<ConfigData> data = new AtomicReference<>(SmeltingConfig.getSmeltingData(event.getSmelting()));
         if (event.getEntity().getPersistentData().contains("LAST_FURNACE_OUTPUT")) {
             HolderLookup.Provider provider = event.getEntity().getServer().registryAccess();
             CompoundTag tag = event.getEntity().getPersistentData().getCompound("LAST_FURNACE_OUTPUT");
             Optional<ItemStack> optionalItem = ItemStack.parse(provider, tag);
             optionalItem.ifPresent(entry -> {
-                LAST_FURNACE_OUTPUT = entry;
+                item.set(entry);
+                data.set(SmeltingConfig.getSmeltingData(entry));
             });
-            item = LAST_FURNACE_OUTPUT;
-            data = SmeltingConfig.getSmeltingData(LAST_FURNACE_OUTPUT);
             event.getEntity().getPersistentData().remove("LAST_FURNACE_OUTPUT");
         }
-        if (data == null) {
+        if (data.get() == null) {
             return;
         }
-        if (progress.getSkills().getSkill(SkillType.SMELTING).getLevel() < data.getLevel()) {
-            handleFailedIronFurnace(player, menu, item, event, data);
+        if (progress.getSkills().getSkill(SkillType.SMELTING).getLevel() < data.get().getLevel()) {
+            handleFailedIronFurnace(player, menu, item.get(), event, data.get());
         } else {
-            grantSmeltingExperience(player, progress, item, data);
+            grantSmeltingExperience(player, progress, item.get(), data.get());
         }
     }
 
