@@ -81,8 +81,8 @@ public class CraftingTracker {
                 }
             }
 
-            message.append("You gained ").append(roundedXp).append(" experience for crafting");
-            if (tracker.getCraftedAmount() > 1) message.append(tracker.getCraftedAmount()).append(" x "); else message.append(" One ");
+            message.append("You gained ").append(roundedXp).append(" experience for crafting ");
+            if (tracker.getCraftedAmount() > 1) message.append(tracker.getCraftedAmount()).append(" x "); else message.append("One ");
             message.append(tracker.getItemName());
             player.sendSystemMessage(Component.literal(message.toString()));
             FloatingTextSender.sendCenteredText(player, "+"+roundedXp+"xp", type);

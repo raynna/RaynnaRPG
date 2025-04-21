@@ -1,6 +1,7 @@
 package net.raynna.raynnarpg.server.events;
 
 import com.mojang.datafixers.util.Pair;
+import ironfurnaces.container.furnaces.BlockIronFurnaceContainerBase;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -30,6 +31,7 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.raynna.raynnarpg.Config;
 import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.*;
@@ -47,6 +49,7 @@ import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ServerPlayerEvents {
 
@@ -73,6 +76,18 @@ public class ServerPlayerEvents {
         event.getServer().getAllLevels().forEach(level -> {
             level.players().forEach(PlayerDataStorage::savePlayer);
         });
+    }
+
+    @SubscribeEvent
+    public static void onTick(PlayerTickEvent.Post event) {
+        if (event.getEntity().getServer() == null) return;
+        if (event.getEntity().containerMenu instanceof BlockIronFurnaceContainerBase ironFurnace) {
+            ItemStack output = ironFurnace.getSlot(OUTPUT_SLOT).getItem();
+            if (output.isEmpty()) return;
+            CompoundTag tag = new CompoundTag();
+            HolderLookup.Provider provider = event.getEntity().getServer().registryAccess();
+            event.getEntity().getPersistentData().put("LAST_FURNACE_OUTPUT", output.save(provider, tag));
+        }
     }
 
     @SubscribeEvent
@@ -228,8 +243,14 @@ public class ServerPlayerEvents {
     @SubscribeEvent
     public static void onFurnace(PlayerEvent.ItemSmeltedEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if (!(event.getEntity().containerMenu instanceof AbstractFurnaceMenu menu)) return;
-        handleSmeltingEvent(player, menu, event);
+
+
+        if (event.getEntity().containerMenu instanceof BlockIronFurnaceContainerBase ironFurnace) {
+            handleIronFurnaceEvent(player, ironFurnace, event);
+        }
+        if (event.getEntity().containerMenu instanceof AbstractFurnaceMenu menu) {
+            handleSmeltingEvent(player, menu, event);
+        }
     }
 
 
@@ -369,16 +390,82 @@ public class ServerPlayerEvents {
         target.sendSystemMessage(Component.literal(feeder.getName().getString() + " has fed you."));
     }
 
+    private static ItemStack LAST_FURNACE_OUTPUT = null;
+
+    private static void handleIronFurnaceEvent(ServerPlayer player, BlockIronFurnaceContainerBase menu, PlayerEvent.ItemSmeltedEvent event) {
+        if (event.getEntity().getServer() == null) return;
+        PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
+        if (progress == null) {
+            return;
+        }
+        ItemStack item = event.getSmelting();
+        ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
+        if (event.getEntity().getPersistentData().contains("LAST_FURNACE_OUTPUT")) {
+            HolderLookup.Provider provider = event.getEntity().getServer().registryAccess();
+            CompoundTag tag = event.getEntity().getPersistentData().getCompound("LAST_FURNACE_OUTPUT");
+            Optional<ItemStack> optionalItem = ItemStack.parse(provider, tag);
+            optionalItem.ifPresent(entry -> {
+                LAST_FURNACE_OUTPUT = entry;
+            });
+            item = LAST_FURNACE_OUTPUT;
+            data = SmeltingConfig.getSmeltingData(LAST_FURNACE_OUTPUT);
+            event.getEntity().getPersistentData().remove("LAST_FURNACE_OUTPUT");
+        }
+        if (data == null) {
+            return;
+        }
+        if (progress.getSkills().getSkill(SkillType.SMELTING).getLevel() < data.getLevel()) {
+            handleFailedIronFurnace(player, menu, item, event, data);
+        } else {
+            grantSmeltingExperience(player, progress, item, data);
+        }
+    }
+
+    private static void handleFailedIronFurnace(ServerPlayer player, BlockIronFurnaceContainerBase menu, ItemStack item, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
+        player.sendSystemMessage(Component.literal("You need smelting level " + data.getLevel() + " to smelt " + item.getHoverName().getString()));
+        ItemStack outputCopy = item.copy();
+        event.getSmelting().setCount(0);
+        ItemStack rawMaterial = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw())), outputCopy.getCount());
+        ItemStack input = menu.getSlot(INPUT_SLOT).getItem();
+        if (input.isEmpty()) {
+            menu.getSlot(INPUT_SLOT).set(rawMaterial);
+        } else if (!ItemStack.isSameItem(input, rawMaterial)) {
+            player.getInventory().placeItemBackInInventory(rawMaterial);
+        } else {
+            int maxStackSize = input.getMaxStackSize();
+            int totalCount = input.getCount() + rawMaterial.getCount();
+
+            if (totalCount > maxStackSize) {
+                int fitCount = maxStackSize - input.getCount();
+                input.grow(fitCount);
+
+                int overflowCount = rawMaterial.getCount() - fitCount;
+                if (overflowCount > 0) {
+                    ItemStack overflow = rawMaterial.copy();
+                    overflow.setCount(overflowCount);
+                    player.getInventory().placeItemBackInInventory(overflow);
+                }
+            } else {
+                input.grow(rawMaterial.getCount());
+            }
+            menu.getSlot(INPUT_SLOT).set(input);
+        }
+        boolean shifting = player.getPersistentData().getBoolean("isShifting");
+        if (shifting) {//prevent dupe when shiftclicking
+            PlayerUtils.removeItemStack(player, outputCopy);
+        }
+    }
+
     private static void handleSmeltingEvent(ServerPlayer player, AbstractFurnaceMenu menu, PlayerEvent.ItemSmeltedEvent event) {
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
         if (progress == null) return;
-
+        ItemStack item = event.getSmelting();
         ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
         if (data == null) return;
         if (progress.getSkills().getSkill(SkillType.SMELTING).getLevel() < data.getLevel()) {
             handleFailedSmelting(player, menu, event, data);
         } else {
-            grantSmeltingExperience(player, progress, event, data);
+            grantSmeltingExperience(player, progress, item, data);
         }
     }
 
@@ -417,16 +504,16 @@ public class ServerPlayerEvents {
         }
     }
 
-    private static void grantSmeltingExperience(ServerPlayer player, PlayerProgress progress, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
-        double xp = Math.round(data.getXp() * event.getSmelting().getCount() * 100) / 100.0;
+    private static void grantSmeltingExperience(ServerPlayer player, PlayerProgress progress, ItemStack item, ConfigData data) {
+        double xp = Math.round(data.getXp() * item.getCount() * 100) / 100.0;
         double xpRate = Config.Server.XP_RATE.get();
         if (xpRate != 1.0) {
             xp *= xpRate;
         }
         double finalXp = xp;
-        CraftingTracker.accumulateCraftingData(player, event.getSmelting(), null, finalXp, SkillType.SMELTING, () -> {
+        CraftingTracker.accumulateCraftingData(player, item, null, finalXp, SkillType.SMELTING, () -> {
             if (Utils.isXpCapped(progress.getSkills().getSkill(SkillType.SMELTING).getLevel(), data.getLevel())) {
-                MessageSender.send(player, "You are to high of a level to gain experience from " + event.getSmelting().getHoverName().getString());
+                MessageSender.send(player, "You are to high of a level to gain experience from " + item.getHoverName().getString());
                 return;
             }
             progress.getSkills().addXpNoBonus(SkillType.SMELTING, finalXp);
