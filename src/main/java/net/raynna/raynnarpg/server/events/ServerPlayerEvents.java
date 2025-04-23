@@ -47,6 +47,7 @@ import net.raynna.raynnarpg.server.player.playerdata.PlayerDataStorage;
 import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.*;
+import net.silentchaos512.gear.SilentGear;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -221,7 +222,7 @@ public class ServerPlayerEvents {
         ConfigData data = CombatConfig.getData(item, isArmor);
         if (data != null && combatLevel < data.getLevel()) {
             MessagePacketSender.send(player,
-                    "You need combat level " + data.getLevel() +
+                    "You need a combat level of " + data.getLevel() +
                             " to equip " + item.getHoverName().getString());
             return false;
         }
@@ -362,7 +363,7 @@ public class ServerPlayerEvents {
 
         ConfigData data = ToolConfig.getToolData(tool);
         if (data != null && miningLevel < data.getLevel()) {
-            MessagePacketSender.send(player, "You need mining level " + data.getLevel() + " to use " + tool.getHoverName().getString());
+            MessagePacketSender.send(player, "You need a mining level of " + data.getLevel() + " to use " + tool.getHoverName().getString());
             return false;
         }
         return true;
@@ -389,6 +390,7 @@ public class ServerPlayerEvents {
         feeder.sendSystemMessage(Component.literal("You have fed " + target.getName().getString() + "."));
         target.sendSystemMessage(Component.literal(feeder.getName().getString() + " has fed you."));
     }
+
 
     private static void handleIronFurnaceEvent(ServerPlayer player, BlockIronFurnaceContainerBase menu, PlayerEvent.ItemSmeltedEvent event) {
         if (event.getEntity().getServer() == null) return;
@@ -419,7 +421,7 @@ public class ServerPlayerEvents {
     }
 
     private static void handleFailedIronFurnace(ServerPlayer player, BlockIronFurnaceContainerBase menu, ItemStack item, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
-        player.sendSystemMessage(Component.literal("You need smelting level " + data.getLevel() + " to smelt " + item.getHoverName().getString()));
+        player.sendSystemMessage(Component.literal("You need a smelting level of " + data.getLevel() + " to smelt " + item.getHoverName().getString()));
         ItemStack outputCopy = item.copy();
         event.getSmelting().setCount(0);
         ItemStack rawMaterial = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw())), outputCopy.getCount());
@@ -467,7 +469,7 @@ public class ServerPlayerEvents {
     }
 
     private static void handleFailedSmelting(ServerPlayer player, AbstractFurnaceMenu menu, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
-        player.sendSystemMessage(Component.literal("You need smelting level " + data.getLevel() + " to smelt " + event.getSmelting().getHoverName().getString()));
+        player.sendSystemMessage(Component.literal("You need a smelting level of " + data.getLevel() + " to smelt " + event.getSmelting().getHoverName().getString()));
         ItemStack outputCopy = event.getSmelting().copy();
         event.getSmelting().setCount(0);
         ItemStack rawMaterial = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw())), outputCopy.getCount());
@@ -571,7 +573,7 @@ public class ServerPlayerEvents {
     }
 
     private static void handleInvalidCraftingMaterial(ServerPlayer player, PlayerEvent.ItemCraftedEvent event, CraftingContainer container, ItemStack material, int requiredLevel, Skill skill) {
-        MessageSender.send(player, "You need " + skill.getType().getName() + " level " + requiredLevel + " to use " + material.getHoverName().getString() + " in crafting.");
+        MessageSender.send(player, "You need a " + skill.getType().getName() + " level of " + requiredLevel + " to use " + material.getHoverName().getString() + " in crafting.");
 
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack stack = container.getItem(i);
