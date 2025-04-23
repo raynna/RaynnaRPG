@@ -33,13 +33,9 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.raynna.raynnarpg.Config;
-import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.*;
-import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.crafting.CraftingConfig;
 import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
-import net.raynna.raynnarpg.config.tools.ToolConfig;
-import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
 import net.raynna.raynnarpg.recipe.ReversibleCraftingRegistry;
 import net.raynna.raynnarpg.server.player.PlayerProgress;
 import net.raynna.raynnarpg.server.player.playerdata.PlayerDataProvider;
@@ -47,7 +43,6 @@ import net.raynna.raynnarpg.server.player.playerdata.PlayerDataStorage;
 import net.raynna.raynnarpg.server.player.skills.Skill;
 import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.raynna.raynnarpg.utils.*;
-import net.silentchaos512.gear.SilentGear;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -101,10 +96,10 @@ public class ServerPlayerEvents {
             int miningLevel = progress.getSkills().getSkill(SkillType.MINING).getLevel();
             int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
 
-            if (!validateToolUse(player, mainHand, miningLevel)) {
+            if (!ItemUtils.canUsePickaxe(player, mainHand, miningLevel)) {
                 event.setCanceled(true);
             }
-            if (!canUseWeapon(player, mainHand, combatLevel)) {
+            if (!ItemUtils.canUseWeapon(player, mainHand, combatLevel)) {
                 player.swing(event.getHand());
                 event.setCanceled(true);
             }
@@ -119,7 +114,7 @@ public class ServerPlayerEvents {
         ItemStack mainHand = player.getMainHandItem();
         if (ItemUtils.isBow(mainHand)) {
             int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
-            if (!canUseWeapon(player, mainHand, combatLevel)) {
+            if (!ItemUtils.canUseWeapon(player, mainHand, combatLevel)) {
                 player.releaseUsingItem();
                 player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 0.5f, 0.5f);
                 event.setCanceled(true);
@@ -144,7 +139,7 @@ public class ServerPlayerEvents {
             if (progress == null) return;
 
             ItemStack weapon = player.getMainHandItem();
-            if (!canUseWeapon(player, weapon, progress.getSkills().getSkill(SkillType.COMBAT).getLevel())) {
+            if (!ItemUtils.canUseWeapon(player, weapon, progress.getSkills().getSkill(SkillType.COMBAT).getLevel())) {
                 player.swing(InteractionHand.MAIN_HAND);
                 event.setCanceled(true);
             }
@@ -170,7 +165,7 @@ public class ServerPlayerEvents {
         ItemStack newItem = event.getTo();
         ItemStack oldItem = event.getFrom();
 
-        if (newItem.isEmpty() || !isEquipmentSlot(slot)) {
+        if (newItem.isEmpty() || !ItemUtils.isEquipmentSlot(slot)) {
             return;
         }
 
@@ -179,7 +174,7 @@ public class ServerPlayerEvents {
             return;
         }
 
-        if (!canEquipItem(player, newItem, slot, progress)) {
+        if (!ItemUtils.canEquipItem(player, newItem, slot, progress)) {
             revertEquipmentChange(player, event);
             player.closeContainer();
             syncEquipmentState(player);
@@ -208,37 +203,6 @@ public class ServerPlayerEvents {
         player.getServer().execute(() -> {
             player.containerMenu.slotsChanged(player.getInventory());
         });
-    }
-
-    private static boolean canEquipItem(ServerPlayer player, ItemStack item, EquipmentSlot slot, PlayerProgress progress) {
-        int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
-        boolean isArmor = isArmorSlot(slot);
-        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(item)) {
-            if (!ItemUtils.checkCombatLevel(player, item, combatLevel, isArmor)) {
-                return false;
-            }
-        }
-
-        ConfigData data = CombatConfig.getData(item, isArmor);
-        if (data != null && combatLevel < data.getLevel()) {
-            MessagePacketSender.send(player,
-                    "You need a combat level of " + data.getLevel() +
-                            " to equip " + item.getHoverName().getString());
-            return false;
-        }
-        return true;
-    }
-
-    private static boolean isEquipmentSlot(EquipmentSlot slot) {
-        return isArmorSlot(slot) ||
-                slot == EquipmentSlot.OFFHAND;
-    }
-
-    private static boolean isArmorSlot(EquipmentSlot slot) {
-        return slot == EquipmentSlot.HEAD ||
-                slot == EquipmentSlot.CHEST ||
-                slot == EquipmentSlot.LEGS ||
-                slot == EquipmentSlot.FEET;
     }
 
     @SubscribeEvent
@@ -335,38 +299,6 @@ public class ServerPlayerEvents {
         if (event.getEntity() instanceof ServerPlayer player && event.getInventory() instanceof CraftingContainer container) {
             handleCraftingEvent(player, container, event);
         }
-    }
-
-    private static boolean canUseWeapon(ServerPlayer player, ItemStack weapon, int combatLevel) {
-        if (weapon.isEmpty()) return true;
-
-        /*if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(weapon) && ItemUtils.isWeapon(weapon)) {
-            if (!ItemUtils.checkCombatLevel(player, weapon, combatLevel, false)) {
-                return false;
-            }
-        }*/
-
-        /*ConfigData data = net.raynna.raynnarpg.newconfig.combat.CombatConfig.getWeaponData(weapon);
-        if (data != null && combatLevel < data.getLevel()) {
-            MessagePacketSender.send(player, "(Server) You need combat level " + data.getLevel() + " to use " + weapon.getHoverName().getString());
-            return false;
-        }*/
-        return true;
-    }
-
-    private static boolean validateToolUse(ServerPlayer player, ItemStack tool, int miningLevel) {
-        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(tool) && ItemUtils.isTool(tool)) {
-            if (!ItemUtils.checkMiningLevel(player, tool, miningLevel)) {
-                return false;
-            }
-        }
-
-        ConfigData data = ToolConfig.getToolData(tool);
-        if (data != null && miningLevel < data.getLevel()) {
-            MessagePacketSender.send(player, "You need a mining level of " + data.getLevel() + " to use " + tool.getHoverName().getString());
-            return false;
-        }
-        return true;
     }
 
     private static void handlePlayerFeeding(ServerPlayer feeder, Player target) {

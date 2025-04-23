@@ -4,15 +4,16 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.fml.ModList;
 import net.raynna.raynnarpg.compat.silentgear.SilentGearCompat;
 import net.raynna.raynnarpg.config.ConfigData;
 import net.raynna.raynnarpg.config.combat.CombatConfig;
 import net.raynna.raynnarpg.config.tools.ToolConfig;
 import net.raynna.raynnarpg.network.packets.message.MessagePacketSender;
-import net.silentchaos512.gear.SilentGear;
+import net.raynna.raynnarpg.server.player.PlayerProgress;
+import net.raynna.raynnarpg.server.player.skills.SkillType;
 import net.silentchaos512.gear.api.item.GearItem;
 import net.silentchaos512.gear.api.property.GearProperty;
 import net.silentchaos512.gear.core.component.GearPropertiesData;
@@ -107,6 +108,69 @@ public class ItemUtils {
             return true;
         }
         return itemId.matches(".*(shovel|spade|excavator|digger).*");
+    }
+
+    public static boolean isEquipmentSlot(EquipmentSlot slot) {
+        return isArmorSlot(slot) ||
+                slot == EquipmentSlot.OFFHAND;
+    }
+
+    private static boolean isArmorSlot(EquipmentSlot slot) {
+        return slot == EquipmentSlot.HEAD ||
+                slot == EquipmentSlot.CHEST ||
+                slot == EquipmentSlot.LEGS ||
+                slot == EquipmentSlot.FEET;
+    }
+
+    public static boolean canEquipItem(ServerPlayer player, ItemStack item, EquipmentSlot slot, PlayerProgress progress) {
+        int combatLevel = progress.getSkills().getSkill(SkillType.COMBAT).getLevel();
+        boolean isArmor = isArmorSlot(slot);
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(item)) {
+            if (!checkCombatLevel(player, item, combatLevel, isArmor)) {
+                return false;
+            }
+        }
+
+        ConfigData data = CombatConfig.getData(item, isArmor);
+        if (data != null && combatLevel < data.getLevel()) {
+            MessagePacketSender.send(player,
+                    "You need a combat level of " + data.getLevel() +
+                            " to equip " + item.getHoverName().getString());
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean canUseWeapon(ServerPlayer player, ItemStack weapon, int combatLevel) {
+        if (weapon.isEmpty()) return true;
+
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(weapon) && isWeapon(weapon)) {
+            if (!ItemUtils.checkCombatLevel(player, weapon, combatLevel, false)) {
+                return false;
+            }
+        }
+
+        ConfigData data = CombatConfig.getData(weapon, false);
+        if (data != null && combatLevel < data.getLevel()) {
+            MessagePacketSender.send(player, "You need a combat level " + data.getLevel() + " to use " + weapon.getHoverName().getString());
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean canUsePickaxe(ServerPlayer player, ItemStack tool, int miningLevel) {
+        if (SilentGearCompat.IS_LOADED && SilentGearCompat.isGearItem(tool) && isPickaxe(tool)) {
+            if (!checkMiningLevel(player, tool, miningLevel)) {
+                return false;
+            }
+        }
+
+        ConfigData data = ToolConfig.getToolData(tool);
+        if (data != null && miningLevel < data.getLevel()) {
+            MessagePacketSender.send(player, "You need a mining level of " + data.getLevel() + " to use " + tool.getHoverName().getString());
+            return false;
+        }
+        return true;
     }
 
     /**
