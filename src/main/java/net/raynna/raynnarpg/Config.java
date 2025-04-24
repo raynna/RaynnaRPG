@@ -305,7 +305,7 @@ public class Config {
             boolean hasSilentGear = ModList.get().isLoaded("silentgear");
             boolean hasSilentGems = ModList.get().isLoaded("silentgems");
             boolean hasIceAndFire = ModList.get().isLoaded("iceandfire");
-            boolean hasAllTheMods = ModList.get().isLoaded("allthemods");
+            boolean hasAllTheOres = ModList.get().isLoaded("alltheores");
             boolean hasCreate = ModList.get().isLoaded("create");
             boolean hasBno = ModList.get().isLoaded("bno");
             ConfigRegister.registerCategory(builder, "crafting_config", "Crafting", "Settings for Crafting", () -> {
@@ -407,7 +407,7 @@ public class Config {
                     silentgems.add(new CraftingEntry("silentgems:white_diamond", 45));
                     CraftingConfig.registerMultipleConfigs(builder, "crafting_silentgems", "Silent Gems", silentgems);
                 }
-                if (ModList.get().isLoaded("iceandfire")) {
+                if (hasIceAndFire) {
                     List<CraftingEntry> iceandfire = new ArrayList<>();
                     //ruby
                     iceandfire.add(new CraftingEntry("iceandfire:witherbone", 15));
@@ -424,7 +424,7 @@ public class Config {
                     create.add(new CraftingEntry("create:zinc_ingot", 12, "c:ingots/zinc"));
                     CraftingConfig.registerMultipleConfigs(builder, "crafting_create", "Create", create);
                 }
-                if (ModList.get().isLoaded("bno")) {
+                if (hasBno) {
                     List<CraftingEntry> bno = new ArrayList<>();
                     bno.add(new CraftingEntry("bno:zinc_ingot", 12, "c:ingots/zinc"));
                     bno.add(new CraftingEntry("bno:tin_ingot", 14, "c:ingots/tin"));
@@ -436,25 +436,25 @@ public class Config {
                     bno.add(new CraftingEntry("bno:uranium_ingot", 22, "c:ingots/uranium"));
                     CraftingConfig.registerMultipleConfigs(builder, "crafting_bno", "Basic Nether", bno);
                 }
-                if (ModList.get().isLoaded("alltheores")) {
-                    List<CraftingEntry> bno = new ArrayList<>();
-                    bno.add(new CraftingEntry("alltheores:zinc_ingot", 12, "c:ingots/zinc"));
-                    bno.add(new CraftingEntry("alltheores:tin_ingot", 14, "c:ingots/tin"));
-                    bno.add(new CraftingEntry("alltheores:lead_ingot", 16, "c:ingots/lead"));
-                    bno.add(new CraftingEntry("alltheores:aluminum_ingot", 18, "c:ingots/aluminum"));
-                    bno.add(new CraftingEntry("alltheores:nickel_ingot", 19, "c:ingots/nickel"));
-                    bno.add(new CraftingEntry("alltheores:silver_ingot", 12, "c:ingots/silver"));
-                    bno.add(new CraftingEntry("alltheores:brass_ingot", 13, "c:ingots/brass"));
-                    bno.add(new CraftingEntry("alltheores:osmium_ingot", 20, "c:ingots/osmium"));
-                    bno.add(new CraftingEntry("alltheores:bronze_ingot", 20, "c:ingots/bronze"));
-                    bno.add(new CraftingEntry("alltheores:uranium_ingot", 22, "c:ingots/uranium"));
-                    bno.add(new CraftingEntry("alltheores:invar_ingot", 23, "c:ingots/invar"));
-                    bno.add(new CraftingEntry("alltheores:electrum_ingot", 24, "c:ingots/electrum"));
-                    bno.add(new CraftingEntry("alltheores:signalum_ingot", 32, "c:ingots/signalum"));
-                    bno.add(new CraftingEntry("alltheores:lumium_ingot", 34, "c:ingots/lumium"));
-                    bno.add(new CraftingEntry("alltheores:steel_ingot", 41, "c:ingots/steel"));
-                    bno.add(new CraftingEntry("alltheores:enderium_ingot", 47, "c:ingots/enderium"));
-                    CraftingConfig.registerMultipleConfigs(builder, "crafting_bno", "Basic Nether", bno);
+                if (hasAllTheOres) {
+                    List<CraftingEntry> ato = new ArrayList<>();
+                    ato.add(new CraftingEntry("alltheores:zinc_ingot", 12, "c:ingots/zinc"));
+                    ato.add(new CraftingEntry("alltheores:tin_ingot", 14, "c:ingots/tin"));
+                    ato.add(new CraftingEntry("alltheores:lead_ingot", 16, "c:ingots/lead"));
+                    ato.add(new CraftingEntry("alltheores:aluminum_ingot", 18, "c:ingots/aluminum"));
+                    ato.add(new CraftingEntry("alltheores:nickel_ingot", 19, "c:ingots/nickel"));
+                    ato.add(new CraftingEntry("alltheores:silver_ingot", 12, "c:ingots/silver"));
+                    ato.add(new CraftingEntry("alltheores:brass_ingot", 13, "c:ingots/brass"));
+                    ato.add(new CraftingEntry("alltheores:osmium_ingot", 20, "c:ingots/osmium"));
+                    ato.add(new CraftingEntry("alltheores:bronze_ingot", 20, "c:ingots/bronze"));
+                    ato.add(new CraftingEntry("alltheores:uranium_ingot", 22, "c:ingots/uranium"));
+                    ato.add(new CraftingEntry("alltheores:invar_ingot", 23, "c:ingots/invar"));
+                    ato.add(new CraftingEntry("alltheores:electrum_ingot", 24, "c:ingots/electrum"));
+                    ato.add(new CraftingEntry("alltheores:signalum_ingot", 32, "c:ingots/signalum"));
+                    ato.add(new CraftingEntry("alltheores:lumium_ingot", 34, "c:ingots/lumium"));
+                    ato.add(new CraftingEntry("alltheores:steel_ingot", 41, "c:ingots/steel"));
+                    ato.add(new CraftingEntry("alltheores:enderium_ingot", 47, "c:ingots/enderium"));
+                    CraftingConfig.registerMultipleConfigs(builder, "crafting_ato", "All the Ores", ato);
                 }
             });
         }
@@ -530,7 +530,7 @@ public class Config {
             boolean hasSilentGear = ModList.get().isLoaded("silentgear");
             boolean hasSilentGems = ModList.get().isLoaded("silentgems");
             boolean hasIceAndFire = ModList.get().isLoaded("iceandfire");
-            boolean hasAlltheores = ModList.get().isLoaded("alltheores");
+            boolean hasAllTheOres = ModList.get().isLoaded("alltheores");
             boolean hasCreate = ModList.get().isLoaded("create");
             boolean hasBno = ModList.get().isLoaded("bno");
             ConfigRegister.registerCategory(builder, "mining_config", "Mining", "Settings for Mining", () -> {
@@ -661,26 +661,26 @@ public class Config {
                     MiningConfig.registerMultipleConfigs(builder, "mining_create", "Create", create);
                 }
                 if (hasBno) {
-                    List<MiningEntry> mining_bno = new ArrayList<>();
-                    mining_bno.add(new MiningEntry("alltheores:zinc_ore", 12, "c:ores/zinc"));
-                    mining_bno.add(new MiningEntry("alltheores:tin_ore", 14, "c:ores/tin"));
-                    mining_bno.add(new MiningEntry("alltheores:lead_ore", 16, "c:ores/lead"));
-                    mining_bno.add(new MiningEntry("alltheores:aluminum_ore", 18, "c:ores/aluminum"));
-                    mining_bno.add(new MiningEntry("alltheores:nickel_ore", 19, "c:ores/nickel"));
-                    mining_bno.add(new MiningEntry("alltheores:silver_ore", 12, "c:ores/silver"));
-                    mining_bno.add(new MiningEntry("alltheores:brass_ore", 13, "c:ores/brass"));
-                    mining_bno.add(new MiningEntry("alltheores:osmium_ore", 20, "c:ores/osmium"));
-                    mining_bno.add(new MiningEntry("alltheores:bronze_ingot", 20, "c:ores/bronze"));
-                    mining_bno.add(new MiningEntry("alltheores:uranium_ingot", 22, "c:ores/uranium"));
-                    mining_bno.add(new MiningEntry("alltheores:invar_ingot", 23, "c:ores/invar"));
-                    mining_bno.add(new MiningEntry("alltheores:electrum_ingot", 24, "c:ores/electrum"));
-                    mining_bno.add(new MiningEntry("alltheores:signalum_ingot", 32, "c:ores/signalum"));
-                    mining_bno.add(new MiningEntry("alltheores:lumium_ingot", 34, "c:ores/lumium"));
-                    mining_bno.add(new MiningEntry("alltheores:steel_ingot", 47, "c:ores/steel"));
-                    mining_bno.add(new MiningEntry("alltheores:enderium_ingot", 47, "c:ores/enderium"));
-                    MiningConfig.registerMultipleConfigs(builder, "mining_bno", "Basic Nether", mining_bno);
+                    List<MiningEntry> bno = new ArrayList<>();
+                    bno.add(new MiningEntry("bno:zinc_ore", 12, "c:ores/zinc"));
+                    bno.add(new MiningEntry("bno:tin_ore", 14, "c:ores/tin"));
+                    bno.add(new MiningEntry("bno:lead_ore", 16, "c:ores/lead"));
+                    bno.add(new MiningEntry("bno:aluminum_ore", 18, "c:ores/aluminum"));
+                    bno.add(new MiningEntry("bno:nickel_ore", 19, "c:ores/nickel"));
+                    bno.add(new MiningEntry("bno:silver_ore", 12, "c:ores/silver"));
+                    bno.add(new MiningEntry("bno:brass_ore", 13, "c:ores/brass"));
+                    bno.add(new MiningEntry("bno:osmium_ore", 20, "c:ores/osmium"));
+                    bno.add(new MiningEntry("bno:bronze_ingot", 20, "c:ores/bronze"));
+                    bno.add(new MiningEntry("bno:uranium_ingot", 22, "c:ores/uranium"));
+                    bno.add(new MiningEntry("bno:invar_ingot", 23, "c:ores/invar"));
+                    bno.add(new MiningEntry("bno:electrum_ingot", 24, "c:ores/electrum"));
+                    bno.add(new MiningEntry("bno:signalum_ingot", 32, "c:ores/signalum"));
+                    bno.add(new MiningEntry("bno:lumium_ingot", 34, "c:ores/lumium"));
+                    bno.add(new MiningEntry("bno:steel_ingot", 47, "c:ores/steel"));
+                    bno.add(new MiningEntry("bno:enderium_ingot", 47, "c:ores/enderium"));
+                    MiningConfig.registerMultipleConfigs(builder, "mining_bno", "Basic Nether", bno);
                 }
-                if (hasAlltheores) {
+                if (hasAllTheOres) {
                     List<MiningEntry> mining_alltheores = new ArrayList<>();
                     mining_alltheores.add(new MiningEntry("alltheores:zinc_ore", 12, "c:ores/zinc"));
                     mining_alltheores.add(new MiningEntry("alltheores:tin_ore", 14, "c:ores/tin"));
