@@ -1,7 +1,6 @@
 package net.raynna.raynnarpg.server.events;
 
 import com.mojang.datafixers.util.Pair;
-import ironfurnaces.container.furnaces.BlockIronFurnaceContainerBase;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
