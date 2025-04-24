@@ -77,6 +77,7 @@ public class ServerPlayerEvents {
     @SubscribeEvent
     public static void onTick(PlayerTickEvent.Post event) {
         if (event.getEntity().getServer() == null) return;
+
         if (event.getEntity().containerMenu instanceof BlockIronFurnaceContainerBase ironFurnace) {
             ItemStack output = ironFurnace.getSlot(OUTPUT_SLOT).getItem();
             if (output.isEmpty()) return;
@@ -208,12 +209,8 @@ public class ServerPlayerEvents {
     @SubscribeEvent
     public static void onFurnace(PlayerEvent.ItemSmeltedEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-
-
-        if (event.getEntity().containerMenu instanceof BlockIronFurnaceContainerBase ironFurnace) {
-            handleIronFurnaceEvent(player, ironFurnace, event);
-        }
-        if (event.getEntity().containerMenu instanceof AbstractFurnaceMenu menu) {
+        AbstractContainerMenu menu = event.getEntity().containerMenu;
+        if (menu instanceof AbstractFurnaceMenu || menu instanceof BlockIronFurnaceContainerBase) {
             handleSmeltingEvent(player, menu, event);
         }
     }
@@ -323,16 +320,12 @@ public class ServerPlayerEvents {
         target.sendSystemMessage(Component.literal(feeder.getName().getString() + " has fed you."));
     }
 
-
-    private static void handleIronFurnaceEvent(ServerPlayer player, BlockIronFurnaceContainerBase menu, PlayerEvent.ItemSmeltedEvent event) {
-        if (event.getEntity().getServer() == null) return;
+    private static void handleSmeltingEvent(ServerPlayer player, AbstractContainerMenu menu, PlayerEvent.ItemSmeltedEvent event) {
         PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
-        if (progress == null) {
-            return;
-        }
+        if (progress == null) return;
         AtomicReference<ItemStack> item = new AtomicReference<>(event.getSmelting());
         AtomicReference<ConfigData> data = new AtomicReference<>(SmeltingConfig.getSmeltingData(event.getSmelting()));
-        if (event.getEntity().getPersistentData().contains("LAST_FURNACE_OUTPUT")) {
+        if (event.getEntity().getPersistentData().contains("LAST_FURNACE_OUTPUT") && event.getEntity().getServer() != null) {
             HolderLookup.Provider provider = event.getEntity().getServer().registryAccess();
             CompoundTag tag = event.getEntity().getPersistentData().getCompound("LAST_FURNACE_OUTPUT");
             Optional<ItemStack> optionalItem = ItemStack.parse(provider, tag);
@@ -346,63 +339,15 @@ public class ServerPlayerEvents {
             return;
         }
         if (progress.getSkills().getSkill(SkillType.SMELTING).getLevel() < data.get().getLevel()) {
-            handleFailedIronFurnace(player, menu, item.get(), event, data.get());
+            handleFailedSmelting(player, menu, item.get(), event, data.get());
         } else {
             grantSmeltingExperience(player, progress, item.get(), data.get());
         }
     }
 
-    private static void handleFailedIronFurnace(ServerPlayer player, BlockIronFurnaceContainerBase menu, ItemStack item, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
-        player.sendSystemMessage(Component.literal("You need a smelting level of " + data.getLevel() + " to smelt " + item.getHoverName().getString()));
-        ItemStack outputCopy = item.copy();
-        event.getSmelting().setCount(0);
-        ItemStack rawMaterial = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw())), outputCopy.getCount());
-        ItemStack input = menu.getSlot(INPUT_SLOT).getItem();
-        if (input.isEmpty()) {
-            menu.getSlot(INPUT_SLOT).set(rawMaterial);
-        } else if (!ItemStack.isSameItem(input, rawMaterial)) {
-            player.getInventory().placeItemBackInInventory(rawMaterial);
-        } else {
-            int maxStackSize = input.getMaxStackSize();
-            int totalCount = input.getCount() + rawMaterial.getCount();
-
-            if (totalCount > maxStackSize) {
-                int fitCount = maxStackSize - input.getCount();
-                input.grow(fitCount);
-
-                int overflowCount = rawMaterial.getCount() - fitCount;
-                if (overflowCount > 0) {
-                    ItemStack overflow = rawMaterial.copy();
-                    overflow.setCount(overflowCount);
-                    player.getInventory().placeItemBackInInventory(overflow);
-                }
-            } else {
-                input.grow(rawMaterial.getCount());
-            }
-            menu.getSlot(INPUT_SLOT).set(input);
-        }
-        boolean shifting = player.getPersistentData().getBoolean("isShifting");
-        if (shifting) {//prevent dupe when shiftclicking
-            PlayerUtils.removeItemStack(player, outputCopy);
-        }
-    }
-
-    private static void handleSmeltingEvent(ServerPlayer player, AbstractFurnaceMenu menu, PlayerEvent.ItemSmeltedEvent event) {
-        PlayerProgress progress = PlayerDataProvider.getPlayerProgress(player);
-        if (progress == null) return;
-        ItemStack item = event.getSmelting();
-        ConfigData data = SmeltingConfig.getSmeltingData(event.getSmelting());
-        if (data == null) return;
-        if (progress.getSkills().getSkill(SkillType.SMELTING).getLevel() < data.getLevel()) {
-            handleFailedSmelting(player, menu, event, data);
-        } else {
-            grantSmeltingExperience(player, progress, item, data);
-        }
-    }
-
-    private static void handleFailedSmelting(ServerPlayer player, AbstractFurnaceMenu menu, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
+    private static void handleFailedSmelting(ServerPlayer player, AbstractContainerMenu menu, ItemStack item, PlayerEvent.ItemSmeltedEvent event, ConfigData data) {
         player.sendSystemMessage(Component.literal("You need a smelting level of " + data.getLevel() + " to smelt " + event.getSmelting().getHoverName().getString()));
-        ItemStack outputCopy = event.getSmelting().copy();
+        ItemStack outputCopy = item.copy();
         event.getSmelting().setCount(0);
         ItemStack rawMaterial = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.getRaw())), outputCopy.getCount());
         ItemStack input = menu.getSlot(INPUT_SLOT).getItem();
@@ -482,7 +427,9 @@ public class ServerPlayerEvents {
                 materialData = new CraftingResult.Materials(materialName, 0, 0, false);
             }
             ConfigData data = CraftingConfig.getCraftingData(material);
+
             if (data == null) continue;
+
             materialData.increaseCount(1);
             double materialXp = data.getXp();
             if (Utils.isXpCapped(progress.getSkills().getSkill(SkillType.CRAFTING).getLevel(), data.getLevel())) {
