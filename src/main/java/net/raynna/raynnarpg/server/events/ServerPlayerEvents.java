@@ -23,6 +23,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.*;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModLoader;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.entity.living.*;
@@ -33,6 +35,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.raynna.raynnarpg.Config;
+import net.raynna.raynnarpg.compat.ironfurnace.IronFurnaceCompat;
 import net.raynna.raynnarpg.config.*;
 import net.raynna.raynnarpg.config.crafting.CraftingConfig;
 import net.raynna.raynnarpg.config.smelting.SmeltingConfig;
@@ -78,8 +81,9 @@ public class ServerPlayerEvents {
     public static void onTick(PlayerTickEvent.Post event) {
         if (event.getEntity().getServer() == null) return;
 
-        if (event.getEntity().containerMenu instanceof BlockIronFurnaceContainerBase ironFurnace) {
-            ItemStack output = ironFurnace.getSlot(OUTPUT_SLOT).getItem();
+        AbstractContainerMenu menu = event.getEntity().containerMenu;
+        if (IronFurnaceCompat.isIronFurnace(menu)) {
+            ItemStack output = menu.getSlot(OUTPUT_SLOT).getItem();
             if (output.isEmpty()) return;
             CompoundTag tag = new CompoundTag();
             HolderLookup.Provider provider = event.getEntity().getServer().registryAccess();
@@ -210,7 +214,10 @@ public class ServerPlayerEvents {
     public static void onFurnace(PlayerEvent.ItemSmeltedEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         AbstractContainerMenu menu = event.getEntity().containerMenu;
-        if (menu instanceof AbstractFurnaceMenu || menu instanceof BlockIronFurnaceContainerBase) {
+        if (IronFurnaceCompat.isIronFurnace(menu)) {
+            handleSmeltingEvent(player, menu, event);
+        }
+        if (menu instanceof AbstractFurnaceMenu) {
             handleSmeltingEvent(player, menu, event);
         }
     }
