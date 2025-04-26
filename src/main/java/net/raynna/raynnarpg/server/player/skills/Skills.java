@@ -23,7 +23,7 @@ public class Skills {
      * For config settings
      */
     public static double XP_RATE;
-    public static int MAX_LEVEL;
+    public static int MAX_LEVEL = 99;
     public static int MAX_XP;
     public static int XP_LEVEL_CAP;
     public static double BASE_CRAFTING_XP;
